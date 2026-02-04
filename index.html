@@ -1,8 +1,20 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.9.6
+Version 3.9.7
 Datum: 2026-02-04
+
+
+Änderungen in v3.9.7:
+- BUG-FIX: AbortError beim Login behoben
+  * App-Initialisierung erfolgt jetzt erst NACH dem Login
+  * Datenbankabfragen werden nicht mehr vor der Authentifizierung durchgeführt
+  * Disziplinen und Filter laden nur Daten des eingeloggten Users
+  * Verhindert Race-Conditions und Authentifizierungsprobleme
+- VERBESSERUNG: Passwort-Toggle modernisiert
+  * Statt Emoji-Icons wird jetzt "SHOW"/"HIDE" Text verwendet
+  * Professionelleres und klareres Design
+  * Bessere Benutzerfreundlichkeit
 
 
 Änderungen in v3.9.6:
@@ -3309,7 +3321,7 @@ Datum: 2026-02-04
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">Passwort</label>
           <div style="position: relative;">
             <input type="password" id="loginPassword" required placeholder="Passwort" style="width: 100%; padding: 12px 45px 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
-            <button type="button" onclick="toggleLoginPassword()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.2em; padding: 5px; color: #666;">👁️</button>
+            <button type="button" id="togglePasswordBtn" onclick="toggleLoginPassword()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 0.75em; padding: 5px 8px; color: #666; font-weight: 600;">SHOW</button>
           </div>
         </div>
         <div style="margin-bottom: 20px;">
@@ -4409,13 +4421,16 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
       isAdmin = existingAthlete.ist_admin || false;
       selectedAthleteName = `${existingAthlete.vorname || ''} ${existingAthlete.name || ''}`.trim();
       
-      console.log('📋 Loading leistungen...');
-      await ladeLeistungen();
-      
       console.log('🎨 Showing main app...');
       // Show main app
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'block';
+      
+      console.log('🔧 Initializing app...');
+      await initializeApp();
+      
+      console.log('📋 Loading leistungen...');
+      await ladeLeistungen();
       
       console.log('📊 Loading dashboard data...');
       await ladeDashboardDaten();
@@ -4450,14 +4465,14 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
 // Toggle password visibility in login form
 function toggleLoginPassword() {
   const passwordInput = document.getElementById('loginPassword');
-  const button = event.target;
+  const button = document.getElementById('togglePasswordBtn');
   
   if (passwordInput.type === 'password') {
     passwordInput.type = 'text';
-    button.textContent = '🙈';
+    button.textContent = 'HIDE';
   } else {
     passwordInput.type = 'password';
-    button.textContent = '👁️';
+    button.textContent = 'SHOW';
   }
 }
 
@@ -5034,25 +5049,44 @@ async function ladeAlleAthleten() {
 
 /* ================= DISZIPLINEN ================= */
 async function ladeDisziplinen() {
-  const { data, error } = await supabaseClient.schema("la").from("leistung").select("disziplin");
-  if (!error) {
+  if (!selectedAthleteId) {
+    console.log('Keine Athlet-ID verfügbar, überspringe Disziplinen-Laden');
+    return;
+  }
+  
+  const { data, error } = await supabaseClient
+    .schema("la")
+    .from("leistung")
+    .select("disziplin")
+    .eq("athlet_id", selectedAthleteId);
+    
+  if (!error && data) {
     const uniqueDisziplinen = [...new Set(data.map(d => d.disziplin))].filter(Boolean);
     // Sortiere nach Disziplintyp (wie bei SBs)
     disziplinenListe = uniqueDisziplinen.map(d => ({ disziplin: d })).sort(sortiereNachDisziplinTyp).map(item => item.disziplin);
+  } else if (error) {
+    console.error('Fehler beim Laden der Disziplinen:', error);
   }
 }
 
 /* ================= FILTER OPTIONEN ================= */
 async function ladeFilterOptionen() {
+  if (!selectedAthleteId) {
+    console.log('Keine Athlet-ID verfügbar, überspringe Filter-Optionen-Laden');
+    return;
+  }
+  
   const { data: akData, error: akError } = await supabaseClient
     .schema("la").from("leistung")
     .select("ak")
+    .eq("athlet_id", selectedAthleteId)
     .not("ak", "is", null);
   if(!akError) alleAK = [...new Set(akData.map(d => d.ak))].sort();
 
   const { data: rundeData, error: rundeError } = await supabaseClient
     .schema("la").from("leistung")
     .select("runde")
+    .eq("athlet_id", selectedAthleteId)
     .not("runde", "is", null);
   if(!rundeError) {
     alleRunden = [...new Set(rundeData.map(d => d.runde))].sort();
@@ -5061,6 +5095,7 @@ async function ladeFilterOptionen() {
   const { data: msData, error: msError } = await supabaseClient
     .schema("la").from("leistung")
     .select("ms")
+    .eq("athlet_id", selectedAthleteId)
     .not("ms", "is", null);
   if(!msError) alleMS = [...new Set(msData.map(d => d.ms))].sort();
 
@@ -5071,6 +5106,7 @@ async function ladeFilterOptionen() {
   const { data: jahrData, error: jahrError } = await supabaseClient
     .schema("la").from("leistung")
     .select("datum")
+    .eq("athlet_id", selectedAthleteId)
     .not("datum", "is", null);
   if(!jahrError && jahrData) {
     const jahre = [...new Set(jahrData.map(d => {
@@ -6700,15 +6736,8 @@ async function zeigeAlleSBs() {
 }
 
 /* ================= INIT ================= */
-window.addEventListener('DOMContentLoaded', async function() {
-  // Check authentication first
-  checkSession();
-
-  console.log('=== INIT START ===');
-  
-  // Zeige Lade-Indikator
-  const athletSuche = document.getElementById('athletSuche');
-  if(athletSuche) athletSuche.placeholder = '⏳ Lade Athleten...';
+async function initializeApp() {
+  console.log('=== APP INIT START ===');
   
   await ladeDisziplinen();
   console.log('✅ Disziplinen geladen:', disziplinenListe.length);
@@ -6777,14 +6806,12 @@ window.addEventListener('DOMContentLoaded', async function() {
       disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
   }
   
-  // Initialisiere Athleten-Suche
-  initAthleteSearch();
-  console.log('✅ Athleten-Suche initialisiert');
-  
-  // Aktualisiere Platzhalter
-  if(athletSuche) athletSuche.placeholder = '🔍 Name eingeben...';
-  
-  console.log('=== ✅ INIT COMPLETE ===');
+  console.log('=== ✅ APP INIT COMPLETE ===');
+}
+
+window.addEventListener('DOMContentLoaded', async function() {
+  // Only check authentication on page load, don't initialize app yet
+  checkSession();
 });
 
 /* ================= TAB SWITCHING ================= */
