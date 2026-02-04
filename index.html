@@ -1,8 +1,16 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.9.5
+Version 3.9.6
 Datum: 2026-02-04
+
+
+Änderungen in v3.9.6:
+- BUG-FIX: Login-Weiterleitung zur Main-App behoben
+  * Main-App wird jetzt korrekt nach dem Login angezeigt
+  * Verbesserte Fehlerbehandlung und Logging
+  * Athletenprofil wird direkt im Auth-Handler geladen
+  * Verhindert Race-Conditions und Doppel-Verarbeitung
 
 
 Änderungen in v3.9.5:
@@ -4037,48 +4045,6 @@ function showMainApp() {
 }
 
 // Load User's Athlete Profile
-async function loadUserAthlete() {
-  console.log('Loading athlete profile for user:', currentUser.id);
-  
-  const { data, error } = await supabaseClient
-    .schema('la').from('athlet')
-    .select('*')
-    .eq('user_id', currentUser.id)
-    .maybeSingle();
-  
-  if (error) {
-    console.error('Fehler beim Laden des Athleten-Profils:', error);
-    showMessage('Fehler beim Laden deines Profils: ' + error.message, 'error');
-    return;
-  }
-  
-  if (!data) {
-    console.error('Kein Athleten-Profil gefunden für User:', currentUser.id);
-    showMessage('Kein Athleten-Profil gefunden. Bitte kontaktiere den Administrator.', 'error');
-    await supabaseClient.auth.signOut();
-    return;
-  }
-  
-  currentAthlete = data;
-  selectedAthleteId = data.id;
-  isAdmin = data.ist_admin || false;
-  
-  console.log('Athlete profile loaded:', {
-    athlet_id: data.id,
-    name: `${data.vorname} ${data.name}`,
-    isAdmin: isAdmin
-  });
-  
-  // Update selectedAthleteName for dashboard
-  selectedAthleteName = `${data.vorname || ''} ${data.name || ''}`.trim();
-  
-  // Load data
-  console.log('Loading leistungen for athlet_id:', selectedAthleteId);
-  await ladeLeistungen();
-  
-  console.log('Data loaded successfully');
-}
-
 // Check Session on Load
 async function checkSession() {
   console.log('Checking session on page load...');
@@ -4372,34 +4338,35 @@ let isHandlingAuth = false;
 let lastProcessedUserId = null; // Track which user was last processed
 
 supabaseClient.auth.onAuthStateChange(async (event, session) => {
-  console.log('Auth event:', event, 'Session:', session?.user?.email);
+  console.log('🔐 Auth event:', event, 'Session:', session?.user?.email);
   
   // Prevent concurrent handling
   if (isHandlingAuth) {
-    console.log('Already handling auth, skipping...');
+    console.log('⚠️ Already handling auth, skipping...');
     return;
   }
   
   if (event === 'INITIAL_SESSION') {
     isAuthInitialized = true;
     if (!session) {
-      console.log('No initial session, showing login screen');
+      console.log('❌ No initial session, showing login screen');
       showLoginScreen();
       return;
     }
+    console.log('✅ Initial session found, will process...');
     // Fall through to handle session
   }
   
   if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
     // Skip if we already processed this user
     if (lastProcessedUserId === session.user.id && event === 'SIGNED_IN') {
-      console.log('User already processed, skipping duplicate SIGNED_IN event');
+      console.log('⏭️ User already processed, skipping duplicate SIGNED_IN event');
       return;
     }
     
     isHandlingAuth = true;
     currentUser = session.user;
-    console.log('User signed in:', currentUser.id, currentUser.email);
+    console.log('👤 User signed in:', currentUser.id, currentUser.email);
     console.log("🔍 Starte Athlet-Suche für user_id:", currentUser.id);
     
     try {
@@ -4412,12 +4379,21 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         .maybeSingle();
       
       console.log("📦 Query-Ergebnis erhalten");
-      console.log('Existing athlete:', existingAthlete, fetchError);
-      console.log("🔍 Athlet-Suche:", { user_id: currentUser.id, gefunden: !!existingAthlete, daten: existingAthlete });
+      console.log('📊 Existing athlete:', existingAthlete);
+      console.log('❗ Fetch error:', fetchError);
+      
+      if (fetchError) {
+        console.error('❌ Database error:', fetchError);
+        showMessage('⚠️ Fehler beim Laden des Profils: ' + fetchError.message, 'error');
+        await supabaseClient.auth.signOut();
+        isHandlingAuth = false;
+        lastProcessedUserId = null;
+        return;
+      }
       
       if (!existingAthlete) {
-        console.log('No athlete profile found for existing user');
-        console.log('This should have been created during registration');
+        console.log('❌ No athlete profile found for existing user');
+        console.log('⚠️ This should have been created during registration');
         showMessage('⚠️ Kein Athleten-Profil gefunden. Bitte kontaktiere den Administrator.', 'error');
         await supabaseClient.auth.signOut();
         isHandlingAuth = false;
@@ -4425,20 +4401,32 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         return;
       }
       
-      // Load athlete data and show main app
-      console.log('Loading athlete data and showing main app...');
-      await loadUserAthlete();
+      console.log('✅ Athlete profile found:', existingAthlete.vorname, existingAthlete.name);
       
-      // Show main app (loadUserAthlete already handles admin feature visibility)
+      // Set currentAthlete immediately before calling loadUserAthlete
+      currentAthlete = existingAthlete;
+      selectedAthleteId = existingAthlete.id;
+      isAdmin = existingAthlete.ist_admin || false;
+      selectedAthleteName = `${existingAthlete.vorname || ''} ${existingAthlete.name || ''}`.trim();
+      
+      console.log('📋 Loading leistungen...');
+      await ladeLeistungen();
+      
+      console.log('🎨 Showing main app...');
+      // Show main app
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'block';
       
+      console.log('📊 Loading dashboard data...');
+      await ladeDashboardDaten();
+      
       // Mark this user as processed
       lastProcessedUserId = session.user.id;
-      console.log('✅ Auth handling complete, mainApp should be visible');
+      console.log('✅✅✅ Auth handling complete, mainApp is now visible');
       
     } catch (error) {
-      console.error('Error in auth handler:', error);
+      console.error('❌ Error in auth handler:', error);
+      console.error('❌ Error stack:', error.stack);
       showMessage('Ein Fehler ist aufgetreten: ' + error.message, 'error');
       showLoginScreen();
       lastProcessedUserId = null;
@@ -4447,7 +4435,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
     }
     
   } else if (event === 'SIGNED_OUT') {
-    console.log('User signed out');
+    console.log('🚪 User signed out');
     currentUser = null;
     currentAthlete = null;
     isAdmin = false;
