@@ -1,8 +1,22 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.9.8
+Version 3.10.0
 Datum: 2026-02-04
+
+
+Änderungen in v3.10.0:
+- NEU: Admin-Athletensuche wieder hinzugefügt
+  * Admins sehen oben rechts eine kompakte Suchleiste
+  * Admins können andere Athleten auswählen und deren Daten ansehen
+  * Normale User sehen keine Suchleiste und nur ihre eigenen Daten
+- VERBESSERUNG: Berechtigungen für Leistungen optimiert
+  * Jeder User kann seine eigenen Leistungen hinzufügen und bearbeiten
+  * Admins können Leistungen für ausgewählte Athleten hinzufügen
+  * Automatische Zuordnung zur richtigen athlete_id
+- SICHERHEIT: Normale User können nur ihre eigenen Daten sehen und bearbeiten
+  * selectedAthleteId wird korrekt verwendet
+  * Keine Möglichkeit für normale User, andere Profile zu sehen
 
 
 Änderungen in v3.9.8:
@@ -1069,6 +1083,216 @@ Datum: 2026-02-04
     .header-links a:hover {
       background: rgba(255,255,255,0.3);
       transform: translateY(-2px);
+    }
+
+    /* Kompakte Athletensuche in der Ecke (nur für Admins) */
+    .compact-athlete-search {
+      position: absolute;
+      top: 30px;
+      right: 110px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 18px;
+      padding: 0;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      display: none;
+      align-items: center;
+      gap: 0;
+      width: 36px;
+      height: 36px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: visible;
+      cursor: pointer;
+    }
+
+    .compact-athlete-search:hover,
+    .compact-athlete-search:focus-within {
+      width: 220px;
+      border-radius: 18px;
+      gap: 6px;
+      padding: 0 10px;
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(102, 126, 234, 0.3);
+      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+      cursor: default;
+      overflow: visible;
+    }
+
+    .compact-athlete-search.has-selection {
+      width: 220px;
+      border-radius: 18px;
+      gap: 6px;
+      padding: 0 10px;
+      background: rgba(255, 255, 255, 0.95);
+      border-color: rgba(102, 126, 234, 0.3);
+      overflow: visible;
+    }
+
+    .compact-athlete-search .search-icon {
+      font-size: 1.1em;
+      color: white;
+      opacity: 0.95;
+      transition: all 0.3s;
+      flex-shrink: 0;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .compact-athlete-search:hover .search-icon,
+    .compact-athlete-search:focus-within .search-icon {
+      opacity: 1;
+      color: #667eea;
+      filter: none;
+      width: auto;
+      height: auto;
+    }
+
+    .compact-athlete-search.has-selection .search-icon {
+      color: #667eea;
+      opacity: 1;
+      filter: none;
+      width: auto;
+      height: auto;
+    }
+
+    .compact-athlete-search input {
+      border: none;
+      background: white;
+      padding: 0 8px;
+      height: 28px;
+      font-size: 0.85em;
+      flex: 1;
+      min-width: 0;
+      color: #333;
+      opacity: 0;
+      width: 0;
+      transition: opacity 0.3s ease 0.1s;
+      border-radius: 5px;
+    }
+
+    .compact-athlete-search:hover input,
+    .compact-athlete-search:focus-within input {
+      opacity: 1;
+      width: auto;
+      background: white;
+    }
+
+    .compact-athlete-search.has-selection input {
+      display: none;
+    }
+
+    .compact-athlete-search input::placeholder {
+      color: rgba(0, 0, 0, 0.4);
+      font-size: 0.95em;
+    }
+
+    .compact-athlete-search input:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+    }
+
+    .compact-athlete-search .autocomplete-suggestions {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      left: 0;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 10000;
+      border: 1px solid #e0e0e0;
+      display: none;
+    }
+
+    body.dark-mode .compact-athlete-search .autocomplete-suggestions {
+      background: var(--card-bg);
+      border-color: var(--border-color);
+    }
+
+    .compact-athlete-search .autocomplete-suggestions.show {
+      display: block;
+    }
+
+    .compact-athlete-search .autocomplete-suggestions .suggestion-item {
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: background 0.2s;
+      color: #333;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 0.9em;
+    }
+
+    body.dark-mode .compact-athlete-search .autocomplete-suggestions .suggestion-item {
+      color: var(--text-primary);
+      border-bottom-color: var(--border-color);
+    }
+
+    .compact-athlete-search .autocomplete-suggestions .suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .compact-athlete-search .autocomplete-suggestions .suggestion-item:hover {
+      background: #f5f5f5;
+    }
+
+    body.dark-mode .compact-athlete-search .autocomplete-suggestions .suggestion-item:hover {
+      background: var(--table-hover-bg);
+    }
+
+    .compact-athlete-search .selected-info {
+      font-size: 0.8em;
+      color: #333;
+      display: none;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      padding: 0 8px;
+      height: 28px;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      background: white;
+      border-radius: 5px;
+      font-weight: 500;
+    }
+
+    .compact-athlete-search.has-selection .selected-info {
+      display: flex;
+    }
+
+    .compact-athlete-search .clear-btn {
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.4);
+      font-size: 1em;
+      padding: 0 5px;
+      border-radius: 50%;
+      transition: all 0.2s;
+      line-height: 1;
+      flex-shrink: 0;
+      opacity: 0;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .compact-athlete-search.has-selection .clear-btn,
+    .compact-athlete-search:hover .clear-btn {
+      opacity: 1;
+    }
+
+    .compact-athlete-search .clear-btn:hover {
+      background: rgba(255, 107, 107, 0.15);
+      color: #ff6b6b;
     }
 
     .content {
@@ -3394,6 +3618,17 @@ Datum: 2026-02-04
     </button>
     <h1>Leichtathletik Leistungsdatenbank</h1>
     
+    <!-- Kompakte Athletensuche (nur für Admins) - im Header integriert -->
+    <div id="compactAthleteSearch" class="compact-athlete-search" style="display: none;">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="compactAthletSuche" placeholder="Athlet suchen..." autocomplete="off">
+      <div id="compactAthletVorschlaege" class="autocomplete-suggestions"></div>
+      <div id="compactSelectedInfo" class="selected-info" style="display: none;">
+        <span id="compactAthletName"></span>
+        <span class="clear-btn" onclick="clearCompactAthlete()">✕</span>
+      </div>
+    </div>
+    
     <div class="header-links">
       <!--<a href="erklaerung_attribute_disziplinen.pdf" target="_blank">📋 Erklärung Abkürzungen (DB)</a>
       <a href="infos_zur_aktuellen_version.pdf" target="_blank">ℹ️ Infos zur aktuellen Version</a>!-->
@@ -4513,8 +4748,22 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'block';
       
+      // Show admin features if user is admin
+      if (isAdmin) {
+        console.log('👑 User is admin - showing admin features');
+        const compactAthleteSearch = document.getElementById('compactAthleteSearch');
+        if (compactAthleteSearch) {
+          compactAthleteSearch.style.display = 'flex';
+        }
+      }
+      
       console.log('🔧 Initializing app...');
       await initializeApp();
+      
+      // Initialize compact athlete search for admins
+      if (isAdmin) {
+        initCompactAthleteSearch();
+      }
       
       console.log('📋 Loading leistungen...');
       await ladeLeistungen();
@@ -11057,6 +11306,118 @@ function resetAllFiltersAndSettings() {
   console.log('✅ Alle Filter und Einstellungen wurden zurückgesetzt');
 }
 
+// ========== KOMPAKTE ATHLETENSUCHE (für Admins) ==========
+function initCompactAthleteSearch() {
+  console.log('🔍 initCompactAthleteSearch aufgerufen');
+  const searchInput = document.getElementById('compactAthletSuche');
+  const suggestionsDiv = document.getElementById('compactAthletVorschlaege');
+  
+  if (!searchInput) {
+    console.log('⚠️ CompactAthletSuche nicht gefunden - überspringe Initialisierung');
+    return;
+  }
+  
+  console.log('✅ Event Listener wird hinzugefügt...');
+  
+  searchInput.addEventListener('input', async function(e) {
+    const query = this.value.trim().toLowerCase();
+    console.log('🔎 Input Event! Query:', query);
+    
+    if (query.length < 2) {
+      suggestionsDiv.innerHTML = '';
+      suggestionsDiv.classList.remove('show');
+      return;
+    }
+    
+    try {
+      const { data, error } = await supabaseClient
+        .schema('la').from('athlet')
+        .select('*')
+        .or(`vorname.ilike.%${query}%,name.ilike.%${query}%`)
+        .order('name');
+      
+      if (error) {
+        console.error('❌ Supabase Error:', error);
+        throw error;
+      }
+      
+      if (data && data.length > 0) {
+        console.log(`✅ ${data.length} Athleten gefunden`);
+        suggestionsDiv.innerHTML = data.map(athlete => `
+          <div class="suggestion-item" onclick="selectCompactAthlete(${athlete.id}, '${athlete.vorname.replace(/'/g, "\\'")}', '${athlete.name.replace(/'/g, "\\'")}', ${athlete.jahrgang})">
+            ${athlete.vorname} ${athlete.name} (${athlete.jahrgang})
+          </div>
+        `).join('');
+        suggestionsDiv.classList.add('show');
+      } else {
+        suggestionsDiv.innerHTML = '<div class="suggestion-item">Keine Athleten gefunden</div>';
+        suggestionsDiv.classList.add('show');
+      }
+    } catch (err) {
+      console.error('❌ Fehler beim Laden der Athleten:', err);
+      suggestionsDiv.innerHTML = '<div class="suggestion-item">Fehler beim Laden</div>';
+      suggestionsDiv.classList.add('show');
+    }
+  });
+  
+  // Schließe Vorschläge bei Klick außerhalb
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.compact-athlete-search')) {
+      suggestionsDiv.classList.remove('show');
+    }
+  });
+  
+  console.log('✅ initCompactAthleteSearch abgeschlossen');
+}
+
+function selectCompactAthlete(id, vorname, name, jahrgang) {
+  // RESET ALLE EINSTELLUNGEN vor dem Wechsel
+  resetAllFiltersAndSettings();
+
+  // Setze den ausgewählten Athleten
+  selectedAthleteId = id;
+  selectedAthleteName = `${vorname} ${name}`;
+  
+  // Aktualisiere kompakte Anzeige
+  const compactSearch = document.getElementById('compactAthleteSearch');
+  const searchInput = document.getElementById('compactAthletSuche');
+  const suggestionsDiv = document.getElementById('compactAthletVorschlaege');
+  const selectedInfo = document.getElementById('compactSelectedInfo');
+  const athletName = document.getElementById('compactAthletName');
+  
+  if (compactSearch) compactSearch.classList.add('has-selection');
+  if (searchInput) searchInput.value = '';
+  if (suggestionsDiv) suggestionsDiv.classList.remove('show');
+  if (selectedInfo) selectedInfo.style.display = 'flex';
+  if (athletName) athletName.textContent = `${vorname} ${name} (${jahrgang})`;
+  
+  // Lade Daten für den neuen Athleten
+  console.log('📊 Lade Daten für Athlet:', selectedAthleteId);
+  ladeLeistungen();
+  ladeDashboardDaten();
+}
+
+function clearCompactAthlete() {
+  // Setze zurück zum eigenen Profil
+  if (currentAthlete) {
+    selectedAthleteId = currentAthlete.id;
+    selectedAthleteName = `${currentAthlete.vorname} ${currentAthlete.name}`;
+  }
+  
+  // Aktualisiere kompakte Anzeige
+  const compactSearch = document.getElementById('compactAthleteSearch');
+  const searchInput = document.getElementById('compactAthletSuche');
+  const selectedInfo = document.getElementById('compactSelectedInfo');
+  
+  if (compactSearch) compactSearch.classList.remove('has-selection');
+  if (searchInput) searchInput.value = '';
+  if (selectedInfo) selectedInfo.style.display = 'none';
+  
+  // Lade eigene Daten
+  ladeLeistungen();
+  ladeDashboardDaten();
+}
+
 // Event-Listener für benutzerdefinierte Datumsbereiche
 document.addEventListener('DOMContentLoaded', function() {
   // Statistik Filter
@@ -11652,9 +12013,18 @@ async function saveLeistung(event) {
     return;
   }
   
+  // For non-admins, always use their own athlete_id
+  // For admins, use selectedAthleteId if they've selected another athlete
+  let athletId;
+  if (isAdmin && selectedAthleteId && selectedAthleteId !== currentAthlete.id) {
+    athletId = selectedAthleteId;
+  } else {
+    athletId = currentAthlete.id;
+  }
+  
   const leistungId = document.getElementById('editLeistungId').value;
   const leistungData = {
-    athlet_id: currentAthlete.id,
+    athlet_id: athletId,
     datum: document.getElementById('modalDatum').value,
     disziplin: document.getElementById('modalDisziplin').value,
     leistung: parseFloat(document.getElementById('modalLeistung').value.replace(',', '.')),
