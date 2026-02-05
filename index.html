@@ -4526,54 +4526,16 @@ window.addEventListener('DOMContentLoaded', function() {
         
         // Check if user was created successfully
         if (authData.user) {
-          // 2. Create athlete profile immediately
-          try {
-            const { data: newAthlete, error: insertError } = await supabaseClient
-              .schema('la').from('athlet')
-              .insert([{
-                user_id: authData.user.id,
-                vorname: vorname,
-                name: nachname,
-                jahrgang: jahrgang,
-                ist_admin: false
-              }])
-              .select()
-              .single();
-            
-            if (insertError) {
-              console.error('Fehler beim Erstellen des Athleten-Profils:', insertError);
-              showMessage('⚠️ Registrierung teilweise erfolgreich, aber Profil konnte nicht erstellt werden: ' + insertError.message, 'error');
-              
-              // Try to delete the auth user if athlete creation failed
-              await supabaseClient.auth.signOut();
-              
-              submitBtn.disabled = false;
-              submitBtn.textContent = originalText;
-              isSubmitting = false;
-              return;
-            }
-            
-            console.log("✅ Athlet erstellt:", newAthlete);
-            console.log("📊 Eingefügte Daten:", { user_id: authData.user.id, vorname, nachname, jahrgang });
-            console.log('Athlete profile created:', newAthlete);
-            
-            // Check if email confirmation is required
-            if (authData.session) {
-              // User is logged in immediately (no email confirmation required)
-              showMessage('✅ Registrierung erfolgreich! Du wirst automatisch angemeldet...', 'success');
-              // The onAuthStateChange will load the user data
-            } else {
-              // Email confirmation required
-              showMessage('✅ Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, um dich anzumelden.', 'success');
-              submitBtn.disabled = false;
-              submitBtn.textContent = originalText;
-              isSubmitting = false;
-            }
-            
-          } catch (athleteError) {
-            console.error('Error creating athlete:', athleteError);
-            showMessage('Fehler beim Erstellen des Profils: ' + athleteError.message, 'error');
-            await supabaseClient.auth.signOut();
+          console.log('✅ User created, database trigger will create athlete profile automatically');
+          
+          // Check if email confirmation is required
+          if (authData.session) {
+            // User is logged in immediately (no email confirmation required)
+            showMessage('✅ Registrierung erfolgreich! Du wirst automatisch angemeldet...', 'success');
+            // The onAuthStateChange will load the user data
+          } else {
+            // Email confirmation required
+            showMessage('✅ Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, um dich anzumelden.', 'success');
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
             isSubmitting = false;
@@ -4658,91 +4620,39 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
       
       if (fetchError) {
         console.error('❌ Database error:', fetchError);
-        
-        // If it's a permissions error, try to create the athlete profile
-        if (fetchError.code === 'PGRST116' || fetchError.message?.includes('permission') || fetchError.message?.includes('policy')) {
-          console.log('🔧 Permissions error detected, trying to create athlete profile...');
-          
-          // Get user metadata
-          const metadata = currentUser.user_metadata || {};
-          const vorname = metadata.vorname || '';
-          const name = metadata.name || '';
-          const jahrgang = metadata.jahrgang || null;
-          
-          console.log('📝 Creating athlete with:', { vorname, name, jahrgang });
-          
-          const { data: newAthlete, error: createError } = await supabaseClient
-            .schema('la').from('athlet')
-            .insert([{
-              user_id: currentUser.id,
-              vorname: vorname,
-              name: name,
-              jahrgang: jahrgang,
-              ist_admin: false
-            }])
-            .select()
-            .single();
-          
-          if (createError) {
-            console.error('❌ Failed to create athlete:', createError);
-            showMessage('⚠️ Fehler beim Erstellen des Profils: ' + createError.message, 'error');
-            await supabaseClient.auth.signOut();
-            isHandlingAuth = false;
-            lastProcessedUserId = null;
-            return;
-          }
-          
-          console.log('✅ Athlete profile created:', newAthlete);
-          currentAthlete = newAthlete;
-          selectedAthleteId = newAthlete.id;
-          isAdmin = false;
-          selectedAthleteName = `${vorname} ${name}`.trim();
-        } else {
-          showMessage('⚠️ Fehler beim Laden des Profils: ' + fetchError.message, 'error');
-          await supabaseClient.auth.signOut();
-          isHandlingAuth = false;
-          lastProcessedUserId = null;
-          return;
-        }
+        showMessage('⚠️ Fehler beim Laden des Profils: ' + fetchError.message, 'error');
+        await supabaseClient.auth.signOut();
+        isHandlingAuth = false;
+        lastProcessedUserId = null;
+        return;
       } else if (!existingAthlete) {
         console.log('❌ No athlete profile found for existing user');
-        console.log('⚠️ This should have been created during registration');
+        console.log('⚠️ Waiting for database trigger to create profile...');
         
-        // Try to create it now with user metadata
-        const metadata = currentUser.user_metadata || {};
-        const vorname = metadata.vorname || '';
-        const name = metadata.name || '';
-        const jahrgang = metadata.jahrgang || null;
+        // Wait a moment for the trigger to execute (in case it's delayed)
+        await new Promise(resolve => setTimeout(resolve, 2000));
         
-        console.log('🔧 Trying to create missing athlete profile...');
-        console.log('📝 User metadata:', metadata);
-        
-        const { data: newAthlete, error: createError } = await supabaseClient
+        // Try to fetch again
+        const { data: retryAthlete, error: retryError } = await supabaseClient
           .schema('la').from('athlet')
-          .insert([{
-            user_id: currentUser.id,
-            vorname: vorname,
-            name: name,
-            jahrgang: jahrgang,
-            ist_admin: false
-          }])
-          .select()
-          .single();
+          .select('*')
+          .eq('user_id', currentUser.id)
+          .maybeSingle();
         
-        if (createError) {
-          console.error('❌ Failed to create athlete:', createError);
-          showMessage('⚠️ Kein Athleten-Profil gefunden und konnte nicht erstellt werden. Bitte kontaktiere den Administrator.', 'error');
+        if (retryError || !retryAthlete) {
+          console.error('❌ Still no athlete profile found after retry');
+          showMessage('⚠️ Kein Athleten-Profil gefunden. Bitte kontaktiere den Administrator.', 'error');
           await supabaseClient.auth.signOut();
           isHandlingAuth = false;
           lastProcessedUserId = null;
           return;
         }
         
-        console.log('✅ Athlete profile created:', newAthlete);
-        currentAthlete = newAthlete;
-        selectedAthleteId = newAthlete.id;
-        isAdmin = false;
-        selectedAthleteName = `${vorname} ${name}`.trim();
+        console.log('✅ Athlete profile found after retry:', retryAthlete);
+        currentAthlete = retryAthlete;
+        selectedAthleteId = retryAthlete.id;
+        isAdmin = retryAthlete.ist_admin || false;
+        selectedAthleteName = `${retryAthlete.vorname || ''} ${retryAthlete.name || ''}`.trim();
       } else {
         console.log('✅ Athlete profile found:', existingAthlete.vorname, existingAthlete.name);
         currentAthlete = existingAthlete;
