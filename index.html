@@ -1,9 +1,17 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.10.0
-Datum: 2026-02-04
+Version 3.10.1
+Datum: 2026-02-05
 
+
+
+Änderungen in v3.10.1:
+- NEU: Löschen-Button im Leistung-Bearbeiten-Modal hinzugefügt
+  * Beim Bearbeiten einer Leistung ist nun ein roter "Löschen"-Button sichtbar
+  * Sicherheitsabfrage vor dem Löschen
+  * Button ist nur im Bearbeitungsmodus sichtbar, nicht beim Hinzufügen
+  * Nutzt die bestehende RLS DELETE Policy
 
 Änderungen in v3.10.0:
 - NEU: Admin-Athletensuche wieder hinzugefügt
@@ -3533,7 +3541,7 @@ Datum: 2026-02-04
      ============================================ -->
 <div id="loginScreen" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px;">
   <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%;">
-    <h1 style="color: #2a5298; margin-bottom: 10px; text-align: center; font-size: 2em;">🏃 LA Auswertung</h1>
+    <h1 style="color: #2a5298; margin-bottom: 10px; text-align: center; font-size: 2em;">Login</h1>
     <p style="color: #666; text-align: center; margin-bottom: 30px;">Leichtathletik Leistungsdatenbank</p>
     
     <div id="authMessage" style="display: none; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em;"></div>
@@ -11964,6 +11972,9 @@ function openAddLeistungModal() {
   document.getElementById('modalTitle').textContent = 'Leistung hinzufügen';
   document.getElementById('editLeistungId').value = '';
   document.getElementById('leistungForm').reset();
+  
+  // Hide delete button when adding new
+  document.getElementById('deleteLeistungBtn').style.display = 'none';
   document.getElementById('leistungModal').style.display = 'flex';
 }
 
@@ -11996,7 +12007,42 @@ async function openEditLeistungModal(leistungId) {
   document.getElementById('modalPlatzierung').value = data.platzierung || '';
   document.getElementById('modalAK').value = data.ak || '';
   
+  
+  // Show delete button when editing
+  document.getElementById('deleteLeistungBtn').style.display = 'block';
   document.getElementById('leistungModal').style.display = 'flex';
+}
+
+
+// Delete Leistung
+async function deleteLeistung() {
+  const leistungId = document.getElementById('editLeistungId').value;
+  
+  if (!leistungId) {
+    alert('Fehler: Keine Leistung zum Löschen ausgewählt');
+    return;
+  }
+  
+  // Confirm deletion
+  if (!confirm('Möchtest du diese Leistung wirklich löschen?')) {
+    return;
+  }
+  
+  const { error } = await supabaseClient
+    .schema('la').from('leistung')
+    .delete()
+    .eq('id', leistungId);
+  
+  if (error) {
+    alert('Fehler beim Löschen: ' + error.message);
+    return;
+  }
+  
+  alert('Leistung erfolgreich gelöscht!');
+  closeLeistungModal();
+  
+  // Reload performances
+  ladeLeistungen();
 }
 
 // Close Leistung Modal
@@ -12185,9 +12231,12 @@ async function importCSV() {
         </div>
       </div>
       
-      <div style="display: flex; gap: 10px; justify-content: flex-end;">
-        <button type="button" onclick="closeLeistungModal()" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #6c757d; color: white;">Abbrechen</button>
-        <button type="submit" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">Speichern</button>
+      <div style="display: flex; gap: 10px; justify-content: space-between;">
+        <button type="button" id="deleteLeistungBtn" onclick="deleteLeistung()" style="display: none; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #dc3545; color: white;">🗑️ Löschen</button>
+        <div style="display: flex; gap: 10px;">
+          <button type="button" onclick="closeLeistungModal()" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #6c757d; color: white;">Abbrechen</button>
+          <button type="submit" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">Speichern</button>
+        </div>
       </div>
     </form>
   </div>
