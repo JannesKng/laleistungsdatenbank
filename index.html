@@ -779,6 +779,17 @@ Datum: 2026-02-05
       color: white;
     }
     
+    body.dark-mode .map-fullscreen-btn {
+      background: #2d2d2d;
+      color: #667eea;
+      border-color: #667eea;
+    }
+    
+    body.dark-mode .map-fullscreen-btn:hover {
+      background: #667eea;
+      color: white;
+    }
+    
     body.dark-mode .map-tooltip {
       background: #2d2d2d;
       color: #e0e0e0;
@@ -3035,6 +3046,46 @@ Datum: 2026-02-05
       transform: none;
     }
     
+    .map-fullscreen-btn {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--card-bg);
+      color: #2a5298;
+      border: 1.5px solid #2a5298;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      z-index: 1000;
+    }
+    
+    .map-fullscreen-btn:hover {
+      background: #667eea;
+      color: white;
+      transform: scale(1.05);
+    }
+    
+    .map-fullscreen-btn svg {
+      display: block;
+    }
+    
+    /* Vollbild-Modus */
+    #mapContainer.fullscreen {
+      position: fixed !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      z-index: 9999 !important;
+      border-radius: 0 !important;
+      margin: 0 !important;
+    }
+    
     .map-tooltip {
       display: none;
       position: absolute;
@@ -3565,18 +3616,7 @@ Datum: 2026-02-05
     
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 30px;">
-      <svg width="200" height="80" viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg" style="margin: 0 auto; display: block;">
-        <defs>
-          <linearGradient id="loginLogo" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <text x="10" y="55" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="url(#loginLogo)">LA</text>
-        <rect x="85" y="15" width="3" height="50" fill="url(#loginLogo)"/>
-        <text x="100" y="35" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#333">Leistungs-</text>
-        <text x="100" y="52" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#333">datenbank</text>
-      </svg>
+      <img src="transparent-logo-tu.svg" alt="TrackUp Logo" style="width: 120px; height: auto; margin: 0 auto; display: block;">
     </div>
     
     <h1 style="color: #2a5298; margin-bottom: 10px; text-align: center; font-size: 2em;">Login</h1>
@@ -3670,18 +3710,7 @@ Datum: 2026-02-05
     
     <!-- Logo -->
     <div style="display: flex; justify-content: center; align-items: center; padding: 20px 0;">
-      <svg width="240" height="90" viewBox="0 0 240 90" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="headerLogo" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
-          </linearGradient>
-        </defs>
-        <text x="8" y="60" font-family="Arial, sans-serif" font-size="56" font-weight="bold" fill="url(#headerLogo)">LA</text>
-        <rect x="100" y="18" width="3" height="54" fill="url(#headerLogo)"/>
-        <text x="115" y="40" font-family="Arial, sans-serif" font-size="18" font-weight="600" fill="#e0e7ff">Leistungs-</text>
-        <text x="115" y="62" font-family="Arial, sans-serif" font-size="18" font-weight="600" fill="#e0e7ff">datenbank</text>
-      </svg>
+      <img src="transparent-logo.svg" alt="TrackUp Logo" style="width: 180px; height: auto;">
     </div>
     
     <!-- Kompakte Athletensuche (nur für Admins) - im Header integriert -->
@@ -3840,6 +3869,12 @@ Datum: 2026-02-05
                 <button onclick="resetMapView()" class="map-reset-btn">
                   <span>🔄</span>
                   <span>Zoom zurücksetzen</span>
+                </button>
+                <!-- Vollbild Button -->
+                <button onclick="toggleMapFullscreen()" class="map-fullscreen-btn" title="Vollbild">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                  </svg>
                 </button>
                 <!-- Tooltip -->
                 <div id="mapTooltip" class="map-tooltip"></div>
@@ -10265,6 +10300,42 @@ function resetMapView() {
   updateMapTransform();
   updateMarkerSizes();
 }
+
+// Vollbild-Funktion für die Karte
+function toggleMapFullscreen() {
+  const mapContainer = document.getElementById('mapContainer');
+  const fullscreenBtn = document.querySelector('.map-fullscreen-btn');
+  
+  if (mapContainer.classList.contains('fullscreen')) {
+    // Vollbild verlassen
+    mapContainer.classList.remove('fullscreen');
+    fullscreenBtn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      </svg>
+    `;
+    fullscreenBtn.title = "Vollbild";
+  } else {
+    // Vollbild aktivieren
+    mapContainer.classList.add('fullscreen');
+    fullscreenBtn.innerHTML = `
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+      </svg>
+    `;
+    fullscreenBtn.title = "Vollbild verlassen";
+  }
+}
+
+// ESC-Taste zum Verlassen des Vollbildmodus
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const mapContainer = document.getElementById('mapContainer');
+    if (mapContainer && mapContainer.classList.contains('fullscreen')) {
+      toggleMapFullscreen();
+    }
+  }
+});
 
 // Zoom und Pan Funktionalität für die Karte
 let mapScale = 1;
