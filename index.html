@@ -4353,7 +4353,7 @@ Datum: 2026-02-09
           </div>
     
           <div class="avg-buttons">
-      <button class="avg-btn" onclick="zeigeLeistungsTabelle()">📋 Tabelle</button>
+      <button class="avg-btn" onclick="zeigeLeistungsTabelle()">📊 Score</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('leistung')">📈 Ø Leistung</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('platzierung')">🏅 Ø Platzierung</button>
       <button class="avg-btn" onclick="berechneErfolgsquote()">🎯 Erfolgsquote</button>
@@ -6070,24 +6070,49 @@ async function zeigeLeistungsTabelle() {
   // Sortiere nach Score aus der Datenbank (höchster zuerst)
   data.sort((a, b) => b.score - a.score);
 
+  // Speichere Daten für Sortierung
+  window.scoreTableData = data;
+  window.scoreTableSortColumn = 'score';
+  window.scoreTableSortDirection = 'desc';
+
+  renderScoreTable();
+}
+
+// Funktion zum Rendern der Score-Tabelle
+function renderScoreTable() {
+  const data = window.scoreTableData;
+  
+  if (!data || data.length === 0) {
+    return;
+  }
+
   // Erstelle Tabelle
   let html = `
-    <div style="position: relative;">
+    <div style="position: relative; margin-top: 10px;">
       <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''" 
-              style="position: absolute; top: 0; right: 0; background: #dc3545; color: white; border: none; 
+              style="position: absolute; top: -10px; right: 0; background: #dc3545; color: white; border: none; 
                      padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em; 
                      transition: all 0.3s;">
         ✕ Schließen
       </button>
-      <h3 style="color: #2a5298; margin-bottom: 15px;">📋 Leistungstabelle (sortiert nach Score)</h3>
-      <table style="width:100%; border-collapse: collapse; margin-top:20px; background:white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+      <table id="scoreTable" style="width:100%; border-collapse: collapse; background:white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
         <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;">
           <tr>
-            <th style="padding:12px; text-align:left; border:1px solid #ddd;">Datum</th>
-            <th style="padding:12px; text-align:left; border:1px solid #ddd;">Disziplin</th>
-            <th style="padding:12px; text-align:right; border:1px solid #ddd;">Leistung</th>
-            <th style="padding:12px; text-align:left; border:1px solid #ddd;">Ort</th>
-            <th style="padding:12px; text-align:right; border:1px solid #ddd;">Score</th>
+            <th onclick="sortScoreTable('datum')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
+              Datum ${getSortIndicator('datum')}
+            </th>
+            <th onclick="sortScoreTable('disziplin')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
+              Disziplin ${getSortIndicator('disziplin')}
+            </th>
+            <th onclick="sortScoreTable('leistung')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
+              Leistung ${getSortIndicator('leistung')}
+            </th>
+            <th onclick="sortScoreTable('ort')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
+              Ort ${getSortIndicator('ort')}
+            </th>
+            <th onclick="sortScoreTable('score')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
+              Score ${getSortIndicator('score')}
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -6101,11 +6126,11 @@ async function zeigeLeistungsTabelle() {
     
     html += `
       <tr style="${rowStyle}">
-        <td style="padding:10px; border:1px solid #ddd;">${formatierteDatum}</td>
-        <td style="padding:10px; border:1px solid #ddd;">${l.disziplin}</td>
-        <td style="padding:10px; border:1px solid #ddd; text-align:right; font-weight:600;">${formatierteLeistung}</td>
-        <td style="padding:10px; border:1px solid #ddd;">${l.ort || '-'}</td>
-        <td style="padding:10px; border:1px solid #ddd; text-align:right; font-weight:600; color: #667eea;">${scoreFormatiert}</td>
+        <td style="padding:10px; border:1px solid #ddd; text-align:center;">${formatierteDatum}</td>
+        <td style="padding:10px; border:1px solid #ddd; text-align:center;">${l.disziplin}</td>
+        <td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:600;">${formatierteLeistung}</td>
+        <td style="padding:10px; border:1px solid #ddd; text-align:center;">${l.ort || '-'}</td>
+        <td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:600; color: #667eea;">${scoreFormatiert}</td>
       </tr>
     `;
   });
@@ -6120,6 +6145,59 @@ async function zeigeLeistungsTabelle() {
   
   // Zeige Export-Button
   document.getElementById("analyseExportBtn").style.display = "inline-block";
+}
+
+// Funktion zum Sortieren der Score-Tabelle
+function sortScoreTable(column) {
+  const data = window.scoreTableData;
+  
+  if (!data || data.length === 0) return;
+  
+  // Wenn gleiche Spalte, Toggle Direction
+  if (window.scoreTableSortColumn === column) {
+    window.scoreTableSortDirection = window.scoreTableSortDirection === 'asc' ? 'desc' : 'asc';
+  } else {
+    // Neue Spalte, standard aufsteigend (außer Score, das absteigend startet)
+    window.scoreTableSortColumn = column;
+    window.scoreTableSortDirection = column === 'score' ? 'desc' : 'asc';
+  }
+  
+  const direction = window.scoreTableSortDirection === 'asc' ? 1 : -1;
+  
+  data.sort((a, b) => {
+    let valA, valB;
+    
+    if (column === 'datum') {
+      valA = a.datum;
+      valB = b.datum;
+    } else if (column === 'disziplin') {
+      valA = (a.disziplin || '').toLowerCase();
+      valB = (b.disziplin || '').toLowerCase();
+    } else if (column === 'leistung') {
+      valA = a.leistung || 0;
+      valB = b.leistung || 0;
+    } else if (column === 'ort') {
+      valA = (a.ort || '').toLowerCase();
+      valB = (b.ort || '').toLowerCase();
+    } else if (column === 'score') {
+      valA = a.score || 0;
+      valB = b.score || 0;
+    }
+    
+    if (valA < valB) return -1 * direction;
+    if (valA > valB) return 1 * direction;
+    return 0;
+  });
+  
+  renderScoreTable();
+}
+
+// Funktion zum Anzeigen des Sortier-Indikators
+function getSortIndicator(column) {
+  if (window.scoreTableSortColumn !== column) {
+    return '↕️';
+  }
+  return window.scoreTableSortDirection === 'asc' ? '↑' : '↓';
 }
 
 async function berechneDurchschnitt(typ) {
