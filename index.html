@@ -6086,58 +6086,47 @@ function renderScoreTable() {
     return;
   }
 
-  // Erstelle Tabelle
+  // Erstelle Tabelle im Stil der Leistungen-Tabelle
   let html = `
-    <div style="position: relative; margin-top: 10px;">
-      <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''" 
-              style="position: absolute; top: -10px; right: 0; background: #dc3545; color: white; border: none; 
-                     padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em; 
-                     transition: all 0.3s;">
-        ✕ Schließen
-      </button>
-      <table id="scoreTable" style="width:100%; border-collapse: collapse; background:white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-        <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;">
-          <tr>
-            <th onclick="sortScoreTable('datum')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
-              Datum ${getSortIndicator('datum')}
-            </th>
-            <th onclick="sortScoreTable('disziplin')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
-              Disziplin ${getSortIndicator('disziplin')}
-            </th>
-            <th onclick="sortScoreTable('leistung')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
-              Leistung ${getSortIndicator('leistung')}
-            </th>
-            <th onclick="sortScoreTable('ort')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
-              Ort ${getSortIndicator('ort')}
-            </th>
-            <th onclick="sortScoreTable('score')" style="padding:12px; text-align:center; border:1px solid #ddd; cursor:pointer; user-select: none;">
-              Score ${getSortIndicator('score')}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <div></div>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+      </div>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortScoreTable('datum')" style="cursor: pointer;">Datum${getSortArrow('datum')}</th>
+              <th onclick="sortScoreTable('disziplin')" style="cursor: pointer;">Disziplin${getSortArrow('disziplin')}</th>
+              <th onclick="sortScoreTable('leistung')" style="cursor: pointer;">Leistung${getSortArrow('leistung')}</th>
+              <th onclick="sortScoreTable('ort')" style="cursor: pointer;">Ort${getSortArrow('ort')}</th>
+              <th onclick="sortScoreTable('score')" style="cursor: pointer;">Score${getSortArrow('score')}</th>
+            </tr>
+          </thead>
+          <tbody>
   `;
 
   data.forEach((l, index) => {
     const formatierteDatum = formatiereDatum(l.datum);
     const formatierteLeistung = formatiereLeistung(l.leistung, l.disziplin);
-    const scoreFormatiert = l.score.toFixed(2);
-    const rowStyle = index % 2 === 0 ? 'background:#f9f9f9;' : '';
+    const scoreFormatiert = Math.round(l.score); // Keine Kommastellen
     
     html += `
-      <tr style="${rowStyle}">
-        <td style="padding:10px; border:1px solid #ddd; text-align:center;">${formatierteDatum}</td>
-        <td style="padding:10px; border:1px solid #ddd; text-align:center;">${l.disziplin}</td>
-        <td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:600;">${formatierteLeistung}</td>
-        <td style="padding:10px; border:1px solid #ddd; text-align:center;">${l.ort || '-'}</td>
-        <td style="padding:10px; border:1px solid #ddd; text-align:center; font-weight:600; color: #667eea;">${scoreFormatiert}</td>
+      <tr>
+        <td>${formatierteDatum}</td>
+        <td>${l.disziplin}</td>
+        <td>${formatierteLeistung}</td>
+        <td>${l.ort || '-'}</td>
+        <td>${scoreFormatiert}</td>
       </tr>
     `;
   });
 
   html += `
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </div>
   `;
 
@@ -6192,12 +6181,12 @@ function sortScoreTable(column) {
   renderScoreTable();
 }
 
-// Funktion zum Anzeigen des Sortier-Indikators
-function getSortIndicator(column) {
+// Funktion zum Anzeigen des Sortier-Pfeils (wie in Leistungen-Tabelle)
+function getSortArrow(column) {
   if (window.scoreTableSortColumn !== column) {
-    return '↕️';
+    return '';
   }
-  return window.scoreTableSortDirection === 'asc' ? '↑' : '↓';
+  return window.scoreTableSortDirection === 'asc' ? ' ▲' : ' ▼';
 }
 
 async function berechneDurchschnitt(typ) {
@@ -6289,26 +6278,33 @@ async function berechneDurchschnitt(typ) {
   const avg = werte.reduce((a, b) => a + b, 0) / werte.length;
   const formatierterWert = (typ === 'leistung') ? formatiereLeistung(avg, filterDisziplin) : avg.toFixed(2);
 
-  // Tabellen-HTML mit der gewünschten Reihenfolge
+  // Tabellen-HTML mit der gewünschten Reihenfolge und Schließen-Button
   let html = `
-    <table style="width:100%; border-collapse: collapse; margin-top:20px; background:white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-      <thead style="background:#f8f9fa;">
-        <tr>
-          <th style="padding:10px; border:1px solid #ddd;">Disziplin</th>
-          <th style="padding:10px; border:1px solid #ddd;">${typ === 'leistung' ? 'Ø Leistung' : 'Ø Platzierung'}</th>
-          <th style="padding:10px; border:1px solid #ddd;">Anzahl Leistungen</th>
-          <th style="padding:10px; border:1px solid #ddd;">Zeitraum</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr style="text-align:center;">
-          <td style="padding:10px; border:1px solid #ddd;">${filterDisziplin}</td>
-          <td style="padding:10px; border:1px solid #ddd;"><strong>${formatierterWert}</strong></td>
-          <td style="padding:10px; border:1px solid #ddd;">${werte.length}</td>
-          <td style="padding:10px; border:1px solid #ddd;">${zeitraumText}</td>
-        </tr>
-      </tbody>
-    </table>`;
+    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h3 style="color: #2a5298; margin: 0;">${typ === 'leistung' ? '📈 Ø Leistung' : '🏅 Ø Platzierung'}</h3>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+      </div>
+      <table style="width:100%; border-collapse: collapse; background:white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <thead style="background:#f8f9fa;">
+          <tr>
+            <th style="padding:10px; border:1px solid #ddd;">Disziplin</th>
+            <th style="padding:10px; border:1px solid #ddd;">${typ === 'leistung' ? 'Ø Leistung' : 'Ø Platzierung'}</th>
+            <th style="padding:10px; border:1px solid #ddd;">Anzahl Leistungen</th>
+            <th style="padding:10px; border:1px solid #ddd;">Zeitraum</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="text-align:center;">
+            <td style="padding:10px; border:1px solid #ddd;">${filterDisziplin}</td>
+            <td style="padding:10px; border:1px solid #ddd;"><strong>${formatierterWert}</strong></td>
+            <td style="padding:10px; border:1px solid #ddd;">${werte.length}</td>
+            <td style="padding:10px; border:1px solid #ddd;">${zeitraumText}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `;
   
   document.getElementById("analyseAusgabe").innerHTML = html;
   
