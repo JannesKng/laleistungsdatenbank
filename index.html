@@ -4103,14 +4103,14 @@ Datum: 2026-02-09
       <!-- ANALYSE TAB -->
       <div id="analyseTab" class="tab-content">
 
-  <div class="filter-section">
-    <details open>
+        <div class="filter-section">
+          <details open>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
         📈 Leistungsentwicklung
       </summary>
     
-    <!-- Filter -->
-    <div style="display: grid; grid-template-columns: minmax(0, 40%) minmax(0, 60%); gap: 12px; margin-bottom: 15px;">
+          <!-- Filter -->
+          <div style="display: grid; grid-template-columns: minmax(0, 40%) minmax(0, 60%); gap: 12px; margin-bottom: 15px;">
       <div class="filter-group">
         <strong>Disziplin:</strong>
         <select id="analyseDisziplin">
@@ -4134,10 +4134,10 @@ Datum: 2026-02-09
           </select>
         </div>
       </div>
-    </div>
+          </div>
     
-    <!-- Vergleichsmodus -->
-    <div style="margin-bottom: 15px;">
+          <!-- Vergleichsmodus -->
+          <div style="margin-bottom: 15px;">
       <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
         <input type="checkbox" id="vergleichsModus" onchange="toggleVergleichsModus()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #667eea;">
         <span style="font-weight: 500;">Zwei Disziplinen vergleichen</span>
@@ -4148,34 +4148,34 @@ Datum: 2026-02-09
           <option value="">– Disziplin wählen –</option>
         </select>
       </div>
-    </div>
+          </div>
     
-    <!-- Leistungsentwicklung Diagramm -->
-    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+          <!-- Leistungsentwicklung Diagramm -->
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
       <button id="diagrammAnzeigenBtn" onclick="zeigeDiagramm()">📊 Leistungsentwicklung anzeigen</button>
       <button id="diagrammAktualisierenBtn" onclick="zeigeDiagramm()" style="display: none;">🔄 Aktualisieren</button>
       <button id="diagrammSchließenBtn" onclick="schließeDiagramm()" style="display: none;">⬇️ Einklappen</button>
       <button id="diagrammAusklappenBtn" onclick="klappeAusDiagramm()" style="display: none;">⬆️ Ausklappen</button>
-    </div>
-    <div id="diagrammContainer" style="display:none; margin-top: 20px; background: white; padding: 10px; border-radius: 8px;">
+          </div>
+          <div id="diagrammContainer" style="display:none; margin-top: 20px; background: white; padding: 10px; border-radius: 8px;">
       <h4 style="margin: 0 0 10px 0; color: #2a5298;">Leistungsdiagramm</h4>
       <div style="height: 400px;">
         <canvas id="leistungsChart"></canvas>
       </div>
-    </div>
-    </details>
-  </div>
+          </div>
+          </details>
+        </div>
 
-  <div class="filter-section">
-    <details>
+        <div class="filter-section">
+          <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
         📊 SB & Saisondurchschnitte
       </summary>
     
-    <!-- SB-Diagramm -->
+          <!-- SB-Diagramm -->
     
-    <!-- Filter -->
-    <div style="display: grid; grid-template-columns: minmax(0, 40%) minmax(0, 60%); gap: 12px; margin-bottom: 15px;">
+          <!-- Filter -->
+          <div style="display: grid; grid-template-columns: minmax(0, 40%) minmax(0, 60%); gap: 12px; margin-bottom: 15px;">
       <div class="filter-group">
         <strong>Disziplin für SB-Ansicht:</strong>
         <select id="sbDisziplin" style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 8px;">
@@ -4199,7 +4199,7 @@ Datum: 2026-02-09
           </select>
         </div>
       </div>
-    </div>
+          </div>
       
       <!-- Vergleichsmodus für SB-Diagramm -->
       <div style="margin-bottom: 15px;">
@@ -4242,16 +4242,16 @@ Datum: 2026-02-09
           <canvas id="sbChart"></canvas>
         </div>
       </div>
-    </details>
-  </div>
+          </details>
+        </div>
     
-  <div class="filter-section">
-    <details>
+        <div class="filter-section">
+          <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
         🔮 Leistungsprognose
       </summary>
     
-    <!-- PROGNOSE-DIAGRAMM -->
+          <!-- PROGNOSE-DIAGRAMM -->
       
       <div class="filter-group" style="margin-bottom: 15px;">
         <strong>Disziplin für Prognose:</strong>
@@ -4287,18 +4287,18 @@ Datum: 2026-02-09
           <canvas id="prognoseChart"></canvas>
         </div>
       </div>
-    </details>
-  </div>
+          </details>
+        </div>
 
 
-  <div class="filter-section">
-    <details>
+        <div class="filter-section">
+          <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
         📊 Statistiken
       </summary>
     
-    <!-- Filter -->
-    <div style="margin-bottom: 15px;">
+          <!-- Filter -->
+          <div style="margin-bottom: 15px;">
       <h4 style="margin: 0 0 10px 0; font-weight: 500; color: #2a5298;">🔍 Filter</h4>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
         <div>
@@ -4350,9 +4350,9 @@ Datum: 2026-02-09
           <button class="reset-btn" onclick="statistikFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;">🔄 Filter zurücksetzen</button>
         </div>
       </div>
-    </div>
+          </div>
     
-    <div class="avg-buttons">
+          <div class="avg-buttons">
       <button class="avg-btn" onclick="zeigeLeistungsTabelle()">📋 Tabelle</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('leistung')">📈 Ø Leistung</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('platzierung')">🏅 Ø Platzierung</button>
@@ -4360,19 +4360,19 @@ Datum: 2026-02-09
       <button class="avg-btn" onclick="zeigeSaisonvergleich()">📅 Saisonvergleich</button>
       <button class="avg-btn" onclick="zeigeWettkampffrequenz()">🗓️ Wettkampffrequenz</button>
       <button class="export-btn" onclick="exportiereAnalyseCSV()" id="analyseExportBtn" style="display:none;">💾 Als CSV exportieren</button>
-    </div>
-    <div id="analyseAusgabe" style="margin-top: 20px;"></div>
-    </details>
-  </div>
+          </div>
+          <div id="analyseAusgabe" style="margin-top: 20px;"></div>
+          </details>
+        </div>
 
-  <div class="filter-section">
-    <details>
+        <div class="filter-section">
+          <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
         🏆 Bestleistungen
       </summary>
     
-    <!-- Filter -->
-    <div style="margin-bottom: 15px;">
+          <!-- Filter -->
+          <div style="margin-bottom: 15px;">
       <h4 style="margin: 0 0 10px 0; font-weight: 500; color: #2a5298;">🔍 Filter</h4>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
         <div>
@@ -4424,17 +4424,17 @@ Datum: 2026-02-09
           <button class="reset-btn" onclick="bestleistungenFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;">🔄 Filter zurücksetzen</button>
         </div>
       </div>
-    </div>
+          </div>
     
-    <div class="avg-buttons">
+          <div class="avg-buttons">
       <button class="avg-btn" style="background:#FFD700" onclick="zeigePBs()">🏆 PBs</button>
       <button class="avg-btn" style="background:#4facfe; color:white;" onclick="zeigeSBMenu()">⭐ SBs</button>
       <button class="avg-btn" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);" onclick="zeigePBTimeline()">🏅 PB-Timeline</button>
       <button class="export-btn" onclick="exportiereBestleistungenCSV()" id="bestleistungenExportBtn" style="display:none;">💾 Als CSV exportieren</button>
-    </div>
-    <div id="bestleistungenAusgabe" style="margin-top: 20px;"></div>
-    </details>
-  </div>
+          </div>
+          <div id="bestleistungenAusgabe" style="margin-top: 20px;"></div>
+          </details>
+        </div>
 </div>
       </div> <!-- Close analyseTab -->
     
@@ -6028,11 +6028,12 @@ async function zeigeLeistungsTabelle() {
   const filterTyp = document.getElementById("statistikFilterTyp").value;
   const ms = document.getElementById("statistikFilterMS").value;
 
-  // Baue Query mit allen Filtern
+  // Baue Query mit allen Filtern - WICHTIG: score aus der Datenbank holen
   let query = supabaseClient.schema("la").from("leistung")
-    .select("datum, disziplin, leistung, ort")
+    .select("datum, disziplin, leistung, ort, score")
     .eq("athlet_id", athletId)
-    .not("leistung", "is", null); // Ignoriere NULL-Werte für Leistung
+    .not("leistung", "is", null)
+    .not("score", "is", null); // Nur Leistungen mit Score
   
   // Filter anwenden
   if (filterDisziplin) query = query.eq("disziplin", filterDisziplin);
@@ -6066,32 +6067,8 @@ async function zeigeLeistungsTabelle() {
     return;
   }
 
-  // Berechne Score für jede Leistung (niedrigere Leistung = höherer Score bei Zeitdisziplinen)
-  const leistungenMitScore = data.map(l => {
-    const disziplin = l.disziplin;
-    const istZeitdisziplin = (disziplin.match(/\d+\s*m/) && !disziplin.includes("kampf")) || 
-                              disziplin.includes("lauf") || 
-                              disziplin.includes("x");
-    
-    // Finde PB für diese Disziplin
-    const pbData = data.filter(x => x.disziplin === disziplin);
-    const pb = istZeitdisziplin 
-      ? Math.min(...pbData.map(x => x.leistung))
-      : Math.max(...pbData.map(x => x.leistung));
-    
-    // Berechne Score: bei Zeit = (PB / Leistung) * 100, bei Feld = (Leistung / PB) * 100
-    const score = istZeitdisziplin 
-      ? (pb / l.leistung) * 100
-      : (l.leistung / pb) * 100;
-    
-    return {
-      ...l,
-      score: score
-    };
-  });
-
-  // Sortiere nach Score (höchster zuerst)
-  leistungenMitScore.sort((a, b) => b.score - a.score);
+  // Sortiere nach Score aus der Datenbank (höchster zuerst)
+  data.sort((a, b) => b.score - a.score);
 
   // Erstelle Tabelle
   let html = `
@@ -6116,10 +6093,10 @@ async function zeigeLeistungsTabelle() {
         <tbody>
   `;
 
-  leistungenMitScore.forEach((l, index) => {
+  data.forEach((l, index) => {
     const formatierteDatum = formatiereDatum(l.datum);
     const formatierteLeistung = formatiereLeistung(l.leistung, l.disziplin);
-    const scoreFormatiert = l.score.toFixed(2) + '%';
+    const scoreFormatiert = l.score.toFixed(2);
     const rowStyle = index % 2 === 0 ? 'background:#f9f9f9;' : '';
     
     html += `
@@ -7812,6 +7789,75 @@ function checkIstZeitDisziplin(disziplin) {
            d.includes("meile");
 }
 
+// Funktion zum Generieren schöner runder Leistungswerte für Y-Achsen
+function generiereSchoeneLeistungen(min, max, disziplin, anzahlTicks = 8) {
+    if (!min || !max || min === max) {
+        return [min || 0];
+    }
+    
+    const istZeit = checkIstZeitDisziplin(disziplin);
+    const bereich = max - min;
+    
+    // Bestimme passende Schrittgröße basierend auf dem Bereich
+    let schrittgroesse;
+    
+    if (istZeit) {
+        // Zeitdisziplinen - feinere Abstufungen
+        if (bereich < 0.5) schrittgroesse = 0.05;
+        else if (bereich < 1) schrittgroesse = 0.1;
+        else if (bereich < 2) schrittgroesse = 0.2;
+        else if (bereich < 5) schrittgroesse = 0.5;
+        else if (bereich < 10) schrittgroesse = 1;
+        else if (bereich < 20) schrittgroesse = 2;
+        else if (bereich < 60) schrittgroesse = 5;
+        else if (bereich < 120) schrittgroesse = 10;
+        else if (bereich < 300) schrittgroesse = 30;
+        else schrittgroesse = 60;
+    } else {
+        // Felddisziplinen (Sprung, Wurf, Mehrkampf)
+        if (bereich < 0.5) schrittgroesse = 0.05;
+        else if (bereich < 1) schrittgroesse = 0.1;
+        else if (bereich < 2) schrittgroesse = 0.2;
+        else if (bereich < 5) schrittgroesse = 0.5;
+        else if (bereich < 10) schrittgroesse = 1;
+        else if (bereich < 20) schrittgroesse = 2;
+        else if (bereich < 50) schrittgroesse = 5;
+        else if (bereich < 100) schrittgroesse = 10;
+        else if (bereich < 500) schrittgroesse = 50;
+        else if (bereich < 1000) schrittgroesse = 100;
+        else schrittgroesse = 200;
+    }
+    
+    // Runde Min/Max auf schöne Werte
+    const rundeAb = (wert) => Math.floor(wert / schrittgroesse) * schrittgroesse;
+    const rundeAuf = (wert) => Math.ceil(wert / schrittgroesse) * schrittgroesse;
+    
+    const startWert = rundeAb(min);
+    const endWert = rundeAuf(max);
+    
+    // Generiere Ticks
+    const ticks = [];
+    let aktuellerWert = startWert;
+    
+    while (aktuellerWert <= endWert && ticks.length < 15) { // Max 15 Ticks
+        ticks.push(Number(aktuellerWert.toFixed(3))); // Runde auf 3 Dezimalen um Floating-Point-Fehler zu vermeiden
+        aktuellerWert += schrittgroesse;
+    }
+    
+    // Stelle sicher, dass mindestens 3 Ticks vorhanden sind
+    if (ticks.length < 3) {
+        schrittgroesse = bereich / 4;
+        ticks.length = 0;
+        aktuellerWert = min;
+        while (aktuellerWert <= max && ticks.length < 5) {
+            ticks.push(Number(aktuellerWert.toFixed(3)));
+            aktuellerWert += schrittgroesse;
+        }
+    }
+    
+    return ticks;
+}
+
 // Hilfsfunktion: Normalisiert Leistungswerte (konvertiert cm zu m bei Wurfdisziplinen)
 function normalizeLeistung(leistung, disziplin) {
     if (!leistung || !disziplin || leistung === 0) return leistung;
@@ -8151,11 +8197,50 @@ async function zeigeDiagramm() {
                 position: 'left',
                 min: displayMin,
                 max: displayMax,
+                afterBuildTicks: function(axis) {
+                    // Generiere schöne Leistungswerte für Disziplin 1
+                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung1, maxLeistung1, disziplin, 8);
+                    
+                    // Mappe jede Leistung zu ihrem Score-Wert
+                    axis.ticks = schoeneLeistungen.map(leistung => {
+                        // Berechne den Score für diese Leistung
+                        let score;
+                        if (istZeitDisziplin1) {
+                            // Bei Zeit: niedrigere Zeit = höherer Score
+                            // Normalisiere Leistung im Bereich [minLeistung1, maxLeistung1] zu [0, 1]
+                            const leistungNormalized = (maxLeistung1 - leistung) / (maxLeistung1 - minLeistung1);
+                            // Mappe auf Score-Bereich
+                            score = displayMin + (leistungNormalized * (displayMax - displayMin));
+                        } else {
+                            // Bei Feld: höhere Leistung = höherer Score
+                            const leistungNormalized = (leistung - minLeistung1) / (maxLeistung1 - minLeistung1);
+                            score = displayMin + (leistungNormalized * (displayMax - displayMin));
+                        }
+                        
+                        return {
+                            value: score,
+                            label: leistung // Speichere Leistung für Anzeige
+                        };
+                    });
+                },
                 ticks: {
                     color: '#000',
-                    callback: function(scoreValue) {
-                        // Zeige Score-Wert direkt an
-                        return scoreValue.toFixed(1);
+                    callback: function(scoreValue, index, ticks) {
+                        // Zeige die gespeicherte Leistung statt Score
+                        const tick = ticks[index];
+                        if (tick && tick.label !== undefined) {
+                            return formatiereLeistung(tick.label, disziplin);
+                        }
+                        // Fallback auf alte Methode
+                        if (!minLeistung1 || !maxLeistung1) return scoreValue.toFixed(1);
+                        const normalized = (scoreValue - displayMin) / (displayMax - displayMin);
+                        let leistung;
+                        if (istZeitDisziplin1) {
+                            leistung = maxLeistung1 - (normalized * (maxLeistung1 - minLeistung1));
+                        } else {
+                            leistung = minLeistung1 + (normalized * (maxLeistung1 - minLeistung1));
+                        }
+                        return formatiereLeistung(leistung, disziplin);
                     }
                 },
                 title: {
@@ -8183,11 +8268,48 @@ async function zeigeDiagramm() {
                     position: 'right',
                     min: displayMin,
                     max: displayMax,
+                    afterBuildTicks: function(axis) {
+                        // Generiere schöne Leistungswerte für Disziplin 2
+                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 8);
+                        
+                        // Mappe jede Leistung zu ihrem Score-Wert
+                        axis.ticks = schoeneLeistungen.map(leistung => {
+                            // Berechne den Score für diese Leistung
+                            let score;
+                            if (istZeitDisziplin2) {
+                                // Bei Zeit: niedrigere Zeit = höherer Score
+                                const leistungNormalized = (maxLeistung2 - leistung) / (maxLeistung2 - minLeistung2);
+                                score = displayMin + (leistungNormalized * (displayMax - displayMin));
+                            } else {
+                                // Bei Feld: höhere Leistung = höherer Score
+                                const leistungNormalized = (leistung - minLeistung2) / (maxLeistung2 - minLeistung2);
+                                score = displayMin + (leistungNormalized * (displayMax - displayMin));
+                            }
+                            
+                            return {
+                                value: score,
+                                label: leistung // Speichere Leistung für Anzeige
+                            };
+                        });
+                    },
                     ticks: {
                         color: '#000',
-                        callback: function(scoreValue) {
-                            // Zeige Score-Wert direkt an
-                            return scoreValue.toFixed(1);
+                        callback: function(scoreValue, index, ticks) {
+                            // Zeige die gespeicherte Leistung statt Score
+                            const tick = ticks[index];
+                            if (tick && tick.label !== undefined) {
+                                return formatiereLeistung(tick.label, vergleichsDisziplin);
+                            }
+                            // Fallback auf alte Methode
+                            if (!minLeistung2 || !maxLeistung2) return scoreValue.toFixed(1);
+                            const normalized = (scoreValue - displayMin) / (displayMax - displayMin);
+                            let leistung;
+                            if (istZeitDisziplin2) {
+                                leistung = maxLeistung2 - (normalized * (maxLeistung2 - minLeistung2));
+                            } else {
+                                leistung = minLeistung2 + (normalized * (maxLeistung2 - minLeistung2));
+                            }
+                            return formatiereLeistung(leistung, vergleichsDisziplin);
                         }
                     },
                     title: {
