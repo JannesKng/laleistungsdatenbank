@@ -4117,6 +4117,9 @@ Datum: 2026-02-09
             <label class="checkbox-label">
               <input type="checkbox" class="spalte" value="runde"> Runde
             </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="spalte" value="score"> Score
+            </label>
           </div>
         </div>
 
@@ -5325,7 +5328,8 @@ const SPALTEN = {
   ak: { type: "text" },
   typ: { type: "fixed-select", options: [{ value: "h", label: "Halle" }, { value: "f", label: "Freiluft" }] },
   ms: { type: "text" },
-  runde: { type: "text" }
+  runde: { type: "text" },
+  score: { type: "number" }
 };
 
 /* ================= SPALTENANZEIGE ================= */
@@ -5340,6 +5344,7 @@ const SPALTEN_ANZEIGE = {
   typ: "Halle/Freiluft",
   ms: "Meisterschaft",
   runde: "Runde",
+  score: "Score",
   zeitraum: "Zeitraum",
   name: "Nachname",
   vorname: "Vorname",
@@ -6152,7 +6157,7 @@ function renderScoreTable() {
         <td>${l.disziplin}</td>
         <td>${formatierteLeistung}</td>
         <td>${l.ort || '-'}</td>
-        <td>${scoreFormatiert}</td>
+        <td style="color: #667eea; font-weight: 600;">${scoreFormatiert}</td>
       </tr>
     `;
   });
@@ -6527,6 +6532,10 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
   }
 
   const spaltenAnzahl = Object.keys(angezeigteDaten[0]).length;
+  
+  // Prüfe ob Aktions-Spalte angezeigt wird
+  const hatAktionsSpalte = currentAthlete && (!isAdmin || selectedAthleteId === currentAthlete.id);
+  const gesamtSpaltenAnzahl = hatAktionsSpalte ? spaltenAnzahl + 1 : spaltenAnzahl;
 
   let html = infoHtml + '<div class="table-wrapper"><table><tr>';
   Object.keys(angezeigteDaten[0]).forEach(sp=>{
@@ -6541,7 +6550,7 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
   });
   
   // Add Actions column if user can edit (not admin viewing others)
-  if (currentAthlete && (!isAdmin || selectedAthleteId === currentAthlete.id)) {
+  if (hatAktionsSpalte) {
     html += `<th>Aktionen</th>`;
   }
   
@@ -6554,8 +6563,8 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
     if(vollstaendigeDaten[index].datum) {
       const aktuellesJahr = new Date(vollstaendigeDaten[index].datum).getFullYear();
       if(letzesJahr !== null && aktuellesJahr !== letzesJahr) {
-        // Füge Trennzeile ein
-        html += `<tr class="year-separator"><td colspan="${spaltenAnzahl}"></td></tr>`;
+        // Füge Trennzeile ein - verwende gesamtSpaltenAnzahl
+        html += `<tr class="year-separator"><td colspan="${gesamtSpaltenAnzahl}"></td></tr>`;
       }
       letzesJahr = aktuellesJahr;
     }
@@ -6645,6 +6654,7 @@ function zeigeTabelle(data, containerId, isPB = false, isAthleten = false) {
     html += `<tr class="${classes}">`;
     cols.forEach(c => {
       let val = row[c];
+      let style = '';
       
       // Formatierung je nach Spaltentyp
       if (c === "datum" && val) {
@@ -6655,9 +6665,12 @@ function zeigeTabelle(data, containerId, isPB = false, isAthleten = false) {
         val = RUNDEN_ANZEIGE[val] || val;
       } else if (c === "typ") {
         val = TYP_ANZEIGE[val] || val;
+      } else if (c === "score") {
+        val = val ? Math.round(val) : '';
+        style = ' style="color: #667eea; font-weight: 600;"';
       }
       
-      html += `<td>${val ?? ""}</td>`;
+      html += `<td${style}>${val ?? ""}</td>`;
     });
     html += '</tr>';
   });
