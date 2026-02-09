@@ -1,10 +1,21 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.10.3
-Datum: 2026-02-05
+Version 3.10.4
+Datum: 2026-02-09
 
 
+Änderungen in v3.10.4:
+- VERBESSERUNG: SB-Diagramm Durchschnittslinien besser sichtbar
+  * Transparenz der Durchschnittslinien von 0.4 auf 0.65 erhöht
+  * Durchschnitte sind nun deutlich besser erkennbar
+- NEU: Checkboxen für SBs und Durchschnitte im SB-Diagramm
+  * Option zum Ein-/Ausblenden von Saisonbestleistungen (SB)
+  * Option zum Ein-/Ausblenden von Saisondurchschnitten (Ø)
+  * Funktioniert auch im Vergleichsmodus mit zwei Disziplinen
+  * Ermöglicht fokussierte Ansicht auf gewünschte Datenpunkte
+
+Änderungen in v3.10.3:
 Änderungen in v3.10.3:
 - NEU: Minimalistisches Logo im Login-Screen hinzugefügt
   * "LA" in Lila-Gradient mit "Leistungsdatenbank" Text
@@ -4210,6 +4221,21 @@ Datum: 2026-02-05
         <button id="sbDiagrammAktualisierenBtn" onclick="zeigeSBDiagramm()" style="display: none;">🔄 Aktualisieren</button>
         <button id="sbDiagrammSchließenBtn" onclick="schließeSBDiagramm()" style="display: none;">⬇️ Einklappen</button>
         <button id="sbDiagrammAusklappenBtn" onclick="klappeAusSBDiagramm()" style="display: none;">⬆️ Ausklappen</button>
+      </div>
+      
+      <!-- Checkboxen für SBs und Durchschnitte -->
+      <div id="sbDiagrammOptionsContainer" style="display:none; margin-top: 15px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <strong style="color: #2a5298;">Anzeigen:</strong>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="sbShowSBs" checked onchange="zeigeSBDiagramm()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #667eea;">
+            <span style="font-weight: 500;">Saisonbestleistungen (SB)</span>
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+            <input type="checkbox" id="sbShowAverages" checked onchange="zeigeSBDiagramm()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #667eea;">
+            <span style="font-weight: 500;">Saisondurchschnitte (Ø)</span>
+          </label>
+        </div>
       </div>
       <div id="sbDiagrammContainer" style="display:none; margin-top: 20px; background: white; padding: 10px; border-radius: 8px;">
         <h4 style="margin: 0 0 10px 0; color: #2a5298;">SB & Saisondurchschnitte</h4>
@@ -8644,6 +8670,10 @@ async function zeigeSBDiagramm() {
     const vergleichsModus = document.getElementById("sbVergleichsModus").checked;
     const vergleichsDisziplin = document.getElementById("sbVergleichsDisziplin").value;
 
+    // Hole Checkbox-Werte für SBs und Durchschnitte
+    const showSBs = document.getElementById("sbShowSBs").checked;
+    const showAverages = document.getElementById("sbShowAverages").checked;
+
     // Hole Zeitraum-Filter
     const filterFrom = document.getElementById("sbFilterFrom").value;
     const filterTo = document.getElementById("sbFilterTo").value;
@@ -8825,6 +8855,7 @@ async function zeigeSBDiagramm() {
     
     if (useScoreScaling) {
         // Bei Score-Skalierung: Speichere SCORES als Y-Werte, aber behalte Original-Leistungen für Tooltips
+        if (showSBs) {
         datasets.push({
             label: `${disziplin} - SB`,
             data: werte1.sbWerte.map(d => ({ 
@@ -8843,7 +8874,9 @@ async function zeigeSBDiagramm() {
             yAxisID: 'y1',
             disziplin: disziplin
         });
+        }
         
+        if (showAverages) {
         datasets.push({
             label: `${disziplin} - Ø`,
             data: werte1.durchschnittsWerte.map(d => ({ 
@@ -8851,7 +8884,7 @@ async function zeigeSBDiagramm() {
                 y: berechneVergleichsScore(d.y, disziplin, athletId),  // Score für Y-Achse
                 original: d.y  // Original-Leistung für Tooltip
             })),
-            borderColor: 'rgba(102, 126, 234, 0.4)',
+            borderColor: 'rgba(102, 126, 234, 0.65)',
             backgroundColor: 'rgba(102, 126, 234, 0.05)',
             borderWidth: 1.5,
             borderDash: [5, 5],
@@ -8863,7 +8896,9 @@ async function zeigeSBDiagramm() {
             yAxisID: 'y1',
             disziplin: disziplin
         });
+        }
         
+        if (showSBs) {
         datasets.push({
             label: `${vergleichsDisziplin} - SB`,
             data: werte2.sbWerte.map(d => ({ 
@@ -8882,7 +8917,9 @@ async function zeigeSBDiagramm() {
             yAxisID: 'y2',
             disziplin: vergleichsDisziplin
         });
+        }
         
+        if (showAverages) {
         datasets.push({
             label: `${vergleichsDisziplin} - Ø`,
             data: werte2.durchschnittsWerte.map(d => ({ 
@@ -8890,7 +8927,7 @@ async function zeigeSBDiagramm() {
                 y: berechneVergleichsScore(d.y, vergleichsDisziplin, athletId),  // Score für Y-Achse
                 original: d.y  // Original-Leistung für Tooltip
             })),
-            borderColor: 'rgba(118, 75, 162, 0.4)',
+            borderColor: 'rgba(118, 75, 162, 0.65)',
             backgroundColor: 'rgba(118, 75, 162, 0.05)',
             borderWidth: 1.5,
             borderDash: [5, 5],
@@ -8902,8 +8939,10 @@ async function zeigeSBDiagramm() {
             yAxisID: 'y2',
             disziplin: vergleichsDisziplin
         });
+        }
     } else {
         // Normale Skalierung
+        if (showSBs) {
         datasets.push({
             label: `${disziplin} - SB`,
             data: werte1.sbWerte,
@@ -8918,11 +8957,13 @@ async function zeigeSBDiagramm() {
             yAxisID: 'y1',
             disziplin: disziplin
         });
+        }
         
+        if (showAverages) {
         datasets.push({
             label: `${disziplin} - Ø`,
             data: werte1.durchschnittsWerte,
-            borderColor: 'rgba(102, 126, 234, 0.4)',
+            borderColor: 'rgba(102, 126, 234, 0.65)',
             backgroundColor: 'rgba(102, 126, 234, 0.05)',
             borderWidth: 1.5,
             borderDash: [5, 5],
@@ -8933,8 +8974,10 @@ async function zeigeSBDiagramm() {
             spanGaps: false,
             yAxisID: 'y1',
             disziplin: disziplin
+        }
         });
         
+            if (showSBs) {
         if (werte2) {
             datasets.push({
                 label: `${vergleichsDisziplin} - SB`,
@@ -8949,12 +8992,14 @@ async function zeigeSBDiagramm() {
                 spanGaps: false,
                 yAxisID: 'y2',
                 disziplin: vergleichsDisziplin
+            }
             });
+            if (showAverages) {
             
             datasets.push({
                 label: `${vergleichsDisziplin} - Ø`,
                 data: werte2.durchschnittsWerte,
-                borderColor: 'rgba(118, 75, 162, 0.4)',
+                borderColor: 'rgba(118, 75, 162, 0.65)',
                 backgroundColor: 'rgba(118, 75, 162, 0.05)',
                 borderWidth: 1.5,
                 borderDash: [5, 5],
@@ -8965,6 +9010,7 @@ async function zeigeSBDiagramm() {
                 spanGaps: false,
                 yAxisID: 'y2',
                 disziplin: vergleichsDisziplin
+            }
             });
         }
     }
@@ -9189,6 +9235,7 @@ async function zeigeSBDiagramm() {
 
     // Zeige Container und passe Buttons an
     document.getElementById('sbDiagrammContainer').style.display = 'block';
+    document.getElementById('sbDiagrammOptionsContainer').style.display = 'block';
     document.getElementById('sbDiagrammAnzeigenBtn').style.display = 'none';
     document.getElementById('sbDiagrammAktualisierenBtn').style.display = 'inline-block';
     document.getElementById('sbDiagrammSchließenBtn').style.display = 'inline-block';
@@ -9196,6 +9243,7 @@ async function zeigeSBDiagramm() {
 
 function schließeSBDiagramm() {
     document.getElementById('sbDiagrammContainer').style.display = 'none';
+    document.getElementById('sbDiagrammOptionsContainer').style.display = 'none';
     document.getElementById('sbDiagrammAktualisierenBtn').style.display = 'none';
     document.getElementById('sbDiagrammSchließenBtn').style.display = 'none';
     document.getElementById('sbDiagrammAusklappenBtn').style.display = 'inline-block';
@@ -9204,6 +9252,7 @@ function schließeSBDiagramm() {
 function klappeAusSBDiagramm() {
     document.getElementById('sbDiagrammContainer').style.display = 'block';
     document.getElementById('sbDiagrammAktualisierenBtn').style.display = 'inline-block';
+    document.getElementById('sbDiagrammOptionsContainer').style.display = 'block';
     document.getElementById('sbDiagrammSchließenBtn').style.display = 'inline-block';
     document.getElementById('sbDiagrammAusklappenBtn').style.display = 'none';
 }
