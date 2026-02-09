@@ -432,7 +432,7 @@ Datum: 2026-02-05
   <title>Leichtathletik Leistungsdatenbank</title>
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradMin' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='12' fill='url(%23gradMin)'/%3E%3Ctext x='32' y='45' font-family='Arial, sans-serif' font-size='32' font-weight='bold' fill='white' text-anchor='middle'%3ELA%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='64' height='64' viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='gradMin' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='32' y='45' font-family='Arial, sans-serif' font-size='32' font-weight='bold' fill='url(%23gradMin)' text-anchor='middle'%3ELA%3C/text%3E%3C/svg%3E">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -3239,6 +3239,59 @@ Datum: 2026-02-05
       .button-group button {
         width: 100%;
       }
+      
+      /* NEUE MOBILE-OPTIMIERUNGEN */
+      
+      /* Logo kleiner auf Mobile */
+      .header img[alt="TrackUp Logo"] {
+        width: 180px !important;
+        max-width: 50vw;
+      }
+      
+      /* Icon-Button (Logout) für Mobile */
+      .icon-button {
+        top: 20px !important;
+        left: 15px !important;
+      }
+      
+      /* WICHTIG: Orte-Tabelle unter Top 3 Disziplinen auf Mobile */
+      #bottomSection {
+        grid-template-columns: 1fr !important;
+      }
+      
+      /* Tabellen-Optimierung für Mobile: Spalten nur so breit wie Inhalt */
+      table {
+        table-layout: auto !important;
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      th, td {
+        padding: 10px 8px !important;
+        font-size: 0.9em !important;
+        white-space: nowrap;
+      }
+      
+      /* Erste Spalte (Datum) etwas breiter */
+      th:first-child, td:first-child {
+        min-width: 80px;
+      }
+      
+      /* Disziplin Spalte */
+      th:nth-child(2), td:nth-child(2) {
+        min-width: 70px;
+      }
+      
+      /* Leistung Spalte */
+      th:nth-child(3), td:nth-child(3) {
+        min-width: 60px;
+      }
+      
+      /* Zusätzliche Spalten kompakter */
+      th:nth-child(n+4), td:nth-child(n+4) {
+        min-width: 80px;
+      }
     }
     
     /* Tablet Optimierungen */
@@ -3616,7 +3669,7 @@ Datum: 2026-02-05
     
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 30px;">
-      <img src="transparent-logo-tu.svg" alt="TrackUp Logo" style="width: 120px; height: auto; margin: 0 auto; display: block;">
+      <img src="transparent-logo-tu.svg" alt="TrackUp Logo" style="width: 180px; height: auto; margin: 0 auto; display: block;">
     </div>
     
     <h1 style="color: #2a5298; margin-bottom: 10px; text-align: center; font-size: 2em;">Login</h1>
@@ -3710,7 +3763,7 @@ Datum: 2026-02-05
     
     <!-- Logo -->
     <div style="display: flex; justify-content: center; align-items: center; padding: 20px 0;">
-      <img src="transparent-logo.svg" alt="TrackUp Logo" style="width: 180px; height: auto;">
+      <img src="transparent-logo.svg" alt="TrackUp Logo" style="width: 250px; height: auto;">
     </div>
     
     <!-- Kompakte Athletensuche (nur für Admins) - im Header integriert -->
@@ -10140,30 +10193,49 @@ function renderOrtTable() {
   
   ortTable.innerHTML = tableHTML;
   
-  // Ändere Grid-Layout auf 2 Spalten wenn Tabelle geöffnet ist
-  bottomSection.style.gridTemplateColumns = '1fr 1fr';
-  bottomSection.style.alignItems = 'start';
+  // Ändere Grid-Layout auf 2 Spalten wenn Tabelle geöffnet ist (außer auf Mobile)
+  // Auf Mobile wird durch CSS bereits 1 Spalte erzwungen
+  const isMobile = window.innerWidth <= 768;
+  if (!isMobile) {
+    bottomSection.style.gridTemplateColumns = '1fr 1fr';
+    bottomSection.style.alignItems = 'start';
+  } else {
+    // Auf Mobile: Stack-Layout (1 Spalte)
+    bottomSection.style.gridTemplateColumns = '1fr';
+    bottomSection.style.alignItems = 'stretch';
+  }
   
-  // Warte bis DOM aktualisiert ist, dann gleiche Höhen an
+  // Warte bis DOM aktualisiert ist, dann gleiche Höhen an (nur auf Desktop)
   setTimeout(() => {
-    const topDisziplinenBox = document.querySelector('#topDisziplinenSection > div');
-    const ortTableBox = document.getElementById('ortTableWhiteBox');
-    const ortScrollArea = document.getElementById('ortTableScrollArea');
-    
-    if (topDisziplinenBox && ortTableBox && ortScrollArea) {
-      // Hole die Höhe der Top 3 Disziplinen Box
-      const targetHeight = topDisziplinenBox.offsetHeight;
+    if (!isMobile) {
+      const topDisziplinenBox = document.querySelector('#topDisziplinenSection > div');
+      const ortTableBox = document.getElementById('ortTableWhiteBox');
+      const ortScrollArea = document.getElementById('ortTableScrollArea');
       
-      // Setze die Orts-Box auf die gleiche Höhe
-      ortTableBox.style.height = targetHeight + 'px';
+      if (topDisziplinenBox && ortTableBox && ortScrollArea) {
+        // Hole die Höhe der Top 3 Disziplinen Box
+        const targetHeight = topDisziplinenBox.offsetHeight;
+        
+        // Setze die Orts-Box auf die gleiche Höhe
+        ortTableBox.style.height = targetHeight + 'px';
+        
+        // Berechne verfügbare Höhe für Scroll-Bereich
+        // Ziehe padding und Header-Bereich (mit Button) ab
+        const boxPadding = 40; // 20px oben + 20px unten
+        const headerHeight = ortTableBox.querySelector('div:first-child').offsetHeight + 15; // +15 für margin-bottom
+        
+        const scrollHeight = targetHeight - boxPadding - headerHeight;
+        ortScrollArea.style.maxHeight = scrollHeight + 'px';
+      }
+    } else {
+      // Auf Mobile: Entferne fixe Höhen
+      const ortTableBox = document.getElementById('ortTableWhiteBox');
+      const ortScrollArea = document.getElementById('ortTableScrollArea');
       
-      // Berechne verfügbare Höhe für Scroll-Bereich
-      // Ziehe padding und Header-Bereich (mit Button) ab
-      const boxPadding = 40; // 20px oben + 20px unten
-      const headerHeight = ortTableBox.querySelector('div:first-child').offsetHeight + 15; // +15 für margin-bottom
-      
-      const scrollHeight = targetHeight - boxPadding - headerHeight;
-      ortScrollArea.style.maxHeight = scrollHeight + 'px';
+      if (ortTableBox && ortScrollArea) {
+        ortTableBox.style.height = 'auto';
+        ortScrollArea.style.maxHeight = '400px'; // Max-Höhe für Scroll
+      }
     }
   }, 50);
 }
