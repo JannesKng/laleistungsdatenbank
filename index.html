@@ -5838,7 +5838,7 @@ async function ladeLeistungen() {
   if(!colsForQuery.includes('leistung')) colsForQuery.push('leistung');
   if(!colsForQuery.includes('id')) colsForQuery.push('id');
   
-  let query = supabaseClient.schema("la").from("leistung").select(colsForQuery.join(","));
+  let query = supabaseClient.schema("la").from("leistung").select(colsForQuery.join(",") + ",score");
 
   // Verwende ausgewählten Athleten
   if(selectedAthleteId) query = query.eq("athlet_id", selectedAthleteId);
@@ -7310,7 +7310,7 @@ async function ladeDashboardDaten() {
   // Lade alle Leistungen des Athleten
   const { data, error } = await supabaseClient
     .schema('la').from('leistung')
-    .select('*')
+    .select('*, score')
     .eq('athlet_id', selectedAthleteId)
     .not('leistung', 'is', null);
 
@@ -7432,25 +7432,16 @@ async function ladeDashboardDaten() {
   // Aktualisiere Wettkampforte-Karte
   updateWettkampforteMap(data);
 
-  // Berechne Vergleichsscore basierend auf IAAF Scoring Tables
-  pbs = pbs.map(pb => {
-    const gewichtetesScore = berechneVergleichsScore(pb.leistung, pb.disziplin, pb.athlet_id);
-    
-    // Debug-Ausgabe
-    if (pbs.indexOf(pb) < 10) {
-      console.log(`${pb.disziplin}: ${formatiereLeistung(pb.leistung, pb.disziplin)} → Score=${gewichtetesScore?.toFixed(1)}%`);
-    }
-    
-    return { ...pb, iaafScore: gewichtetesScore };
-  });
+  // Filter out entries without score
+  pbs = pbs.filter(pb => pb.score !== null && pb.score !== undefined);
 
-  // Sortiere nach gewichtetem Score (absteigend)
-  pbs.sort((a, b) => b.iaafScore - a.iaafScore);
+  // Sortiere nach Database Score (absteigend)
+  pbs.sort((a, b) => (b.score || 0) - (a.score || 0));
   
   // Debug: Zeige die Top 8 nach Sortierung
-  console.log('=== TOP 8 NACH SORTIERUNG (Prozent-basiert) ===');
+  console.log('=== TOP 8 NACH SCORE (aus Datenbank) ===');
   pbs.slice(0, 8).forEach((pb, i) => {
-    console.log(`${i+1}. ${pb.disziplin}: ${formatiereLeistung(pb.leistung, pb.disziplin)} → ${pb.iaafScore?.toFixed(1)}% von Weltklasse`);
+    console.log(`${i+1}. ${pb.disziplin}: ${formatiereLeistung(pb.leistung, pb.disziplin)} → Score=${pb.score?.toFixed(1)}`);
   });
 
   // Zeige nur Top 8
@@ -7740,334 +7731,12 @@ window.onload = function() {
 
 /* ================= WELTREKORD-BASIERTE SCORE-BERECHNUNG ================= */
 
-// IAAF Scoring Tables für Männer
-const IAAF_PARAMS_MALE = {
-  '100m': {'a': 25.4347, 'b': 18, 'c': 1.81, 'type': 'time'},
-  '200m': {'a': 5.8425, 'b': 38, 'c': 1.81, 'type': 'time'},
-  '400m': {'a': 1.53775, 'b': 82, 'c': 1.81, 'type': 'time'},
-  '800m': {'a': 0.11193, 'b': 254, 'c': 1.88, 'type': 'time'},
-  '1500m': {'a': 0.04167, 'b': 480, 'c': 1.85, 'type': 'time'},
-  '3000m': {'a': 0.01023, 'b': 1020, 'c': 1.85, 'type': 'time'},
-  '5000m': {'a': 0.00504, 'b': 1740, 'c': 1.85, 'type': 'time'},
-  '10000m': {'a': 0.001636, 'b': 3600, 'c': 1.85, 'type': 'time'},
-  '110m hürden': {'a': 5.74352, 'b': 28.5, 'c': 1.92, 'type': 'time'},
-  '110m hü': {'a': 5.74352, 'b': 28.5, 'c': 1.92, 'type': 'time'},
-  '400m hürden': {'a': 1.40356, 'b': 95, 'c': 1.84, 'type': 'time'},
-  '400m hü': {'a': 1.40356, 'b': 95, 'c': 1.84, 'type': 'time'},
-  'hochsprung': {'a': 0.8465, 'b': 75, 'c': 1.42, 'type': 'field'},
-  'hoch': {'a': 0.8465, 'b': 75, 'c': 1.42, 'type': 'field'},
-  'stabhochsprung': {'a': 0.2797, 'b': 100, 'c': 1.35, 'type': 'field'},
-  'stabhoch': {'a': 0.2797, 'b': 100, 'c': 1.35, 'type': 'field'},
-  'stab': {'a': 0.2797, 'b': 100, 'c': 1.35, 'type': 'field'},
-  'weitsprung': {'a': 0.14354, 'b': 220, 'c': 1.4, 'type': 'field'},
-  'weit': {'a': 0.14354, 'b': 220, 'c': 1.4, 'type': 'field'},
-  'dreisprung': {'a': 0.03768, 'b': 480, 'c': 1.4, 'type': 'field'},
-  'drei': {'a': 0.03768, 'b': 480, 'c': 1.4, 'type': 'field'},
-  'kugelstoßen': {'a': 51.39, 'b': 1.5, 'c': 1.05, 'type': 'field'},
-  'kugelstoß': {'a': 51.39, 'b': 1.5, 'c': 1.05, 'type': 'field'},
-  'kugel': {'a': 51.39, 'b': 1.5, 'c': 1.05, 'type': 'field'},
-  'diskuswurf': {'a': 12.91, 'b': 4, 'c': 1.1, 'type': 'field'},
-  'diskus': {'a': 12.91, 'b': 4, 'c': 1.1, 'type': 'field'},
-  'hammerwurf': {'a': 13.04, 'b': 3.5, 'c': 1.05, 'type': 'field'},
-  'hammer': {'a': 13.04, 'b': 3.5, 'c': 1.05, 'type': 'field'},
-  'speerwurf': {'a': 10.14, 'b': 7, 'c': 1.08, 'type': 'field'},
-  'speer': {'a': 10.14, 'b': 7, 'c': 1.08, 'type': 'field'}
-};
+// Score calculations removed - using database score field
 
-// IAAF Scoring Tables für Frauen
-const IAAF_PARAMS_FEMALE = {
-  '100m': {'a': 17.8570, 'b': 21, 'c': 1.81, 'type': 'time'},
-  '200m': {'a': 4.99087, 'b': 42.5, 'c': 1.81, 'type': 'time'},
-  '400m': {'a': 1.34285, 'b': 91.7, 'c': 1.81, 'type': 'time'},
-  '800m': {'a': 0.11193, 'b': 254, 'c': 1.88, 'type': 'time'},
-  '1500m': {'a': 0.02883, 'b': 535, 'c': 1.88, 'type': 'time'},
-  '3000m': {'a': 0.00815, 'b': 1200, 'c': 1.85, 'type': 'time'},
-  '5000m': {'a': 0.00349, 'b': 2100, 'c': 1.85, 'type': 'time'},
-  '10000m': {'a': 0.00118, 'b': 4400, 'c': 1.85, 'type': 'time'},
-  '100m hürden': {'a': 9.23076, 'b': 26.7, 'c': 1.835, 'type': 'time'},
-  '100m hü': {'a': 9.23076, 'b': 26.7, 'c': 1.835, 'type': 'time'},
-  '400m hürden': {'a': 1.05628, 'b': 110, 'c': 1.84, 'type': 'time'},
-  '400m hü': {'a': 1.05628, 'b': 110, 'c': 1.84, 'type': 'time'},
-  'hochsprung': {'a': 1.84523, 'b': 75, 'c': 1.348, 'type': 'field'},
-  'hoch': {'a': 1.84523, 'b': 75, 'c': 1.348, 'type': 'field'},
-  'stabhochsprung': {'a': 0.44125, 'b': 100, 'c': 1.35, 'type': 'field'},
-  'stabhoch': {'a': 0.44125, 'b': 100, 'c': 1.35, 'type': 'field'},
-  'stab': {'a': 0.44125, 'b': 100, 'c': 1.35, 'type': 'field'},
-  'weitsprung': {'a': 0.188807, 'b': 210, 'c': 1.41, 'type': 'field'},
-  'weit': {'a': 0.188807, 'b': 210, 'c': 1.41, 'type': 'field'},
-  'dreisprung': {'a': 0.07785, 'b': 400, 'c': 1.4, 'type': 'field'},
-  'drei': {'a': 0.07785, 'b': 400, 'c': 1.4, 'type': 'field'},
-  'kugelstoßen': {'a': 56.0211, 'b': 1.5, 'c': 1.05, 'type': 'field'},
-  'kugelstoß': {'a': 56.0211, 'b': 1.5, 'c': 1.05, 'type': 'field'},
-  'kugel': {'a': 56.0211, 'b': 1.5, 'c': 1.05, 'type': 'field'},
-  'diskuswurf': {'a': 12.3311, 'b': 3, 'c': 1.1, 'type': 'field'},
-  'diskus': {'a': 12.3311, 'b': 3, 'c': 1.1, 'type': 'field'},
-  'hammerwurf': {'a': 13.9254, 'b': 1, 'c': 1.05, 'type': 'field'},
-  'hammer': {'a': 13.9254, 'b': 1, 'c': 1.05, 'type': 'field'},
-  'speerwurf': {'a': 15.9803, 'b': 3.8, 'c': 1.04, 'type': 'field'},
-  'speer': {'a': 15.9803, 'b': 3.8, 'c': 1.04, 'type': 'field'}
-};
 
-// Berechnet IAAF Score für eine Leistung
-function berechneIAAFScore(leistung, disziplin, geschlecht) {
-  if (!leistung || !disziplin) return 0;
-  
-  const disziplinKey = disziplin.toLowerCase().replace(/\./g, '').trim();
-  
-  // Wähle passende Parameter basierend auf Geschlecht (M = Männer, W = Frauen)
-  const isFemale = geschlecht && geschlecht.toUpperCase() === 'W';
-  const params = isFemale ? IAAF_PARAMS_FEMALE : IAAF_PARAMS_MALE;
-  const param = params[disziplinKey];
-  
-  if (!param) {
-    console.warn(`⚠️ Keine IAAF-Parameter für: "${disziplin}" (${geschlecht || 'unbekannt'})`);
-    return 500; // Neutraler Score für unbekannte Disziplinen
-  }
-  
-  const a = param.a;
-  const b = param.b;
-  const c = param.c;
-  
-  let score;
-  if (param.type === 'time') {
-    // Zeit-Disziplinen: Score = a * (b - P)^c
-    if (leistung >= b) return 0; // Leistung schlechter als Minimum
-    score = a * Math.pow(b - leistung, c);
-  } else {
-    // Feld-Disziplinen: Score = a * (P - b)^c
-    if (leistung <= b) return 0; // Leistung schlechter als Minimum
-    score = a * Math.pow(leistung - b, c);
-  }
-  
-  // Begrenze auf 0-1500 (1500 ist theoretisches Maximum)
-  return Math.max(0, Math.min(1500, score));
-}
 
-function berechneVergleichsScore(leistung, disziplin, athletId = null) {
-  if (!leistung || !disziplin) {
-    return 0;
-  }
-  
-  // Versuche Geschlecht des Athleten zu ermitteln
-  let geschlecht = null;
-  if (athletId && alleLeistungenFuerPBs.length > 0) {
-    const athletData = alleLeistungenFuerPBs.find(l => l.athlet_id === athletId);
-    if (athletData && athletData.ak) {
-      // Prüfe ob "M" oder "W" in der Altersklasse vorkommt
-      geschlecht = athletData.ak.toUpperCase().includes('W') ? 'W' : 
-                   athletData.ak.toUpperCase().includes('M') ? 'M' : null;
-    }
-  }
-  
-  // Berechne IAAF Score
-  const iaafScore = berechneIAAFScore(leistung, disziplin, geschlecht);
-  
-  // Normalisiere auf 0-150% (1000 IAAF Punkte = 100%)
-  // 1200 Punkte = 120% (Weltklasse)
-  // 1000 Punkte = 100% (Sehr gut)
-  // 800 Punkte = 80% (Durchschnitt)
-  const prozent = (iaafScore / 1000) * 100;
-  
-  console.log(`${geschlecht === 'W' ? '♀️' : '♂️'} ${disziplin}: ${leistung} → ${iaafScore.toFixed(0)} IAAF-Pkt (${prozent.toFixed(1)}%)`);
-  
-  // Begrenze auf 0-150%
-  return Math.max(0, Math.min(150, prozent));
-}
 
-// Hilfsfunktion: Konvertiert IAAF Score zurück zu Leistung
-function scoreZuLeistung(iaafScore, disziplinName, athletId = null) {
-    // Konvertiert einen IAAF-Score zurück zur tatsächlichen Leistung
-    
-    // Ermittle Geschlecht
-    let geschlecht = null;
-    if (athletId && alleLeistungenFuerPBs.length > 0) {
-        const athletData = alleLeistungenFuerPBs.find(l => l.athlet_id === athletId);
-        if (athletData && athletData.ak) {
-            geschlecht = athletData.ak.toUpperCase().includes('W') ? 'W' : 
-                       athletData.ak.toUpperCase().includes('M') ? 'M' : null;
-        }
-    }
-    
-    // Konvertiere von normalisiertem Score (0-150%) zurück zu IAAF Punkten
-    // Score% = (IAAF / 1000) * 100
-    // => IAAF = (Score% / 100) * 1000
-    const iaafPunkte = (iaafScore / 100) * 1000;
-    
-    const disziplinKey = disziplinName.toLowerCase().replace(/\./g, '').trim();
-    const isFemale = geschlecht && geschlecht.toUpperCase() === 'W';
-    const params = isFemale ? IAAF_PARAMS_FEMALE : IAAF_PARAMS_MALE;
-    const param = params[disziplinKey];
-    
-    if (!param) {
-        console.warn('Keine IAAF-Parameter für scoreZuLeistung:', disziplinName);
-        return null;
-    }
-    
-    if (iaafPunkte < 0 || isNaN(iaafPunkte)) return null;
-    
-    const a = param.a;
-    const b = param.b;
-    const c = param.c;
-    
-    let leistung;
-    
-    if (param.type === 'time') {
-        // Zeit-Disziplinen: Score = a * (b - P)^c
-        // => P = b - (Score/a)^(1/c)
-        leistung = b - Math.pow(iaafPunkte / a, 1 / c);
-    } else {
-        // Feld-Disziplinen: Score = a * (P - b)^c
-        // => P = b + (Score/a)^(1/c)
-        leistung = b + Math.pow(iaafPunkte / a, 1 / c);
-    }
-    
-    return leistung;
-}
 
-// Hilfsfunktion: Generiere schöne runde Leistungswerte für eine Disziplin
-function generiereSchoeneLeistungen(minLeistung, maxLeistung, disziplinName, anzahl = 8) {
-    const cleanDisziplin = disziplinName.replace(/ W$/i, '').trim();
-    const disziplinLower = cleanDisziplin.toLowerCase();
-    
-    // Mapping für abgekürzte Disziplin-Namen
-    const disziplinMapping = {
-        'Weit': 'Weitsprung',
-        'Hoch': 'Hochsprung',
-        'Stab': 'Stabhochsprung',
-        'Drei': 'Dreisprung',
-        'Kugel': 'Kugelstoßen',
-        'Diskus': 'Diskuswurf',
-        'Hammer': 'Hammerwurf',
-        'Speer': 'Speerwurf',
-        '100': '100m',
-        '200': '200m',
-        '400': '400m',
-        '800': '800m',
-        '1500': '1500m',
-        '3000': '3000m',
-        '5000': '5000m',
-        '10000': '10000m',
-        '110': '110m Hürden',
-        '400H': '400m Hürden',
-        '400Hü': '400m Hürden',
-        '400m Hü': '400m Hürden',
-        '400m Hü.': '400m Hürden',
-        '110m Hü': '110m Hürden',
-        '110m Hü.': '110m Hürden',
-        '100m Hü': '100m Hürden W',
-        '100m Hü.': '100m Hürden W',
-        "60m Hü": "60m Hürden",
-        "60m Hü.": "60m Hürden"
-    };
-    
-    const mappedDisziplin = disziplinMapping[cleanDisziplin] || cleanDisziplin;
-    const mappedLower = mappedDisziplin.toLowerCase();
-    
-    // Bestimme ob Zeitdisziplin oder Felddisziplin
-    const istZeitDisziplin = mappedLower.match(/\d+m$/)||mappedLower.includes("hürd")||mappedLower.includes("lauf");
-    const istFeldDisziplin = mappedLower.includes("sprung") || mappedLower.includes("wurf") || mappedLower.includes("stoß");
-    
-    const range = Math.abs(maxLeistung - minLeistung);
-    let schritt;
-    
-    if (istZeitDisziplin) {
-        // Zeitdisziplinen - optimiert für schöne Rundungswerte
-        if (range > 100) {
-            schritt = 20; // 20 Sekunden
-        } else if (range > 60) {
-            schritt = 10; // 10 Sekunden
-        } else if (range > 30) {
-            schritt = 5; // 5 Sekunden
-        } else if (range > 10) {
-            schritt = 2; // 2 Sekunden
-        } else if (range > 5) {
-            schritt = 1; // 1 Sekunde
-        } else if (range > 2) {
-            schritt = 0.5; // 0.5 Sekunden
-        } else if (range > 1) {
-            schritt = 0.2; // 0.2 Sekunden
-        } else if (range > 0.5) {
-            schritt = 0.1; // 0.1 Sekunden
-        } else {
-            schritt = 0.05; // 0.05 Sekunden
-        }
-    } else if (istFeldDisziplin) {
-        // Feld-Disziplinen (in Metern) - optimiert für schöne Rundungswerte
-        if (range > 30) {
-            schritt = 10; // 10 Meter
-        } else if (range > 15) {
-            schritt = 5; // 5 Meter
-        } else if (range > 8) {
-            schritt = 2; // 2 Meter
-        } else if (range > 4) {
-            schritt = 1; // 1 Meter
-        } else if (range > 2) {
-            schritt = 0.5; // 0.5 Meter (50cm)
-        } else if (range > 1) {
-            schritt = 0.2; // 0.2 Meter (20cm)
-        } else if (range > 0.5) {
-            schritt = 0.1; // 0.1 Meter (10cm)
-        } else {
-            schritt = 0.05; // 0.05 Meter (5cm)
-        }
-    } else {
-        // Fallback für andere Disziplinen
-        schritt = Math.pow(10, Math.floor(Math.log10(range / anzahl)));
-        // Passe Schritt an schöne Rundungswerte an (1, 2, 5, 10, 20, 50, etc.)
-        const schrittLog = Math.log10(schritt);
-        const schrittBase = Math.pow(10, Math.floor(schrittLog));
-        const schrittMultiplier = schritt / schrittBase;
-        if (schrittMultiplier <= 1.5) {
-            schritt = schrittBase;
-        } else if (schrittMultiplier <= 3.5) {
-            schritt = 2 * schrittBase;
-        } else if (schrittMultiplier <= 7.5) {
-            schritt = 5 * schrittBase;
-        } else {
-            schritt = 10 * schrittBase;
-        }
-    }
-    
-    // Runde Startwert nach unten und Endwert nach oben für bessere Darstellung
-    const rundeAb = (val) => Math.floor(val / schritt) * schritt;
-    const rundeAuf = (val) => Math.ceil(val / schritt) * schritt;
-    
-    // Generiere Ticks mit erweiterten Grenzen für bessere Visualisierung
-    const startLeistung = rundeAb(minLeistung);
-    const endLeistung = rundeAuf(maxLeistung);
-    
-    const leistungen = [];
-    let current = startLeistung;
-    const richtung = endLeistung > startLeistung ? 1 : -1;
-    
-    // Generiere alle Ticks zwischen Start und Ende
-    while ((richtung > 0 && current <= endLeistung) || (richtung < 0 && current >= endLeistung)) {
-        // Runde auf Präzision, um Floating-Point-Fehler zu vermeiden
-        const gerundeterWert = Math.round(current / schritt) * schritt;
-        leistungen.push(parseFloat(gerundeterWert.toFixed(10)));
-        current += schritt * richtung;
-        
-        // Sicherheit: verhindere Endlosschleifen
-        if (leistungen.length > 20) break;
-    }
-    
-    // Stelle sicher, dass wir mindestens 3 Ticks haben
-    if (leistungen.length < 3) {
-        // Wenn zu wenige Ticks, reduziere Schrittgröße
-        schritt = schritt / 2;
-        leistungen.length = 0;
-        current = rundeAb(minLeistung);
-        const neuEndLeistung = rundeAuf(maxLeistung);
-        while ((richtung > 0 && current <= neuEndLeistung) || (richtung < 0 && current >= neuEndLeistung)) {
-            const gerundeterWert = Math.round(current / schritt) * schritt;
-            leistungen.push(parseFloat(gerundeterWert.toFixed(10)));
-            current += schritt * richtung;
-            if (leistungen.length > 20) break;
-        }
-    }
-    
-    return leistungen;
-}
 
 /* ================= DIAGRAMM ANZEIGEN ================= */
 async function zeigeDiagramm() {
@@ -8095,9 +7764,9 @@ async function zeigeDiagramm() {
     // Entscheide ob Vergleichsscores (basierend auf Weltrekorden) verwendet werden
     const useVergleichsScores = vergleichsModus && vergleichsDisziplin && vergleichsDisziplin !== disziplin;
 
-    // Query für erste Disziplin
+    // Query für erste Disziplin  
     let query1 = supabaseClient.schema("la").from("leistung")
-        .select("datum, leistung")
+        .select("datum, leistung, score")
         .eq("athlet_id", athletId)
         .eq("disziplin", disziplin)
         .order("datum", { ascending: true });
@@ -8124,13 +7793,12 @@ async function zeigeDiagramm() {
     let chartData1, minScore1, maxScore1, minLeistung1, maxLeistung1;
     
     if (useVergleichsScores) {
-        // Berechne Vergleichsscores (IAAF basiert) UND finde Min/Max für Skalierung
+        // Verwende DB-Scores für Skalierung
         const dataWithScores = data1.map(d => {
-            const score = berechneVergleichsScore(d.leistung, disziplin, athletId);
             return {
                 datum: d.datum,
                 leistung: d.leistung,
-                score: score
+                score: d.score || 0
             };
         }).filter(d => d.score !== null && d.score > 0);
         
@@ -8189,7 +7857,7 @@ async function zeigeDiagramm() {
     
     if (vergleichsModus && vergleichsDisziplin) {
         let query2 = supabaseClient.schema("la").from("leistung")
-            .select("datum, leistung")
+            .select("datum, leistung, score")
             .eq("athlet_id", athletId)
             .eq("disziplin", vergleichsDisziplin)
             .order("datum", { ascending: true });
@@ -8210,11 +7878,10 @@ async function zeigeDiagramm() {
             let chartData2;
             if (useVergleichsScores) {
                 const dataWithScores = data2.map(d => {
-                    const score = berechneVergleichsScore(d.leistung, vergleichsDisziplin, athletId);
                     return {
                         datum: d.datum,
                         leistung: d.leistung,
-                        score: score
+                        score: d.score || 0
                     };
                 }).filter(d => d.score !== null && d.score > 0);
                 
@@ -8341,27 +8008,11 @@ async function zeigeDiagramm() {
                 position: 'left',
                 min: displayMin,
                 max: displayMax,
-                afterBuildTicks: function(axis) {
-                    // Konvertiere Score-Bereich zu Leistungen für die erste Disziplin
-                    const minLeistungAxis = scoreZuLeistung(axis.min, disziplin, athletId);
-                    const maxLeistungAxis = scoreZuLeistung(axis.max, disziplin, athletId);
-                    
-                    if (minLeistungAxis !== null && maxLeistungAxis !== null) {
-                        // Generiere schöne Leistungswerte für die ERSTE Disziplin
-                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeistungAxis, maxLeistungAxis, disziplin, 8);
-                        
-                        // Konvertiere zurück zu Scores
-                        axis.ticks = schoeneLeistungen.map(leistung => ({
-                            value: berechneVergleichsScore(leistung, disziplin, athletId)
-                        })).filter(tick => tick.value !== null);
-                    }
-                },
                 ticks: {
                     color: '#000',
                     callback: function(scoreValue) {
-                        const leistung = scoreZuLeistung(scoreValue, disziplin, athletId);
-                        if (leistung === null) return '';
-                        return formatiereLeistung(leistung, disziplin);
+                        // Zeige Score-Wert direkt an
+                        return scoreValue.toFixed(1);
                     }
                 },
                 title: {
@@ -8382,38 +8033,18 @@ async function zeigeDiagramm() {
                 // Verwende den GEMEINSAMEN Score-Bereich (displayMin/Max) - gleich wie erste Achse!
                 // Das stellt sicher, dass gleiche Vergleichsscores auf beiden Achsen auf gleicher Höhe sind
                 
-                // Berechne den Leistungsbereich für die zweite Disziplin basierend auf dem gemeinsamen displayMin/Max
-                const minLeistung2Display = scoreZuLeistung(displayMin, vergleichsDisziplin, athletId);
-                const maxLeistung2Display = scoreZuLeistung(displayMax, vergleichsDisziplin, athletId);
-                
-                console.log(`Zweite Achse (${vergleichsDisziplin}):`, {
-                    gemeinsamerScoreBereich: [displayMin, displayMax],
-                    leistungsBereichDisziplin2: [minLeistung2Display, maxLeistung2Display]
-                });
+                console.log(`Zweite Achse (${vergleichsDisziplin}) mit Score-Bereich:`, [displayMin, displayMax]);
                 
                 yAxes.y2 = {
                     type: 'linear',
                     position: 'right',
                     min: displayMin,
                     max: displayMax,
-                    afterBuildTicks: function(axis) {
-                        // Verwende die Werte für die zweite Disziplin
-                        if (minLeistung2Display !== null && maxLeistung2Display !== null) {
-                            // Generiere schöne Leistungswerte für die ZWEITE Disziplin
-                            const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2Display, maxLeistung2Display, vergleichsDisziplin, 8);
-                            
-                            // Konvertiere zurück zu Scores (für die zweite Disziplin)
-                            axis.ticks = schoeneLeistungen.map(leistung => ({
-                                value: berechneVergleichsScore(leistung, vergleichsDisziplin, athletId)
-                            })).filter(tick => tick.value !== null);
-                        }
-                    },
                     ticks: {
                         color: '#000',
                         callback: function(scoreValue) {
-                            const leistung = scoreZuLeistung(scoreValue, vergleichsDisziplin);
-                            if (leistung === null) return '';
-                            return formatiereLeistung(leistung, vergleichsDisziplin);
+                            // Zeige Score-Wert direkt an
+                            return scoreValue.toFixed(1);
                         }
                     },
                     title: {
@@ -8651,6 +8282,14 @@ function klappeAusDiagramm() {
 /* ================= SB-DIAGRAMM FUNKTIONEN ================= */
 let sbChartInstance = null;
 
+
+/* ===== SCORE-BASIERTE ACHSEN-SKALIERUNG =====
+ * Die Y-Achsen verwenden jetzt direkt die Scores aus der Datenbank (la.leistung.score).
+ * Für die Anzeige werden die originalen Leistungswerte in den Tooltips gezeigt.
+ * Bei Vergleich zweier Disziplinen werden die Y-Achsen so skaliert, dass
+ * Werte mit dem gleichen Score auf der gleichen Höhe stehen.
+ */
+
 async function zeigeSBDiagramm() {
     if (!selectedAthleteId) {
         alert("⚠️ Bitte wählen Sie zuerst einen Athleten aus!");
@@ -8679,9 +8318,9 @@ async function zeigeSBDiagramm() {
     const filterTo = document.getElementById("sbFilterTo").value;
     const filterJahr = document.getElementById("sbFilterJahr").value;
 
-    // Query für erste Disziplin (alle Leistungen)
+    // Query für erste Disziplin (alle Leistungen) 
     let query = supabaseClient.schema("la").from("leistung")
-        .select("datum, leistung")
+        .select("datum, leistung, score")
         .eq("athlet_id", athletId)
         .eq("disziplin", disziplin)
         .order("datum", { ascending: true });
@@ -8712,19 +8351,23 @@ async function zeigeSBDiagramm() {
     function berechneSaisonWerte(daten, disziplinName) {
         const istZeitDisziplin = checkIstZeitDisziplin(disziplinName);
         const saisonDaten = {};
+        const saisonScores = {}; // Scores parallel zu Leistungen speichern
         
         daten.forEach(d => {
             // Normalisiere Leistung (konvertiert cm zu m bei Wurf-/Sprungdisziplinen)
             let leistung = normalizeLeistung(d.leistung, disziplinName);
             leistung = parseFloat(leistung);
+            const score = d.score || 0;
             
             // Filtere null, undefined, NaN und 0 Werte
             if (leistung && !isNaN(leistung) && leistung > 0) {
                 const jahr = new Date(d.datum).getFullYear();
                 if (!saisonDaten[jahr]) {
                     saisonDaten[jahr] = [];
+                    saisonScores[jahr] = [];
                 }
                 saisonDaten[jahr].push(leistung);
+                saisonScores[jahr].push(score);
             }
         });
 
@@ -8741,24 +8384,31 @@ async function zeigeSBDiagramm() {
         
         jahre.forEach(jahr => {
             const leistungen = saisonDaten[jahr];
+            const scores = saisonScores[jahr];
             
             // Überspringe Jahre ohne gültige Leistungen
             if (!leistungen || leistungen.length === 0) {
                 return;
             }
             
-            // SB (Saisonbestleistung)
-            const sb = istZeitDisziplin 
-                ? Math.min(...leistungen)  // Für Zeitdisziplinen: niedrigster Wert ist am besten
-                : Math.max(...leistungen); // Für Feld-Disziplinen: höchster Wert ist am besten
+            // SB (Saisonbestleistung) - finde Index der besten Leistung
+            let sbIndex;
+            if (istZeitDisziplin) {
+                sbIndex = leistungen.indexOf(Math.min(...leistungen));
+            } else {
+                sbIndex = leistungen.indexOf(Math.max(...leistungen));
+            }
+            const sb = leistungen[sbIndex];
+            const sbScore = scores[sbIndex];
             
             // Durchschnitt
             const durchschnitt = leistungen.reduce((sum, val) => sum + val, 0) / leistungen.length;
+            const durchschnittScore = scores.reduce((sum, val) => sum + val, 0) / scores.length;
             
             // Nur hinzufügen wenn Werte gültig sind
             if (!isNaN(sb) && !isNaN(durchschnitt)) {
-                sbWerte.push({ x: parseInt(jahr), y: sb });
-                durchschnittsWerte.push({ x: parseInt(jahr), y: durchschnitt });
+                sbWerte.push({ x: parseInt(jahr), y: sb, score: sbScore });
+                durchschnittsWerte.push({ x: parseInt(jahr), y: durchschnitt, score: durchschnittScore });
             }
         });
         
@@ -8776,7 +8426,7 @@ async function zeigeSBDiagramm() {
     
     if (vergleichsModus && vergleichsDisziplin && vergleichsDisziplin !== disziplin) {
         let query2 = supabaseClient.schema("la").from("leistung")
-            .select("datum, leistung")
+            .select("datum, leistung, score")
             .eq("athlet_id", athletId)
             .eq("disziplin", vergleichsDisziplin)
             .order("datum", { ascending: true });
@@ -8804,25 +8454,22 @@ async function zeigeSBDiagramm() {
         }
     }
 
-    // Berechne Score-Bereiche für beide Disziplinen
+    // Berechne Score-Bereiche für beide Disziplinen (aus Datenbank)
     let minScore1 = null, maxScore1 = null, minScore2 = null, maxScore2 = null;
     let displayMin = null, displayMax = null;
     let useScoreScaling = false;
 
     if (werte2) {
-        // Berechne Scores für beide Disziplinen
-        const alleLeistungen1 = [...werte1.sbWerte.map(d => d.y), ...werte1.durchschnittsWerte.map(d => d.y)];
-        const alleLeistungen2 = [...werte2.sbWerte.map(d => d.y), ...werte2.durchschnittsWerte.map(d => d.y)];
+        // Verwende Scores aus Datenbank
+        const scores1 = [...werte1.sbWerte.map(d => d.score), ...werte1.durchschnittsWerte.map(d => d.score)].filter(s => s !== null && s !== undefined);
+        const scores2 = [...werte2.sbWerte.map(d => d.score), ...werte2.durchschnittsWerte.map(d => d.score)].filter(s => s !== null && s !== undefined);
         
-        console.log('📊 Berechne Scores für SB-Diagramm:', {
+        console.log('📊 Verwende DB-Scores für SB-Diagramm:', {
             disziplin1: disziplin,
-            alleLeistungen1: alleLeistungen1,
+            scores1: scores1,
             disziplin2: vergleichsDisziplin,
-            alleLeistungen2: alleLeistungen2
+            scores2: scores2
         });
-        
-        const scores1 = alleLeistungen1.map(l => berechneVergleichsScore(l, disziplin, athletId)).filter(s => s !== null);
-        const scores2 = alleLeistungen2.map(l => berechneVergleichsScore(l, vergleichsDisziplin, athletId)).filter(s => s !== null);
         
         if (scores1.length > 0) {
             minScore1 = Math.min(...scores1);
@@ -8860,7 +8507,7 @@ async function zeigeSBDiagramm() {
                 label: `${disziplin} - SB`,
             data: werte1.sbWerte.map(d => ({ 
                 x: d.x, 
-                y: berechneVergleichsScore(d.y, disziplin, athletId),  // Score für Y-Achse
+                y: d.score,  // DB-Score für Y-Achse
                 original: d.y  // Original-Leistung für Tooltip
             })),
             borderColor: '#667eea',
@@ -8881,7 +8528,7 @@ async function zeigeSBDiagramm() {
                 label: `${disziplin} - Ø`,
             data: werte1.durchschnittsWerte.map(d => ({ 
                 x: d.x, 
-                y: berechneVergleichsScore(d.y, disziplin, athletId),  // Score für Y-Achse
+                y: d.score,  // DB-Score für Y-Achse
                 original: d.y  // Original-Leistung für Tooltip
             })),
             borderColor: 'rgba(102, 126, 234, 0.65)',
@@ -8903,7 +8550,7 @@ async function zeigeSBDiagramm() {
                 label: `${vergleichsDisziplin} - SB`,
             data: werte2.sbWerte.map(d => ({ 
                 x: d.x, 
-                y: berechneVergleichsScore(d.y, vergleichsDisziplin, athletId),  // Score für Y-Achse
+                y: d.score,  // DB-Score für Y-Achse
                 original: d.y  // Original-Leistung für Tooltip
             })),
             borderColor: '#764ba2',
@@ -8924,7 +8571,7 @@ async function zeigeSBDiagramm() {
                 label: `${vergleichsDisziplin} - Ø`,
             data: werte2.durchschnittsWerte.map(d => ({ 
                 x: d.x, 
-                y: berechneVergleichsScore(d.y, vergleichsDisziplin, athletId),  // Score für Y-Achse
+                y: d.score,  // DB-Score für Y-Achse
                 original: d.y  // Original-Leistung für Tooltip
             })),
             borderColor: 'rgba(118, 75, 162, 0.65)',
@@ -9021,10 +8668,7 @@ async function zeigeSBDiagramm() {
     if (useScoreScaling) {
         // Score-basierte Skalierung
         // Datenpunkte sind jetzt Scores, also müssen die Achsen auch Score-Bereiche verwenden
-        const minLeistung1Display = scoreZuLeistung(displayMin, disziplin, athletId);
-        const maxLeistung1Display = scoreZuLeistung(displayMax, disziplin, athletId);
-        const minLeistung2Display = scoreZuLeistung(displayMin, vergleichsDisziplin, athletId);
-        const maxLeistung2Display = scoreZuLeistung(displayMax, vergleichsDisziplin, athletId);
+        console.log(`Score-Bereich für beide Disziplinen:`, [displayMin, displayMax]);
         
         scales = {
             x: {
@@ -9046,20 +8690,9 @@ async function zeigeSBDiagramm() {
                 position: 'left',
                 min: displayMin,
                 max: displayMax,
-                afterBuildTicks: function(axis) {
-                    if (minLeistung1Display !== null && maxLeistung1Display !== null) {
-                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung1Display, maxLeistung1Display, disziplin, 8);
-                        // Konvertiere Leistungen zu Scores für die Achse
-                        axis.ticks = schoeneLeistungen.map(leistung => ({
-                            value: berechneVergleichsScore(leistung, disziplin, athletId)
-                        })).filter(tick => tick.value !== null);
-                    }
-                },
                 ticks: {
                     callback: function(scoreValue) {
-                        // Konvertiere Score zurück zu Leistung für Anzeige
-                        const leistung = scoreZuLeistung(scoreValue, disziplin, athletId);
-                        return formatiereLeistung(leistung, disziplin);
+                        return scoreValue.toFixed(1);
                     },
                     color: '#000'
                 },
@@ -9075,20 +8708,9 @@ async function zeigeSBDiagramm() {
                 position: 'right',
                 min: displayMin,
                 max: displayMax,
-                afterBuildTicks: function(axis) {
-                    if (minLeistung2Display !== null && maxLeistung2Display !== null) {
-                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2Display, maxLeistung2Display, vergleichsDisziplin, 8);
-                        // Konvertiere Leistungen zu Scores für die Achse
-                        axis.ticks = schoeneLeistungen.map(leistung => ({
-                            value: berechneVergleichsScore(leistung, vergleichsDisziplin, athletId)
-                        })).filter(tick => tick.value !== null);
-                    }
-                },
                 ticks: {
                     callback: function(scoreValue) {
-                        // Konvertiere Score zurück zu Leistung für Anzeige
-                        const leistung = scoreZuLeistung(scoreValue, vergleichsDisziplin);
-                        return formatiereLeistung(leistung, vergleichsDisziplin);
+                        return scoreValue.toFixed(1);
                     },
                     color: '#000'
                 },
