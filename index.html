@@ -16,7 +16,6 @@ Datum: 2026-02-09
   * Ermöglicht fokussierte Ansicht auf gewünschte Datenpunkte
 
 Änderungen in v3.10.3:
-Änderungen in v3.10.3:
 - NEU: Minimalistisches Logo im Login-Screen hinzugefügt
   * "LA" in Lila-Gradient mit "Leistungsdatenbank" Text
   * Favicon für Browser-Tab integriert
@@ -8674,6 +8673,7 @@ async function zeigeSBDiagramm() {
     const showSBs = document.getElementById("sbShowSBs").checked;
     const showAverages = document.getElementById("sbShowAverages").checked;
 
+
     // Hole Zeitraum-Filter
     const filterFrom = document.getElementById("sbFilterFrom").value;
     const filterTo = document.getElementById("sbFilterTo").value;
@@ -8856,8 +8856,8 @@ async function zeigeSBDiagramm() {
     if (useScoreScaling) {
         // Bei Score-Skalierung: Speichere SCORES als Y-Werte, aber behalte Original-Leistungen für Tooltips
         if (showSBs) {
-        datasets.push({
-            label: `${disziplin} - SB`,
+            datasets.push({
+                label: `${disziplin} - SB`,
             data: werte1.sbWerte.map(d => ({ 
                 x: d.x, 
                 y: berechneVergleichsScore(d.y, disziplin, athletId),  // Score für Y-Achse
@@ -8873,12 +8873,12 @@ async function zeigeSBDiagramm() {
             spanGaps: false,
             yAxisID: 'y1',
             disziplin: disziplin
-        });
+            });
         }
         
         if (showAverages) {
-        datasets.push({
-            label: `${disziplin} - Ø`,
+            datasets.push({
+                label: `${disziplin} - Ø`,
             data: werte1.durchschnittsWerte.map(d => ({ 
                 x: d.x, 
                 y: berechneVergleichsScore(d.y, disziplin, athletId),  // Score für Y-Achse
@@ -8895,12 +8895,12 @@ async function zeigeSBDiagramm() {
             spanGaps: false,
             yAxisID: 'y1',
             disziplin: disziplin
-        });
+            });
         }
         
         if (showSBs) {
-        datasets.push({
-            label: `${vergleichsDisziplin} - SB`,
+            datasets.push({
+                label: `${vergleichsDisziplin} - SB`,
             data: werte2.sbWerte.map(d => ({ 
                 x: d.x, 
                 y: berechneVergleichsScore(d.y, vergleichsDisziplin, athletId),  // Score für Y-Achse
@@ -8916,12 +8916,12 @@ async function zeigeSBDiagramm() {
             spanGaps: false,
             yAxisID: 'y2',
             disziplin: vergleichsDisziplin
-        });
+            });
         }
         
         if (showAverages) {
-        datasets.push({
-            label: `${vergleichsDisziplin} - Ø`,
+            datasets.push({
+                label: `${vergleichsDisziplin} - Ø`,
             data: werte2.durchschnittsWerte.map(d => ({ 
                 x: d.x, 
                 y: berechneVergleichsScore(d.y, vergleichsDisziplin, athletId),  // Score für Y-Achse
@@ -8938,13 +8938,13 @@ async function zeigeSBDiagramm() {
             spanGaps: false,
             yAxisID: 'y2',
             disziplin: vergleichsDisziplin
-        });
+            });
         }
     } else {
         // Normale Skalierung
         if (showSBs) {
-        datasets.push({
-            label: `${disziplin} - SB`,
+            datasets.push({
+                label: `${disziplin} - SB`,
             data: werte1.sbWerte,
             borderColor: '#667eea',
             backgroundColor: 'rgba(102, 126, 234, 0.1)',
@@ -8956,12 +8956,12 @@ async function zeigeSBDiagramm() {
             spanGaps: false,
             yAxisID: 'y1',
             disziplin: disziplin
-        });
+            });
         }
         
         if (showAverages) {
-        datasets.push({
-            label: `${disziplin} - Ø`,
+            datasets.push({
+                label: `${disziplin} - Ø`,
             data: werte1.durchschnittsWerte,
             borderColor: 'rgba(102, 126, 234, 0.65)',
             backgroundColor: 'rgba(102, 126, 234, 0.05)',
@@ -8974,13 +8974,13 @@ async function zeigeSBDiagramm() {
             spanGaps: false,
             yAxisID: 'y1',
             disziplin: disziplin
-        });
+            });
         }
         
-            if (showSBs) {
         if (werte2) {
-            datasets.push({
-                label: `${vergleichsDisziplin} - SB`,
+            if (showSBs) {
+                datasets.push({
+                    label: `${vergleichsDisziplin} - SB`,
                 data: werte2.sbWerte,
                 borderColor: '#764ba2',
                 backgroundColor: 'rgba(118, 75, 162, 0.1)',
@@ -8992,12 +8992,12 @@ async function zeigeSBDiagramm() {
                 spanGaps: false,
                 yAxisID: 'y2',
                 disziplin: vergleichsDisziplin
+                });
             }
-            });
-            if (showAverages) {
             
-            datasets.push({
-                label: `${vergleichsDisziplin} - Ø`,
+            if (showAverages) {
+                datasets.push({
+                    label: `${vergleichsDisziplin} - Ø`,
                 data: werte2.durchschnittsWerte,
                 borderColor: 'rgba(118, 75, 162, 0.65)',
                 backgroundColor: 'rgba(118, 75, 162, 0.05)',
@@ -9010,8 +9010,8 @@ async function zeigeSBDiagramm() {
                 spanGaps: false,
                 yAxisID: 'y2',
                 disziplin: vergleichsDisziplin
+                });
             }
-            });
         }
     }
 
@@ -9251,8 +9251,8 @@ function schließeSBDiagramm() {
 
 function klappeAusSBDiagramm() {
     document.getElementById('sbDiagrammContainer').style.display = 'block';
-    document.getElementById('sbDiagrammAktualisierenBtn').style.display = 'inline-block';
     document.getElementById('sbDiagrammOptionsContainer').style.display = 'block';
+    document.getElementById('sbDiagrammAktualisierenBtn').style.display = 'inline-block';
     document.getElementById('sbDiagrammSchließenBtn').style.display = 'inline-block';
     document.getElementById('sbDiagrammAusklappenBtn').style.display = 'none';
 }
