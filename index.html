@@ -4353,6 +4353,7 @@ Datum: 2026-02-09
     </div>
     
     <div class="avg-buttons">
+      <button class="avg-btn" onclick="zeigeLeistungsTabelle()">📋 Tabelle</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('leistung')">📈 Ø Leistung</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('platzierung')">🏅 Ø Platzierung</button>
       <button class="avg-btn" onclick="berechneErfolgsquote()">🎯 Erfolgsquote</button>
@@ -4435,6 +4436,9 @@ Datum: 2026-02-09
     </details>
   </div>
 </div>
+      </div> <!-- Close analyseTab -->
+    
+    </div> <!-- Close section -->
 
 <!-- Dialog für SB-Jahr-Auswahl -->
 <div id="sbDialog" class="dialog-overlay">
@@ -6002,6 +6006,145 @@ async function ladeLeistungen() {
 }
 
 /* ================= DURCHSCHNITT BERECHNEN ================= */
+
+/* ================= LEISTUNGS-TABELLE ================= */
+async function zeigeLeistungsTabelle() {
+  // Verstecke Export-Button zunächst
+  document.getElementById("analyseExportBtn").style.display = "none";
+  
+  const athletId = selectedAthleteId; // Verwende ausgewählten Athleten
+  
+  if (!athletId) {
+    alert("⚠️ Bitte wählen Sie zuerst einen Athleten aus!");
+    return;
+  }
+  
+  // Hole alle Filter unter Statistiken
+  const filterDisziplin = document.getElementById("statistikFilterDisziplin").value;
+  const filterZeitraum = document.getElementById("statistikFilterZeitraum").value;
+  const ort = document.getElementById("statistikFilterOrt").value;
+  const wk = document.getElementById("statistikFilterWK").value;
+  const ak = document.getElementById("statistikFilterAK").value;
+  const filterTyp = document.getElementById("statistikFilterTyp").value;
+  const ms = document.getElementById("statistikFilterMS").value;
+
+  // Baue Query mit allen Filtern
+  let query = supabaseClient.schema("la").from("leistung")
+    .select("datum, disziplin, leistung, ort")
+    .eq("athlet_id", athletId)
+    .not("leistung", "is", null); // Ignoriere NULL-Werte für Leistung
+  
+  // Filter anwenden
+  if (filterDisziplin) query = query.eq("disziplin", filterDisziplin);
+  if (ort) query = query.ilike("ort", `%${ort}%`);
+  if (wk) query = query.ilike("wk_bz", `%${wk}%`);
+  if (ak) query = query.ilike("ak", `%${ak}%`);
+  if (filterTyp) query = query.eq("typ", filterTyp);
+  if (ms) query = query.eq("ms", ms);
+
+  // Zeitraum-Filter anwenden
+  if (filterZeitraum === 'custom') {
+    const von = document.getElementById("statistikFilterVon").value;
+    const bis = document.getElementById("statistikFilterBis").value;
+    
+    if (von) query = query.gte("datum", von);
+    if (bis) query = query.lte("datum", bis);
+  } else if (filterZeitraum) {
+    query = query.gte("datum", `${filterZeitraum}-01-01`).lte("datum", `${filterZeitraum}-12-31`);
+  }
+
+  const { data, error } = await query;
+  
+  if (error) {
+    console.error("Fehler beim Laden der Daten:", error);
+    alert("❌ Fehler beim Laden der Daten: " + error.message);
+    return;
+  }
+  
+  if (!data || data.length === 0) {
+    alert("📭 Keine Daten für diese Auswahl gefunden");
+    return;
+  }
+
+  // Berechne Score für jede Leistung (niedrigere Leistung = höherer Score bei Zeitdisziplinen)
+  const leistungenMitScore = data.map(l => {
+    const disziplin = l.disziplin;
+    const istZeitdisziplin = (disziplin.match(/\d+\s*m/) && !disziplin.includes("kampf")) || 
+                              disziplin.includes("lauf") || 
+                              disziplin.includes("x");
+    
+    // Finde PB für diese Disziplin
+    const pbData = data.filter(x => x.disziplin === disziplin);
+    const pb = istZeitdisziplin 
+      ? Math.min(...pbData.map(x => x.leistung))
+      : Math.max(...pbData.map(x => x.leistung));
+    
+    // Berechne Score: bei Zeit = (PB / Leistung) * 100, bei Feld = (Leistung / PB) * 100
+    const score = istZeitdisziplin 
+      ? (pb / l.leistung) * 100
+      : (l.leistung / pb) * 100;
+    
+    return {
+      ...l,
+      score: score
+    };
+  });
+
+  // Sortiere nach Score (höchster zuerst)
+  leistungenMitScore.sort((a, b) => b.score - a.score);
+
+  // Erstelle Tabelle
+  let html = `
+    <div style="position: relative;">
+      <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''" 
+              style="position: absolute; top: 0; right: 0; background: #dc3545; color: white; border: none; 
+                     padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.9em; 
+                     transition: all 0.3s;">
+        ✕ Schließen
+      </button>
+      <h3 style="color: #2a5298; margin-bottom: 15px;">📋 Leistungstabelle (sortiert nach Score)</h3>
+      <table style="width:100%; border-collapse: collapse; margin-top:20px; background:white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+        <thead style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color:white;">
+          <tr>
+            <th style="padding:12px; text-align:left; border:1px solid #ddd;">Datum</th>
+            <th style="padding:12px; text-align:left; border:1px solid #ddd;">Disziplin</th>
+            <th style="padding:12px; text-align:right; border:1px solid #ddd;">Leistung</th>
+            <th style="padding:12px; text-align:left; border:1px solid #ddd;">Ort</th>
+            <th style="padding:12px; text-align:right; border:1px solid #ddd;">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  leistungenMitScore.forEach((l, index) => {
+    const formatierteDatum = formatiereDatum(l.datum);
+    const formatierteLeistung = formatiereLeistung(l.leistung, l.disziplin);
+    const scoreFormatiert = l.score.toFixed(2) + '%';
+    const rowStyle = index % 2 === 0 ? 'background:#f9f9f9;' : '';
+    
+    html += `
+      <tr style="${rowStyle}">
+        <td style="padding:10px; border:1px solid #ddd;">${formatierteDatum}</td>
+        <td style="padding:10px; border:1px solid #ddd;">${l.disziplin}</td>
+        <td style="padding:10px; border:1px solid #ddd; text-align:right; font-weight:600;">${formatierteLeistung}</td>
+        <td style="padding:10px; border:1px solid #ddd;">${l.ort || '-'}</td>
+        <td style="padding:10px; border:1px solid #ddd; text-align:right; font-weight:600; color: #667eea;">${scoreFormatiert}</td>
+      </tr>
+    `;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById("analyseAusgabe").innerHTML = html;
+  
+  // Zeige Export-Button
+  document.getElementById("analyseExportBtn").style.display = "inline-block";
+}
+
 async function berechneDurchschnitt(typ) {
   // Verstecke Export-Button zunächst
   document.getElementById("analyseExportBtn").style.display = "none";
