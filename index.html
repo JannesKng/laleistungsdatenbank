@@ -7519,15 +7519,25 @@ function switchTab(tabName) {
   });
   
   // Orte-Tabelle und Top-Disziplinen nur im Dashboard anzeigen
-  const orteTable = document.getElementById('orteTable');
-  const topDisziplinen = document.getElementById('topDisziplinen');
+  const topDisziplinenSection = document.getElementById('topDisziplinenSection');
+  const ortLeistungenTable = document.getElementById('ortLeistungenTable');
+  const ortTableMobileContainer = document.getElementById('ortTableMobileContainer');
+  const bottomSection = document.getElementById('bottomSection');
   
-  if (orteTable) {
-    orteTable.style.display = (tabName === 'dashboard') ? 'block' : 'none';
+  if (topDisziplinenSection) {
+    topDisziplinenSection.style.display = (tabName === 'dashboard') ? 'block' : 'none';
   }
   
-  if (topDisziplinen) {
-    topDisziplinen.style.display = (tabName === 'dashboard') ? 'block' : 'none';
+  if (ortLeistungenTable) {
+    ortLeistungenTable.style.display = (tabName === 'dashboard') ? 'block' : 'none';
+  }
+  
+  if (ortTableMobileContainer) {
+    ortTableMobileContainer.style.display = (tabName === 'dashboard' && ortTableMobileContainer.children.length > 0) ? 'block' : 'none';
+  }
+  
+  if (bottomSection) {
+    bottomSection.style.display = (tabName === 'dashboard') ? 'grid' : 'none';
   }
   
   // Zeige gewählten Tab
