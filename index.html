@@ -7518,6 +7518,18 @@ function switchTab(tabName) {
     btn.classList.remove('active');
   });
   
+  // Orte-Tabelle und Top-Disziplinen nur im Dashboard anzeigen
+  const orteTable = document.getElementById('orteTable');
+  const topDisziplinen = document.getElementById('topDisziplinen');
+  
+  if (orteTable) {
+    orteTable.style.display = (tabName === 'dashboard') ? 'block' : 'none';
+  }
+  
+  if (topDisziplinen) {
+    topDisziplinen.style.display = (tabName === 'dashboard') ? 'block' : 'none';
+  }
+  
   // Zeige gewählten Tab
   if(tabName === 'dashboard') {
     const tab = document.getElementById('dashboardTab');
