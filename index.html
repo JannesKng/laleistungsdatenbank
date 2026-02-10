@@ -1,10 +1,64 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.11.0
+Version 3.12.0
 Datum: 2026-02-10
 
 
+Änderungen in v3.12.0:
+- VERBESSERUNG: Detail-Pop-up vergrößert
+  * Höhe von 85vh auf 90vh erhöht (92vh auf sehr großen Bildschirmen)
+  * Maximale Breite auf 1600px erhöht (1800px auf sehr großen Bildschirmen)
+  * Kein Scrollen mehr nötig bei Standard-Inhalten
+- NEU: Umfassende Responsive Design Optimierungen
+  * Große Bildschirme (1920px+): Maximale Nutzung des Platzes, größere Charts
+  * Desktop/Laptop (1025-1919px): Optimierte Layouts
+  * Tablet Landscape (769-1024px): 2-Spalten-Layouts, angepasste Schriftgrößen
+  * Tablet Portrait (481-768px): 1-Spalten-Layouts, kompakte Ansicht
+  * Mobile (bis 480px): Touch-optimiert, Single-Column, große Buttons
+- VERBESSERUNG: Main App nutzt volle Bildschirmbreite
+  * Kein Padding/Margin mehr am Rand
+  * Container passen sich der Bildschirmgröße an
+  * Optimale Nutzung auf allen Geräten
+- VERBESSERUNG: Alle Modals responsive optimiert
+  * Leistung hinzufügen/bearbeiten Modal
+  * Import Modal
+  * Detail-Pop-up
+  * Touch-freundliche Bedienung auf mobilen Geräten
+- VERBESSERUNG: Tabellen, Grids und Karten responsive
+  * Statistik-Karten: 4 Spalten → 2 Spalten → 1 Spalte
+  * PB Cards: Automatische Anpassung der Spaltenanzahl
+  * Tabellen: Angepasste Schriftgrößen und Padding
+  * Filter: Stapeln sich vertikal auf kleinen Bildschirmen
+
+
+Änderungen in v3.11.4:
+- BUG-FIX: Detail-Pop-up Grid-Layout vollständig korrigiert
+  * ALLE vier Elemente (Platzierung, Altersklasse, Freiluft/Halle, Ort) sind jetzt explizit in Zeile 2
+  * Erste Zeile enthält garantiert NUR Leistung und Wettkampf
+  * Jedes Element hat seine eigene Grid-Position (gridRow und gridColumn)
+
+- BUG-FIX: Detail-Pop-up Grid-Layout korrigiert
+  * Platzierung springt jetzt korrekt auf die zweite Zeile
+  * Erste Zeile enthält nur Leistung und Wettkampf
+  * Zweite Zeile enthält Platzierung, Altersklasse, Freiluft/Halle und Ort
+
+Änderungen in v3.11.2:
+- VERBESSERUNG: Detail-Pop-up Layout finalisiert
+  * Erste Zeile: Leistung (50%) und Wettkampf (50%)
+  * Zweite Zeile: Platzierung, Altersklasse, Freiluft/Halle und Ort (je 25%)
+  * Übersichtlichere und kompaktere Darstellung aller Informationen
+- BUG-FIX: Cursor-Verhalten in Top PBs korrigiert
+  * Top PB Cards zeigen jetzt Hand-Cursor statt Text-Cursor
+  * Konsistentes Verhalten über alle klickbaren Elemente
+
+Änderungen in v3.11.1:
+- VERBESSERUNG: Detail-Pop-up Layout optimiert
+  * Statistiken in 2x2 Grid angeordnet (oben links: Leistung, oben rechts: Wettkampf, unten links: Platzierung & Altersklasse, unten rechts: Ort & Freiluft/Halle)
+  * Mehrere Informationen pro Zelle für kompaktere Darstellung
+- VERBESSERUNG: Cursor-Verhalten in Tabellen
+  * Tabellenzeilen zeigen jetzt Hand-Cursor statt Text-Cursor beim Hovern
+  * Klarere Kennzeichnung der Klickbarkeit
 
 Änderungen in v3.11.0:
 - NEU: Detail-Pop-up für Leistungen beim Klick auf Tabellenzeilen
@@ -63,7 +117,6 @@ Datum: 2026-02-10
   * selectedAthleteId wird korrekt verwendet
   * Keine Möglichkeit für normale User, andere Profile zu sehen
 
-
 Änderungen in v3.9.8:
 - BUG-FIX: Robuste Fehlerbehandlung beim Login
   * Query-Timeout hinzugefügt (10 Sekunden)
@@ -71,7 +124,6 @@ Datum: 2026-02-10
   * Bessere Behandlung von Permissions-Fehlern
   * Fallback auf user_metadata wenn Profil nicht existiert
   * Verhindert hängende Login-Versuche
-
 
 Änderungen in v3.9.7:
 - BUG-FIX: AbortError beim Login behoben
@@ -84,14 +136,12 @@ Datum: 2026-02-10
   * Professionelleres und klareres Design
   * Bessere Benutzerfreundlichkeit
 
-
 Änderungen in v3.9.6:
 - BUG-FIX: Login-Weiterleitung zur Main-App behoben
   * Main-App wird jetzt korrekt nach dem Login angezeigt
   * Verbesserte Fehlerbehandlung und Logging
   * Athletenprofil wird direkt im Auth-Handler geladen
   * Verhindert Race-Conditions und Doppel-Verarbeitung
-
 
 Änderungen in v3.9.5:
 - ENTFERNT: Athletentabelle/-suche komplett entfernt für alle Benutzer
@@ -108,7 +158,6 @@ Datum: 2026-02-10
 - INFO: Leistungen werden automatisch mit aktueller athlete_id verknüpft
   * Beim Hinzufügen von Leistungen wird die ID des eingeloggten Users verwendet
   * Keine manuelle Eingabe der Athleten-ID mehr nötig
-
 
 Änderungen in v3.9.4:
 - BUG-FIX: Main App wird nach Login jetzt korrekt angezeigt
@@ -127,7 +176,6 @@ Datum: 2026-02-10
   * user_id wird korrekt verknüpft
   * Automatische Profilerstellung bei Registrierung
 
-
 Änderungen in v3.9.3:
 - BUG-FIX: Auth-Loop und leerer Bildschirm nach Login behoben
   * lastProcessedUserId verhindert Doppel-Verarbeitung von SIGNED_IN Events
@@ -135,7 +183,6 @@ Datum: 2026-02-10
   * Entfernte duplizierte initAthleteSearch() Aufrufe aus showMainApp()
   * Verbesserte Logging für besseres Debugging
   * mainApp wird jetzt korrekt angezeigt nach erfolgreichem Login
-
 
 Änderungen in v3.9.2:
 - VERBESSERUNG: Optimierte Y-Achsen-Einteilung für alle Diagramme
@@ -158,7 +205,6 @@ Datum: 2026-02-10
   * Vorher wurden Wettkämpfe gezählt, was zu Verwirrung führte
   * Marker-Größe basiert weiterhin auf Anzahl der Leistungen für bessere Visualisierung
 
-
 Änderungen in v3.9.1:
 - VERBESSERUNG: Statistiken und Bestleistungen sind jetzt standardmäßig zugeklappt
 - VERBESSERUNG: Alle Statistik- und Bestleistungs-Ausgaben sind jetzt mit X-Button schließbar
@@ -170,7 +216,6 @@ Datum: 2026-02-10
   * PBs sind chronologisch nach Datum sortiert (nicht nach Disziplin)
   * Kompaktere, übersichtlichere Darstellung
   * Timeline-Ansicht über alle Disziplinen hinweg
-
 
 Änderungen in v3.9.0:
 - NEU: Erfolgsquote-Statistik hinzugefügt
@@ -191,12 +236,10 @@ Datum: 2026-02-10
   * Markiert die aktuelle Bestleistung hervorgehoben
   * Zeigt längste "Durststrecke" ohne PB-Verbesserung
 
-
 Änderungen in v3.8.3:
 - VERBESSERUNG: Filter bei Statistiken sind jetzt permanent sichtbar (nicht mehr einklappbar)
 - VERBESSERUNG: Filter bei Bestleistungen sind jetzt permanent sichtbar (nicht mehr einklappbar)
 - VERBESSERUNG: Bessere Übersichtlichkeit durch feste Filter-Anzeige
-
 
 Änderungen in v3.8.2:
 - VERBESSERUNG: Statistiken-Bereich ist jetzt einklappbar (standardmäßig geöffnet)
@@ -206,7 +249,6 @@ Datum: 2026-02-10
   * Alle Jahre mit Leistungsdaten sind verfügbar
   * Nicht mehr auf 2022-2026 beschränkt
   * Jahre werden in absteigender Reihenfolge angezeigt (neueste zuerst)
-
 
 Änderungen in v3.8.1:
 - NEU: Zeitraum-Filter für SB-Diagramm hinzugefügt
@@ -218,7 +260,6 @@ Datum: 2026-02-10
   * Hinzugefügt: Prüfung ob Canvas-Element existiert
   * Verbesserte Fehlerbehandlung mit aussagekräftiger Fehlermeldung
   * Verhindert "Cannot read properties of null" Fehler
-
 
 Änderungen in v3.8.0:
 - BUG-FIX: SB-Diagramm zeigt jetzt korrekte Werte auch im Vergleichsmodus
@@ -239,7 +280,6 @@ Datum: 2026-02-10
   * Monatsprognose zeigt kontinuierliche Trendlinie
   * Nutzt generiereSchoeneLeistungen() für schöne Y-Achsen
 
-
 Änderungen in v3.7.0:
 - NEU: Leistungsprognose-Diagramm hinzugefügt
   * Berechnet Prognosen basierend auf Alter und bisherigen Leistungen
@@ -254,7 +294,6 @@ Datum: 2026-02-10
   * Leistungen werden jetzt korrekt normalisiert (cm zu m)
   * Verhindert zu hohe Werte bei Sprung- und Wurfdisziplinen
   * Verwendet normalizeLeistung() für konsistente Daten
-
 
 Änderungen in v3.6.0:
 - NEU: Vollständiger Reset aller Einstellungen beim Athletenwechsel
@@ -342,7 +381,6 @@ Datum: 2026-02-10
   * Jahresauswahl (2022-2026)
   * Benutzerdefinierter Zeitraum (Von/Bis Datum)
   * Filter werden in berechneDurchschnitt() und zeigePBs() berücksichtigt
-
 
 Änderungen in v3.4.2:
 - VERBESSERUNG: Einheiten aus Achsenbeschriftungen im SB-Diagramm entfernt (nur noch Disziplinname wird angezeigt)
@@ -458,6 +496,436 @@ Datum: 2026-02-10
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+
+/* ================= DETAIL POPUP FUNCTIONS ================= */
+// Variablen für Detail-Popup
+let detailMap = null;
+let detailChart = null;
+let isPopupDragging = false;
+let popupDragStartX, popupDragStartY, popupDragPosX, popupDragPosY;
+
+function openDetailPopup(leistungData) {
+  console.log('Opening detail popup for:', leistungData);
+  
+  // Verhindere, dass das Popup öffnet wenn wir gerade Spalten resized haben
+  if (isResizing) {
+    console.log('Resizing detected, not opening popup');
+    return;
+  }
+  
+  const popup = document.getElementById('detailPopup');
+  const title = document.getElementById('detailPopupTitle');
+  const infoGrid = document.getElementById('detailInfoGrid');
+  
+  // Set title
+  title.textContent = `${leistungData.disziplin} - ${formatiereDatum(leistungData.datum)}`;
+  
+  // Build info grid
+  infoGrid.innerHTML = '';
+  
+  // Oben links: Leistung (50% Breite - span 2)
+  const leistungDiv = document.createElement('div');
+  leistungDiv.className = 'detail-info-item';
+  leistungDiv.style.gridColumn = 'span 2';
+  leistungDiv.innerHTML = `
+    <div class="detail-info-label">Leistung</div>
+    <div class="detail-info-value">${formatiereLeistung(leistungData.leistung, leistungData.disziplin)}</div>
+  `;
+  infoGrid.appendChild(leistungDiv);
+  
+  // Oben rechts: Wettkampf (50% Breite - span 2)
+  const wettkampfDiv = document.createElement('div');
+  wettkampfDiv.className = 'detail-info-item';
+  wettkampfDiv.style.gridColumn = 'span 2';
+  wettkampfDiv.innerHTML = `
+    <div class="detail-info-label">Wettkampf</div>
+    <div class="detail-info-value">${leistungData.wk_bz || '-'}</div>
+  `;
+  infoGrid.appendChild(wettkampfDiv);
+  
+  // Unten: Platzierung (25%) - Zeile 2, Spalte 1
+  const platzierungDiv = document.createElement('div');
+  platzierungDiv.className = 'detail-info-item';
+  platzierungDiv.style.gridColumn = '1';
+  platzierungDiv.style.gridRow = '2';
+  platzierungDiv.innerHTML = `
+    <div class="detail-info-label">Platzierung</div>
+    <div class="detail-info-value">${leistungData.platzierung || '-'}</div>
+  `;
+  infoGrid.appendChild(platzierungDiv);
+  
+  // Unten: Altersklasse (25%) - Zeile 2, Spalte 2
+  const akDiv = document.createElement('div');
+  akDiv.className = 'detail-info-item';
+  akDiv.style.gridColumn = '2';
+  akDiv.style.gridRow = '2';
+  akDiv.innerHTML = `
+    <div class="detail-info-label">Altersklasse</div>
+    <div class="detail-info-value">${leistungData.ak || '-'}</div>
+  `;
+  infoGrid.appendChild(akDiv);
+  
+  // Unten: Freiluft/Halle (25%) - Zeile 2, Spalte 3
+  const typDiv = document.createElement('div');
+  typDiv.className = 'detail-info-item';
+  typDiv.style.gridColumn = '3';
+  typDiv.style.gridRow = '2';
+  typDiv.innerHTML = `
+    <div class="detail-info-label">Halle/Freiluft</div>
+    <div class="detail-info-value">${leistungData.typ === 'h' ? 'Halle' : (leistungData.typ === 'f' ? 'Freiluft' : (leistungData.typ || '-'))}</div>
+  `;
+  infoGrid.appendChild(typDiv);
+  
+  // Unten: Ort (25%) - Zeile 2, Spalte 4
+  const ortDiv = document.createElement('div');
+  ortDiv.className = 'detail-info-item';
+  ortDiv.style.gridColumn = '4';
+  ortDiv.style.gridRow = '2';
+  ortDiv.innerHTML = `
+    <div class="detail-info-label">Ort</div>
+    <div class="detail-info-value">${leistungData.ort || '-'}</div>
+  `;
+  infoGrid.appendChild(ortDiv);
+  
+  // Show popup
+  popup.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  
+  // Initialize drag and resize
+  initPopupDragAndResize();
+  
+  // Initialize map after a short delay to ensure the container is visible
+  setTimeout(() => {
+    initDetailMap(leistungData.ort);
+    initDetailChart(leistungData.disziplin, leistungData.id);
+  }, 100);
+}
+
+function closeDetailPopup(event) {
+  // Wenn event existiert und das Ziel nicht der Hintergrund ist, nicht schließen
+  if (event && event.target.id !== 'detailPopup') {
+    return;
+  }
+  
+  const popup = document.getElementById('detailPopup');
+  popup.style.display = 'none';
+  document.body.style.overflow = '';
+  
+  // Cleanup map and chart
+  if (detailMap) {
+    const mapContainer = document.getElementById('detailMap');
+    if (mapContainer) mapContainer.innerHTML = '';
+    detailMap = null;
+  }
+  if (detailChart) {
+    detailChart.destroy();
+    detailChart = null;
+  }
+  
+  // Reset popup position and size
+  const popupContent = document.querySelector('.detail-popup-content');
+  if (popupContent) {
+    popupContent.style.left = '';
+    popupContent.style.top = '';
+    popupContent.style.transform = '';
+    popupContent.style.width = '';
+    popupContent.style.height = '';
+  }
+}
+
+// Drag and Resize functionality for detail popup
+function initPopupDragAndResize() {
+  const header = document.querySelector('.detail-popup-header');
+  const popupContent = document.querySelector('.detail-popup-content');
+  
+  if (!header || !popupContent) return;
+  
+  header.addEventListener('mousedown', (e) => {
+    // Don't drag if clicking on close button
+    if (e.target.closest('.detail-popup-close')) return;
+    
+    isPopupDragging = true;
+    popupDragStartX = e.clientX;
+    popupDragStartY = e.clientY;
+    
+    // Get current position or default to centered
+    const rect = popupContent.getBoundingClientRect();
+    popupDragPosX = rect.left;
+    popupDragPosY = rect.top;
+    
+    // Set position to absolute for dragging
+    popupContent.style.position = 'absolute';
+    popupContent.style.left = popupDragPosX + 'px';
+    popupContent.style.top = popupDragPosY + 'px';
+    popupContent.style.transform = 'none';
+    
+    e.preventDefault();
+  });
+  
+  document.addEventListener('mousemove', (e) => {
+    if (!isPopupDragging) return;
+    
+    const deltaX = e.clientX - popupDragStartX;
+    const deltaY = e.clientY - popupDragStartY;
+    
+    const newLeft = popupDragPosX + deltaX;
+    const newTop = popupDragPosY + deltaY;
+    
+    // Keep popup within viewport
+    const maxLeft = window.innerWidth - popupContent.offsetWidth;
+    const maxTop = window.innerHeight - popupContent.offsetHeight;
+    
+    popupContent.style.left = Math.max(0, Math.min(newLeft, maxLeft)) + 'px';
+    popupContent.style.top = Math.max(0, Math.min(newTop, maxTop)) + 'px';
+  });
+  
+  document.addEventListener('mouseup', () => {
+    isPopupDragging = false;
+  });
+}
+
+async function initDetailMap(ort) {
+  const container = document.getElementById('detailMap');
+  
+  if (!ort) {
+    container.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">Kein Ort angegeben</p>';
+    return;
+  }
+  
+  // Geocode mit Nominatim
+  let markerCoords = null;
+  try {
+    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}&limit=1`);
+    const data = await resp.json();
+    if (data && data.length > 0) {
+      markerCoords = { lon: parseFloat(data[0].lon), lat: parseFloat(data[0].lat) };
+    }
+  } catch(e) {
+    console.warn('Geocoding failed:', e);
+  }
+
+  // SVG-Karte aufbauen (gleiche Projektion wie Dashboard)
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const vbX = -100, vbWidth = 600, vbHeight = 650, padding = 30;
+  const lonMin = 5.8, lonMax = 15.0, latMin = 47.3, latMax = 55.0;
+  
+  function mercY(lat) {
+    const r = lat * Math.PI / 180;
+    return Math.log(Math.tan(Math.PI / 4 + r / 2));
+  }
+  const mYMin = mercY(latMin), mYMax = mercY(latMax);
+  
+  function toSVG(lon, lat) {
+    const relX = (lon - lonMin) / (lonMax - lonMin);
+    const relY = (mercY(lat) - mYMin) / (mYMax - mYMin);
+    return {
+      x: vbX + padding + relX * (vbWidth - 2 * padding),
+      y: vbHeight - padding - relY * (vbHeight - 2 * padding)
+    };
+  }
+  
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', `${vbX} 0 ${vbWidth} ${vbHeight}`);
+  svg.setAttribute('style', 'width:100%;height:100%;display:block;');
+  
+  // Meeres-Hintergrund
+  const bg = document.createElementNS(svgNS, 'rect');
+  bg.setAttribute('x', vbX); bg.setAttribute('y', '0');
+  bg.setAttribute('width', vbWidth); bg.setAttribute('height', vbHeight);
+  bg.setAttribute('fill', '#d0e8f5');
+  svg.appendChild(bg);
+  
+  // Bundesland-Grenzen
+  const borderGroup = document.createElementNS(svgNS, 'g');
+  for (const [, stateInfo] of Object.entries(borderData)) {
+    stateInfo.parts.forEach(partCoords => {
+      const path = document.createElementNS(svgNS, 'path');
+      let d = '';
+      partCoords.forEach((coord, i) => {
+        const p = toSVG(coord.lon, coord.lat);
+        d += (i === 0 ? 'M ' : ' L ') + `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+      });
+      d += ' Z';
+      path.setAttribute('d', d);
+      path.setAttribute('fill', '#e8f5e9');
+      path.setAttribute('stroke', '#90a4ae');
+      path.setAttribute('stroke-width', '1.2');
+      path.setAttribute('stroke-linejoin', 'round');
+      borderGroup.appendChild(path);
+    });
+  }
+  svg.appendChild(borderGroup);
+  
+  // Marker
+  if (markerCoords) {
+    const p = toSVG(markerCoords.lon, markerCoords.lat);
+    
+    // Pulsierender Halo
+    const halo = document.createElementNS(svgNS, 'circle');
+    halo.setAttribute('cx', p.x); halo.setAttribute('cy', p.y);
+    halo.setAttribute('r', '20'); halo.setAttribute('fill', 'rgba(102,126,234,0.18)');
+    halo.setAttribute('stroke', 'rgba(102,126,234,0.35)'); halo.setAttribute('stroke-width', '2');
+    svg.appendChild(halo);
+    
+    // Marker-Kreis
+    const circle = document.createElementNS(svgNS, 'circle');
+    circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y);
+    circle.setAttribute('r', '11'); circle.setAttribute('fill', '#667eea');
+    circle.setAttribute('stroke', 'white'); circle.setAttribute('stroke-width', '2.5');
+    svg.appendChild(circle);
+    
+    // Ortsname-Label
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('x', p.x); label.setAttribute('y', p.y - 18);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('font-size', '20'); label.setAttribute('font-weight', 'bold');
+    label.setAttribute('font-family', 'sans-serif');
+    label.setAttribute('fill', '#333'); label.setAttribute('stroke', 'white');
+    label.setAttribute('stroke-width', '3'); label.setAttribute('paint-order', 'stroke');
+    label.textContent = ort;
+    svg.appendChild(label);
+    
+    // Hinweis wenn ausserhalb Deutschland
+    const inDE = markerCoords.lon >= lonMin - 3 && markerCoords.lon <= lonMax + 3 &&
+                 markerCoords.lat >= latMin - 3 && markerCoords.lat <= latMax + 3;
+    if (!inDE) {
+      const note = document.createElementNS(svgNS, 'text');
+      note.setAttribute('x', String(vbX + vbWidth / 2));
+      note.setAttribute('y', String(vbHeight - 12));
+      note.setAttribute('text-anchor', 'middle');
+      note.setAttribute('font-size', '15'); note.setAttribute('fill', '#777');
+      note.setAttribute('font-family', 'sans-serif');
+      note.textContent = 'Ort liegt ausserhalb der Kartenansicht';
+      svg.appendChild(note);
+    }
+  } else {
+    const note = document.createElementNS(svgNS, 'text');
+    note.setAttribute('x', String(vbX + vbWidth / 2));
+    note.setAttribute('y', String(vbHeight / 2));
+    note.setAttribute('text-anchor', 'middle');
+    note.setAttribute('font-size', '22'); note.setAttribute('fill', '#888');
+    note.setAttribute('font-family', 'sans-serif');
+    note.textContent = 'Ort nicht gefunden';
+    svg.appendChild(note);
+  }
+  
+  container.innerHTML = '';
+  container.appendChild(svg);
+  detailMap = svg;
+}
+
+async function initDetailChart(disziplin, highlightId) {
+  // Get all performances for this discipline using the global variable
+  // Filter out null/undefined/0 values
+  const disziplinLeistungen = alleLeistungenFuerPBs
+    .filter(l => l.disziplin === disziplin && l.leistung != null && l.leistung !== '' && parseFloat(l.leistung) > 0)
+    .sort((a, b) => new Date(a.datum) - new Date(b.datum));
+  
+  if (disziplinLeistungen.length === 0) {
+    document.getElementById('detailChart').parentElement.innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Keine Leistungen vorhanden</p>';
+    return;
+  }
+  
+  const ctx = document.getElementById('detailChart').getContext('2d');
+  
+  // Prepare data
+  // Prepare data with actual dates for time scale
+  const dataPoints = disziplinLeistungen.map(l => ({
+    x: new Date(l.datum),
+    y: parseFloat(l.leistung)
+  }));
+  
+  // Find the highlighted point index
+  const highlightIndex = disziplinLeistungen.findIndex(l => l.id === highlightId);
+  
+  // Create point background colors (highlight the selected one)
+  const pointBackgroundColors = disziplinLeistungen.map((l, index) => 
+    index === highlightIndex ? '#ff6b6b' : '#667eea'
+  );
+  const pointBorderColors = disziplinLeistungen.map((l, index) => 
+    index === highlightIndex ? '#ff0000' : '#667eea'
+  );
+  const pointRadii = disziplinLeistungen.map((l, index) => 
+    index === highlightIndex ? 8 : 4
+  );
+  
+  // Determine if this is a time discipline (lower is better)
+  const isTimeDiscipline = disziplin.toLowerCase().includes('m') || 
+                           disziplin.toLowerCase().includes('hürden') || 
+                           disziplin.toLowerCase().includes('hindernis');
+  
+  detailChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      datasets: [{
+        label: disziplin,
+        data: dataPoints,
+        borderColor: '#667eea',
+        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+        pointBackgroundColor: pointBackgroundColors,
+        pointBorderColor: pointBorderColors,
+        pointRadius: pointRadii,
+        pointHoverRadius: 10,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const leistung = context.parsed.y;
+              const formattedLeistung = formatiereLeistung(leistung, disziplin);
+              return `${disziplin}: ${formattedLeistung}`;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          reverse: isTimeDiscipline,
+          title: {
+            display: true,
+            text: 'Leistung'
+          }
+        },
+        x: {
+          type: 'time',
+          time: {
+            unit: 'month',
+            displayFormats: {
+              month: 'MMM yyyy'
+            }
+          },
+          title: {
+            display: true,
+            text: 'Datum'
+          }
+        }
+    }
+      }
+  });
+}
+
+// Add row click handlers to tables
+// Close detail popup with Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const popup = document.getElementById('detailPopup');
+    if (popup && popup.style.display === 'flex') {
+      closeDetailPopup();
+    }
+  }
+});
+</script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
   <style>
@@ -1731,7 +2199,6 @@ Datum: 2026-02-10
       padding-bottom: 8px;
     }
 
-
     .search-box {
       background: var(--card-bg);
       padding: 12px;
@@ -2006,7 +2473,6 @@ Datum: 2026-02-10
       }
     }
 
-
     /* Reduzierte Abstände zwischen Filtern im Leistungen-Tab */
     #leistungenTab .columns-section {
       margin-bottom: 8px;
@@ -2101,7 +2567,6 @@ Datum: 2026-02-10
       z-index: 10;
     }
 
-
     th {
       background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
       color: white;
@@ -2168,6 +2633,7 @@ Datum: 2026-02-10
 
     tbody tr {
       transition: all 0.15s ease;
+      cursor: pointer;
     }
 
     tr:last-child td {
@@ -2294,21 +2760,21 @@ Datum: 2026-02-10
       background: transparent;
     }
 
-    .tab-btn {
-      background: #f5f5f5;
-      color: #6c757d;
-      border: none;
-      padding: 12px 28px;
-      border-radius: 0px;
-      font-size: 0.9em;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: none;
-      border-bottom: 3px solid transparent;
-      position: relative;
-      border-right: 1px solid #e0e0e0;
-    }
+      .tab-btn {
+    background: #f5f5f5;
+    color: #6c757d;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 0px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.2s ease, background 0.2s ease, border-bottom-color 0.2s ease;
+    box-shadow: none;
+    border-bottom: 3px solid transparent;
+    position: relative;
+    border-right: 1px solid #e0e0e0;
+  }
 
     .tab-btn:last-child {
       border-right: none;
@@ -2321,17 +2787,16 @@ Datum: 2026-02-10
       box-shadow: none;
     }
 
-    .tab-btn.active {
-      background: white;
-      color: #667eea;
-      border-bottom: 3px solid #667eea;
-      border-top: 1px solid #e0e0e0;
-      border-left: 1px solid #e0e0e0;
-      border-right: 1px solid #e0e0e0;
-      box-shadow: none;
-      transform: none;
-      font-weight: 700;
-    }
+      .tab-btn.active {
+    background: white;
+    color: #667eea;
+    border-bottom: 3px solid #667eea;
+    border-top: 1px solid #e0e0e0;
+    border-left: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+    box-shadow: none;
+    font-weight: 600;
+  }
 
     .tab-btn.active::after {
       display: none;
@@ -2364,7 +2829,6 @@ Datum: 2026-02-10
       width: 100% !important;
       height: 100% !important;
     }
-
 
     /* Autocomplete Suggestions */
     .autocomplete-suggestions {
@@ -2697,6 +3161,7 @@ Datum: 2026-02-10
       overflow: hidden;
       transition: all 0.3s ease;
       box-shadow: 0 2px 8px var(--shadow-color);
+      cursor: pointer;
     }
 
     .pb-card-dashboard:hover {
@@ -3842,10 +4307,20 @@ Datum: 2026-02-10
 
     .main-app {
       display: none;
+      margin: 0;
+      padding: 0;
     }
 
     .main-app.logged-in {
       display: block;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
     }
 
     .logout-btn {
@@ -3868,7 +4343,6 @@ Datum: 2026-02-10
       background: rgba(255,255,255,0.3);
     }
 
-
     /* Detail Popup Modal Styles */
     .detail-popup {
       display: none;
@@ -3885,33 +4359,38 @@ Datum: 2026-02-10
       overflow-y: auto;
     }
 
-    .detail-popup-content {
-      background: var(--card-bg);
-      border-radius: var(--border-radius);
-      max-width: 1400px;
-      width: 95%;
-      height: 85vh;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      position: relative;
-      overflow: hidden;
-    }
+      .detail-popup-content {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    max-width: 1600px;
+    width: 95%;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+    resize: both;
+    min-width: 600px;
+    min-height: 400px;
+  }
 
-    .detail-popup-header {
-      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
-      color: white;
-      padding: 25px 30px;
-      border-radius: var(--border-radius) var(--border-radius) 0 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+      .detail-popup-header {
+    background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+    color: white;
+    padding: 12px 20px;
+    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: move;
+    user-select: none;
+  }
 
     .detail-popup-header h2 {
       margin: 0;
       color: white;
-      font-size: 1.8em;
+      font-size: 1.4em;
     }
 
     .detail-popup-close {
@@ -3935,48 +4414,49 @@ Datum: 2026-02-10
     }
 
     .detail-popup-body {
-      padding: 30px;
+      padding: 16px;
       flex: 1;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 10px;
     }
 
-    .detail-info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
-    }
+      .detail-info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: auto auto;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
 
-    .detail-info-item {
-      padding: 15px;
-      background: var(--input-bg);
-      border-radius: 8px;
-      border-left: 4px solid var(--btn-primary-bg);
-      transition: all 0.3s;
-    }
+      .detail-info-item {
+    padding: 5px 8px;
+    background: var(--input-bg);
+    border-radius: 4px;
+    border-left: 2px solid var(--btn-primary-bg);
+    transition: all 0.3s;
+  }
 
     .detail-info-item:hover {
       box-shadow: 0 2px 8px var(--shadow-color);
       transform: translateX(2px);
     }
 
-    .detail-info-label {
-      font-size: 0.85em;
-      color: var(--text-secondary);
-      margin-bottom: 5px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
+      .detail-info-label {
+    font-size: 0.65em;
+    color: var(--text-secondary);
+    margin-bottom: 2px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
 
-    .detail-info-value {
-      font-size: 1.3em;
-      color: var(--text-primary);
-      font-weight: 700;
-    }
+      .detail-info-value {
+    font-size: 0.9em;
+    color: var(--text-primary);
+    font-weight: 600;
+  }
 
     .detail-section {
       margin-bottom: 30px;
@@ -4001,7 +4481,7 @@ Datum: 2026-02-10
 
     .detail-map-container {
       height: 100%;
-      min-height: 300px;
+      min-height: 200px;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 4px 15px var(--shadow-color);
@@ -4009,9 +4489,9 @@ Datum: 2026-02-10
 
     .detail-visualizations {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
-      margin-bottom: 20px;
+      grid-template-columns: 70% 30%;
+      gap: 12px;
+      margin-bottom: 10px;
     }
 
     .detail-chart-wrapper,
@@ -4023,18 +4503,18 @@ Datum: 2026-02-10
     .detail-chart-wrapper h3,
     .detail-map-wrapper h3 {
       color: var(--text-primary);
-      margin-bottom: 10px;
-      font-size: 1.2em;
+      margin-bottom: 6px;
+      font-size: 1em;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 6px;
     }
 
     .detail-chart-wrapper h3::before,
     .detail-map-wrapper h3::before {
       content: '';
       width: 4px;
-      height: 20px;
+      height: 16px;
       background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
       border-radius: 2px;
     }
@@ -4042,10 +4522,23 @@ Datum: 2026-02-10
         .detail-chart-container {
       position: relative;
       height: 100%;
-      min-height: 300px;
+      min-height: 200px;
       padding: 20px;
       background: var(--input-bg);
       border-radius: 10px;
+    }
+
+    /* Resize Handle für Popup */
+    .detail-popup-content::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, transparent 50%, rgba(102, 126, 234, 0.3) 50%);
+      cursor: nwse-resize;
+      border-bottom-right-radius: var(--border-radius);
     }
 
     /* Dark Mode Anpassungen für Detail Popup */
@@ -4078,26 +4571,475 @@ Datum: 2026-02-10
       background: #383838;
     }
 
-    @media (max-width: 768px) {
+    /* ========== RESPONSIVE DESIGN ========== */
+    
+    /* Große Bildschirme (1920px+) */
+    @media (min-width: 1920px) {
       .detail-popup-content {
-        max-height: 95vh;
+        max-width: 1800px;
+        height: 92vh;
       }
-
+      
+      .detail-visualizations {
+        grid-template-columns: 75% 25%;
+        gap: 20px;
+      }
+      
+      .detail-chart-container {
+        min-height: 400px;
+      }
+      
+      .detail-map-container {
+        min-height: 400px;
+      }
+    }
+    
+    /* Desktop/Laptop (1025px - 1919px) */
+    @media (min-width: 1025px) and (max-width: 1919px) {
+      .detail-popup-content {
+        max-width: 1400px;
+        width: 90%;
+        height: 90vh;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 70% 30%;
+      }
+    }
+    
+    /* Tablet Landscape (769px - 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .detail-popup-content {
+        width: 95%;
+        height: 88vh;
+        min-width: 400px;
+      }
+      
+      .detail-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .detail-chart-container,
+      .detail-map-container {
+        min-height: 300px;
+      }
+    }
+    
+    /* Tablet Portrait & Mobile Landscape (481px - 768px) */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .detail-popup-content {
+        width: 98%;
+        height: 95vh;
+        min-width: 0;
+        padding: 0;
+      }
+      
+      .detail-popup-header {
+        padding: 10px 15px;
+      }
+      
+      .detail-popup-header h2 {
+        font-size: 1.2em;
+      }
+      
+      .detail-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      
+      .detail-info-item {
+        padding: 8px 10px;
+      }
+      
+      .detail-info-label {
+        font-size: 0.6em;
+      }
+      
+      .detail-info-value {
+        font-size: 0.85em;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      .detail-chart-wrapper h3,
+      .detail-map-wrapper h3 {
+        font-size: 0.9em;
+        margin-bottom: 4px;
+      }
+      
+      .detail-chart-container {
+        min-height: 250px;
+        padding: 10px;
+      }
+      
+      .detail-map-container {
+        min-height: 200px;
+      }
+    }
+    
+    /* Mobile Portrait (max 480px) */
+    @media (max-width: 480px) {
+      .detail-popup {
+        padding: 5px;
+      }
+      
+      .detail-popup-content {
+        width: 100%;
+        height: 98vh;
+        min-width: 0;
+        border-radius: 12px;
+      }
+      
+      .detail-popup-header {
+        padding: 8px 12px;
+      }
+      
+      .detail-popup-header h2 {
+        font-size: 1em;
+      }
+      
+      .detail-popup-close {
+        width: 28px;
+        height: 28px;
+        font-size: 1.3em;
+      }
+      
+      .detail-popup-body {
+        padding: 10px;
+        gap: 8px;
+      }
+      
       .detail-info-grid {
         grid-template-columns: 1fr;
+        gap: 6px;
+        margin-bottom: 8px;
       }
-
-      .detail-popup-header h2 {
-        font-size: 1.4em;
+      
+      .detail-info-item {
+        padding: 6px 8px;
       }
-
+      
+      .detail-info-item[style*="span 2"] {
+        grid-column: 1 !important;
+      }
+      
+      .detail-info-label {
+        font-size: 0.55em;
+        margin-bottom: 1px;
+      }
+      
+      .detail-info-value {
+        font-size: 0.8em;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 5px;
+      }
+      
+      .detail-chart-wrapper h3,
+      .detail-map-wrapper h3 {
+        font-size: 0.85em;
+        margin-bottom: 3px;
+      }
+      
       .detail-chart-container {
-        height: 300px;
+        min-height: 200px;
+        padding: 8px;
       }
-
+      
       .detail-map-container {
-        height: 250px;
+        min-height: 180px;
       }
+    }
+
+
+    /* ========== MAIN APP RESPONSIVE ========== */
+    
+    /* Container für volle Breite */
+    #main-app {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100vw !important;
+      box-sizing: border-box;
+    }
+    
+    .container {
+      max-width: 100% !important;
+      margin: 0 !important;
+      padding: 15px !important;
+    }
+    
+    /* Große Bildschirme */
+    @media (min-width: 1920px) {
+      .container {
+        padding: 20px 40px !important;
+      }
+      
+      .tab-content {
+        padding: 25px;
+      }
+      
+      .stat-card {
+        padding: 25px;
+      }
+    }
+    
+    /* Desktop */
+    @media (min-width: 1025px) and (max-width: 1919px) {
+      .container {
+        padding: 15px 30px !important;
+      }
+    }
+    
+    /* Tablet Landscape */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .container {
+        padding: 12px 20px !important;
+      }
+      
+      .tabs {
+        flex-wrap: wrap;
+      }
+      
+      .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.9em;
+      }
+      
+      .stat-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      
+      .pb-grid-dashboard {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+      
+      table {
+        font-size: 0.9em;
+      }
+      
+      th, td {
+        padding: 10px 8px !important;
+      }
+    }
+    
+    /* Tablet Portrait */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .container {
+        padding: 10px 15px !important;
+      }
+      
+      .tabs {
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      
+      .tab-btn {
+        padding: 8px 12px;
+        font-size: 0.85em;
+        flex: 1 1 calc(50% - 5px);
+      }
+      
+      .stat-grid {
+        grid-template-columns: 1fr !important;
+        gap: 12px;
+      }
+      
+      .stat-card {
+        padding: 15px;
+      }
+      
+      .stat-value {
+        font-size: 2em !important;
+      }
+      
+      .pb-grid-dashboard {
+        grid-template-columns: 1fr !important;
+      }
+      
+      .pb-grid-dashboard-2col {
+        grid-template-columns: 1fr !important;
+      }
+      
+      table {
+        font-size: 0.85em;
+      }
+      
+      th, td {
+        padding: 8px 6px !important;
+      }
+      
+      .filter-section {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .filter-section > div {
+        width: 100% !important;
+      }
+    }
+    
+    /* Mobile */
+    @media (max-width: 480px) {
+      .container {
+        padding: 8px 10px !important;
+      }
+      
+      header {
+        padding: 12px 10px !important;
+      }
+      
+      header h1 {
+        font-size: 1.3em !important;
+      }
+      
+      .header-actions {
+        gap: 5px;
+      }
+      
+      .tabs {
+        flex-wrap: wrap;
+        gap: 4px;
+        padding: 8px !important;
+      }
+      
+      .tab-btn {
+        padding: 6px 10px;
+        font-size: 0.75em;
+        flex: 1 1 calc(50% - 4px);
+        min-width: 0;
+      }
+      
+      .tab-content {
+        padding: 10px;
+      }
+      
+      .stat-grid {
+        grid-template-columns: 1fr !important;
+        gap: 10px;
+      }
+      
+      .stat-card {
+        padding: 12px;
+      }
+      
+      .stat-label {
+        font-size: 0.7em;
+      }
+      
+      .stat-value {
+        font-size: 1.6em !important;
+      }
+      
+      .pb-grid-dashboard,
+      .pb-grid-dashboard-2col {
+        grid-template-columns: 1fr !important;
+        gap: 8px;
+      }
+      
+      .pb-card-dashboard {
+        padding: 12px;
+      }
+      
+      .pb-card-dashboard .performance {
+        font-size: 1.5em !important;
+      }
+      
+      table {
+        font-size: 0.75em;
+      }
+      
+      th, td {
+        padding: 6px 4px !important;
+      }
+      
+      .filter-section {
+        flex-direction: column;
+        gap: 8px;
+      }
+      
+      .filter-section > div,
+      .filter-section input,
+      .filter-section select {
+        width: 100% !important;
+      }
+      
+      button {
+        padding: 8px 12px !important;
+        font-size: 0.85em !important;
+      }
+    }
+    
+    /* ========== MODALS RESPONSIVE ========== */
+    
+    /* Leistung Modal & Import Modal */
+    @media (max-width: 768px) {
+      #leistungModal > div,
+      #importModal > div {
+        max-width: 95% !important;
+        width: 95% !important;
+        padding: 20px !important;
+      }
+      
+      #leistungModal h2,
+      #importModal h2 {
+        font-size: 1.3em !important;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      #leistungModal,
+      #importModal {
+        padding: 10px !important;
+      }
+      
+      #leistungModal > div,
+      #importModal > div {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 15px !important;
+        max-height: 95vh;
+        overflow-y: auto;
+      }
+      
+      #leistungModal h2,
+      #importModal h2 {
+        font-size: 1.1em !important;
+      }
+      
+      #leistungModal input,
+      #leistungModal select,
+      #importModal input {
+        padding: 8px !important;
+        font-size: 0.9em !important;
+      }
+      
+      #leistungModal label,
+      #importModal label {
+        font-size: 0.85em !important;
+      }
+      
+      #leistungModal button,
+      #importModal button {
+        padding: 8px 15px !important;
+        font-size: 0.9em !important;
+      }
+    }
+    
+    /* Overflow fix für body */
+    body.modal-open {
+      overflow: hidden;
     }
 
   </style>
@@ -4182,7 +5124,6 @@ Datum: 2026-02-10
     </div>
   </div>
 </div>
-
 
 <!-- Login Screen -->
 
@@ -4396,10 +5337,10 @@ Datum: 2026-02-10
               Wettkampforte
             </h3>
             <div class="dashboard-map-container" style="height: 640px;">
-              <div id="mapContainer" style="position: relative; height: 600px; background: #f8f9fa; border-radius: 8px; overflow: hidden; cursor: grab;" onmousedown="startMapDrag(event)" onwheel="zoomMap(event)">
+              <div id="mapContainer" style="position: relative; height: 600px; background: #d0e8f5; border-radius: 8px; overflow: hidden; cursor: grab;" onmousedown="startMapDrag(event)" onwheel="zoomMap(event)">
                 <svg id="germanyMap" viewBox="-100 0 600 650" style="width: 100%; height: 100%; transform-origin: 0 0;">
                   <!-- Hintergrund -->
-                  <rect x="-100" y="0" width="600" height="650" fill="#f8f9fa" opacity="1"/>
+                  <rect x="-100" y="0" width="600" height="650" fill="#d0e8f5" opacity="1"/>
                   
                   <!-- Deutschlandkarte - korrekte Grenze -->
                   <g id="germanyBorder"></g>
@@ -4825,7 +5766,6 @@ Datum: 2026-02-10
           </details>
         </div>
 
-
         <div class="filter-section">
           <details>
       <summary>
@@ -5040,7 +5980,6 @@ async function checkSession() {
   console.log('Checking session on page load...');
   
   // Wait a bit for auth state listener to initialize
-  await new Promise(resolve => setTimeout(resolve, 100));
   
   // If auth is already being handled, don't interfere
   if (isHandlingAuth) {
@@ -5356,7 +6295,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         console.log('⚠️ Waiting for database trigger to create profile...');
         
         // Wait a moment for the trigger to execute (in case it's delayed)
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Try to fetch again
         const { data: retryAthlete, error: retryError } = await supabaseClient
@@ -5485,7 +6424,6 @@ async function handleLogout() {
   
   showLoginScreen();
 }
-
 
 // ========== PROTECTION: Ensure non-admin users can only see their own data ==========
 function ensureOwnAthleteSelected() {
@@ -5642,8 +6580,6 @@ selectAthlete = function(id, vorname, name, jahrgang) {
   }
   originalSelectAthlete(id, vorname, name, jahrgang);
 };
-
-
 
 /* ================= GLOBALE DATEN ================= */
 let sortSpalte = null;
@@ -6042,8 +6978,6 @@ async function ladeAlleAthleten() {
     alleAthleten = [];
   }
 }
-
-
 
 /* ================= DISZIPLINEN ================= */
 async function ladeDisziplinen() {
@@ -6967,6 +7901,46 @@ function getEinheit(disziplin) {
   
   // Fallback
   return "Pkt.";
+}
+
+/* ================= ROW CLICK HANDLERS FÜR DETAIL POPUP ================= */
+function addRowClickHandlers() {
+  // Get all table rows in tbody
+  const rows = document.querySelectorAll('tbody tr');
+  
+  rows.forEach(row => {
+    // Skip if this is a separator row
+    if (row.classList.contains('year-separator')) {
+      return;
+    }
+    
+    row.style.cursor = 'pointer';
+    
+    // Remove old event listener if it exists (prevent duplicates)
+    const newRow = row.cloneNode(true);
+    row.parentNode.replaceChild(newRow, row);
+    
+    newRow.addEventListener('click', function(e) {
+      // Don't open if we're currently resizing
+      if (isResizing) {
+        return;
+      }
+      
+      // Don't open if clicking on a button
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+        return;
+      }
+      
+      // Get leistung data from row
+      const leistungId = this.dataset.leistungId;
+      if (leistungId) {
+        const leistungData = alleLeistungenFuerPBs.find(l => l.id == leistungId);
+        if (leistungData) {
+          openDetailPopup(leistungData);
+        }
+      }
+    });
+  });
 }
 
 /* ================= ZEIGE TABELLE MIT PBS ================= */
@@ -8127,7 +9101,6 @@ async function ladeDashboardDaten() {
     athletInfoDiv.style.display = 'block';
   }
 
-
   // Bestleistungen berechnen (gruppiert nach Disziplin)
   const pbMap = {};
   
@@ -8210,14 +9183,16 @@ async function ladeDashboardDaten() {
     return;
   }
 
-  grid.innerHTML = topPBs.map((pb, index) => `
-    <div class="pb-card-dashboard" onclick="switchTabToBestleistungen()">
+  grid.innerHTML = topPBs.map((pb, index) => {
+    const pbDataJson = JSON.stringify(pb).replace(/'/g, "&apos;");
+    return `
+    <div class="pb-card-dashboard" onclick='openDetailPopup(${pbDataJson})'>
       <div class="rank">${index + 1}</div>
       <div class="discipline">${pb.disziplin}</div>
       <div class="performance">${formatiereLeistung(pb.leistung, pb.disziplin)}</div>
       <div class="date">${new Date(pb.datum).toLocaleDateString('de-DE')}${pb.ort ? ' • ' + pb.ort : ''}</div>
     </div>
-  `).join('');
+  `}).join('');
 
   // Berechne und zeige Top 3 häufigste Disziplinen
   const disziplinenCount = {};
@@ -8259,7 +9234,6 @@ async function ladeDashboardDaten() {
   console.log('Dashboard geladen mit', topPBs.length, 'Bestleistungen');
 }
 
-
 // Funktion zum Wechseln zum Analyse Tab und Anzeige der Bestleistungen
 function switchTabToBestleistungen() {
   // Wechsle zum Analyse Tab
@@ -8273,7 +9247,6 @@ function switchTabToBestleistungen() {
     }
   }, 100);
 }
-
 
 function switchTab(tabName) {
   console.log('=== SWITCH TAB:', tabName, '===');
@@ -8520,7 +9493,6 @@ function normalizeLeistung(leistung, disziplin) {
     return leistung;
 }
 
-
 async function befuelleAnalyseJahre() {
     // Holt alle Daten, um die Jahre zu extrahieren
     const { data, error } = await supabaseClient
@@ -8557,11 +9529,6 @@ window.onload = function() {
 /* ================= WELTREKORD-BASIERTE SCORE-BERECHNUNG ================= */
 
 // Score calculations removed - using database score field
-
-
-
-
-
 
 /* ================= DIAGRAMM ANZEIGEN ================= */
 async function zeigeDiagramm() {
@@ -9211,7 +10178,6 @@ function klappeAusDiagramm() {
 /* ================= SB-DIAGRAMM FUNKTIONEN ================= */
 let sbChartInstance = null;
 
-
 /* ===== SCORE-BASIERTE ACHSEN-SKALIERUNG =====
  * Die Y-Achsen verwenden jetzt direkt die Scores aus der Datenbank (la.leistung.score).
  * Für die Anzeige werden die originalen Leistungswerte in den Tooltips gezeigt.
@@ -9240,7 +10206,6 @@ async function zeigeSBDiagramm() {
     // Hole Checkbox-Werte für SBs und Durchschnitte
     const showSBs = document.getElementById("sbShowSBs").checked;
     const showAverages = document.getElementById("sbShowAverages").checked;
-
 
     // Hole Zeitraum-Filter
     const filterFrom = document.getElementById("sbFilterFrom").value;
@@ -9274,7 +10239,6 @@ async function zeigeSBDiagramm() {
         alert("Keine Daten für " + disziplin + " gefunden.");
         return;
     }
-
 
     // Funktion zum Gruppieren und Berechnen von SBs und Durchschnitten
     function berechneSaisonWerte(daten, disziplinName) {
@@ -10213,8 +11177,6 @@ function berechneZeitbasiertenTrend(daten, istZeitDisziplin) {
     return { steigung, achsenabschnitt };
 }
 
-
-
 function getEinheit(disziplin) {
     const disziplinLower = disziplin.toLowerCase();
     if (disziplinLower.includes('sprung') || disziplinLower.includes('wurf') || disziplinLower.includes('stoß')) {
@@ -10240,7 +11202,6 @@ function klappeAusPrognoseDiagramm() {
     document.getElementById('prognoseDiagrammSchließenBtn').style.display = 'inline-block';
     document.getElementById('prognoseDiagrammAusklappenBtn').style.display = 'none';
 }
-
 
 function statistikFilterZuruecksetzen() {
     document.getElementById('statistikFilterDisziplin').value = '';
@@ -10518,12 +11479,10 @@ function loadGermanyBorder() {
       pathData += ' Z';
       
       path.setAttribute('d', pathData);
-      path.setAttribute('fill', '#e3f2fd');
-      path.setAttribute('fill-opacity', '0.3');
+      path.setAttribute('fill', '#e8f5e9');
       path.setAttribute('stroke', '#9e9e9e');
       path.setAttribute('stroke-width', '1');
       path.setAttribute('stroke-opacity', '0.5');
-      path.setAttribute('stroke-linejoin', 'round');
       path.setAttribute('data-state', stateId);
       path.setAttribute('data-state-name', stateInfo.name);
       path.setAttribute('data-part', partIndex);
@@ -10947,7 +11906,7 @@ function renderOrtTable() {
 
     .detail-map-container {
       height: 100%;
-      min-height: 300px;
+      min-height: 200px;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 4px 15px var(--shadow-color);
@@ -10956,7 +11915,7 @@ function renderOrtTable() {
     .detail-chart-container {
       position: relative;
       height: 100%;
-      min-height: 300px;
+      min-height: 200px;
       padding: 20px;
       background: var(--input-bg);
       border-radius: 10px;
@@ -10992,25 +11951,195 @@ function renderOrtTable() {
       background: #383838;
     }
 
-    @media (max-width: 768px) {
+    /* ========== RESPONSIVE DESIGN ========== */
+    
+    /* Große Bildschirme (1920px+) */
+    @media (min-width: 1920px) {
       .detail-popup-content {
-        max-height: 95vh;
+        max-width: 1800px;
+        height: 92vh;
       }
-
+      
+      .detail-visualizations {
+        grid-template-columns: 75% 25%;
+        gap: 20px;
+      }
+      
+      .detail-chart-container {
+        min-height: 400px;
+      }
+      
+      .detail-map-container {
+        min-height: 400px;
+      }
+    }
+    
+    /* Desktop/Laptop (1025px - 1919px) */
+    @media (min-width: 1025px) and (max-width: 1919px) {
+      .detail-popup-content {
+        max-width: 1400px;
+        width: 90%;
+        height: 90vh;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 70% 30%;
+      }
+    }
+    
+    /* Tablet Landscape (769px - 1024px) */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .detail-popup-content {
+        width: 95%;
+        height: 88vh;
+        min-width: 400px;
+      }
+      
+      .detail-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .detail-chart-container,
+      .detail-map-container {
+        min-height: 300px;
+      }
+    }
+    
+    /* Tablet Portrait & Mobile Landscape (481px - 768px) */
+    @media (min-width: 481px) and (max-width: 768px) {
+      .detail-popup-content {
+        width: 98%;
+        height: 95vh;
+        min-width: 0;
+        padding: 0;
+      }
+      
+      .detail-popup-header {
+        padding: 10px 15px;
+      }
+      
+      .detail-popup-header h2 {
+        font-size: 1.2em;
+      }
+      
+      .detail-info-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      
+      .detail-info-item {
+        padding: 8px 10px;
+      }
+      
+      .detail-info-label {
+        font-size: 0.6em;
+      }
+      
+      .detail-info-value {
+        font-size: 0.85em;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      
+      .detail-chart-wrapper h3,
+      .detail-map-wrapper h3 {
+        font-size: 0.9em;
+        margin-bottom: 4px;
+      }
+      
+      .detail-chart-container {
+        min-height: 250px;
+        padding: 10px;
+      }
+      
+      .detail-map-container {
+        min-height: 200px;
+      }
+    }
+    
+    /* Mobile Portrait (max 480px) */
+    @media (max-width: 480px) {
+      .detail-popup {
+        padding: 5px;
+      }
+      
+      .detail-popup-content {
+        width: 100%;
+        height: 98vh;
+        min-width: 0;
+        border-radius: 12px;
+      }
+      
+      .detail-popup-header {
+        padding: 8px 12px;
+      }
+      
+      .detail-popup-header h2 {
+        font-size: 1em;
+      }
+      
+      .detail-popup-close {
+        width: 28px;
+        height: 28px;
+        font-size: 1.3em;
+      }
+      
+      .detail-popup-body {
+        padding: 10px;
+        gap: 8px;
+      }
+      
       .detail-info-grid {
         grid-template-columns: 1fr;
+        gap: 6px;
+        margin-bottom: 8px;
       }
-
-      .detail-popup-header h2 {
-        font-size: 1.4em;
+      
+      .detail-info-item {
+        padding: 6px 8px;
       }
-
+      
+      .detail-info-item[style*="span 2"] {
+        grid-column: 1 !important;
+      }
+      
+      .detail-info-label {
+        font-size: 0.55em;
+        margin-bottom: 1px;
+      }
+      
+      .detail-info-value {
+        font-size: 0.8em;
+      }
+      
+      .detail-visualizations {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        margin-bottom: 5px;
+      }
+      
+      .detail-chart-wrapper h3,
+      .detail-map-wrapper h3 {
+        font-size: 0.85em;
+        margin-bottom: 3px;
+      }
+      
       .detail-chart-container {
-        height: 300px;
+        min-height: 200px;
+        padding: 8px;
       }
-
+      
       .detail-map-container {
-        height: 250px;
+        min-height: 180px;
       }
     }
 
@@ -11364,7 +12493,6 @@ function updateMarkerSizes() {
   });
 }
 
-
 // ============================================
 // DARK MODE FUNCTIONS
 // ============================================
@@ -11420,7 +12548,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 });
-
 
 // ============================================
 // ZIEL-TRACKER FUNCTIONS
@@ -11484,7 +12611,6 @@ function isTimeDiscipline(discipline) {
   
   return false;
 }
-
 
 function loadGoals() {
   const stored = localStorage.getItem('athletGoals');
@@ -12164,17 +13290,12 @@ async function renderGoalsToContainer(goalsArray, container, leistungen, athletI
   }
 }
 
-
 // Initialisiere Goals beim Laden
 loadGoals();
-
 
 // ============================================
 // LOGIN SYSTEM
 // ============================================
-
-
-
 
 // ========== RESET FUNKTION ==========
 function resetAllFiltersAndSettings() {
@@ -13030,7 +14151,6 @@ async function openEditLeistungModal(leistungId) {
   document.getElementById('leistungModal').style.display = 'flex';
 }
 
-
 // Delete Leistung
 async function deleteLeistung() {
   const leistungId = document.getElementById('editLeistungId').value;
@@ -13321,7 +14441,6 @@ window.setTimeout = function(fn, delay) {
 
 </div> <!-- Close main-app -->
 
-
 </div> <!-- Close mainApp -->
 <!-- Modal: Leistung hinzufügen/bearbeiten -->
 <div id="leistungModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
@@ -13399,7 +14518,6 @@ window.setTimeout = function(fn, delay) {
   </div>
 </div>
 
-
 <!-- Detail Popup Modal -->
 <div id="detailPopup" class="detail-popup" onclick="closeDetailPopup(event)">
   <div class="detail-popup-content" onclick="event.stopPropagation()">
@@ -13430,355 +14548,6 @@ window.setTimeout = function(fn, delay) {
     </div>
   </div>
 </div>
-
-
-<script>
-// Detail Popup Functions
-let detailMap = null;
-let detailChart = null;
-
-function openDetailPopup(leistungData) {
-  console.log('Opening detail popup for:', leistungData);
-  
-  // Verhindere, dass das Popup öffnet wenn wir gerade Spalten resized haben
-  if (isResizing) {
-    console.log('Resizing detected, not opening popup');
-    return;
-  }
-  
-  const popup = document.getElementById('detailPopup');
-  const title = document.getElementById('detailPopupTitle');
-  const infoGrid = document.getElementById('detailInfoGrid');
-  
-  // Set title
-  title.textContent = `${leistungData.disziplin} - ${formatiereDatum(leistungData.datum)}`;
-  
-  // Build info grid
-  infoGrid.innerHTML = '';
-  
-  const infoItems = [
-    { label: 'Datum', value: formatiereDatum(leistungData.datum) },
-    { label: 'Disziplin', value: leistungData.disziplin },
-    { label: 'Leistung', value: formatiereLeistung(leistungData.leistung, leistungData.disziplin) },
-    { label: 'Ort', value: leistungData.ort || '-' },
-    { label: 'Wettkampf', value: leistungData.wk_bz || '-' },
-    { label: 'Platzierung', value: leistungData.platzierung || '-' },
-    { label: 'Altersklasse', value: leistungData.ak || '-' }
-  ];
-  
-  infoItems.forEach(item => {
-    const div = document.createElement('div');
-    div.className = 'detail-info-item';
-    div.innerHTML = `
-      <div class="detail-info-label">${item.label}</div>
-      <div class="detail-info-value">${item.value}</div>
-    `;
-    infoGrid.appendChild(div);
-  });
-  
-  // Show popup
-  popup.style.display = 'flex';
-  document.body.style.overflow = 'hidden';
-  
-  // Initialize map after a short delay to ensure the container is visible
-  setTimeout(() => {
-    initDetailMap(leistungData.ort);
-    initDetailChart(leistungData.disziplin, leistungData.id);
-  }, 100);
-}
-
-function closeDetailPopup(event) {
-  // Wenn event existiert und das Ziel nicht der Hintergrund ist, nicht schließen
-  if (event && event.target.id !== 'detailPopup') {
-    return;
-  }
-  
-  const popup = document.getElementById('detailPopup');
-  popup.style.display = 'none';
-  document.body.style.overflow = '';
-  
-  // Cleanup map and chart
-  if (detailMap) {
-    const mapContainer = document.getElementById('detailMap');
-    if (mapContainer) mapContainer.innerHTML = '';
-    detailMap = null;
-  }
-  if (detailChart) {
-    detailChart.destroy();
-    detailChart = null;
-  }
-}
-
-async function initDetailMap(ort) {
-  const container = document.getElementById('detailMap');
-  
-  if (!ort) {
-    container.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">Kein Ort angegeben</p>';
-    return;
-  }
-  
-  // Geocode mit Nominatim
-  let markerCoords = null;
-  try {
-    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}&limit=1`);
-    const data = await resp.json();
-    if (data && data.length > 0) {
-      markerCoords = { lon: parseFloat(data[0].lon), lat: parseFloat(data[0].lat) };
-    }
-  } catch(e) {
-    console.warn('Geocoding failed:', e);
-  }
-
-  // SVG-Karte aufbauen (gleiche Projektion wie Dashboard)
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const vbX = -100, vbWidth = 600, vbHeight = 650, padding = 30;
-  const lonMin = 5.8, lonMax = 15.0, latMin = 47.3, latMax = 55.0;
-  
-  function mercY(lat) {
-    const r = lat * Math.PI / 180;
-    return Math.log(Math.tan(Math.PI / 4 + r / 2));
-  }
-  const mYMin = mercY(latMin), mYMax = mercY(latMax);
-  
-  function toSVG(lon, lat) {
-    const relX = (lon - lonMin) / (lonMax - lonMin);
-    const relY = (mercY(lat) - mYMin) / (mYMax - mYMin);
-    return {
-      x: vbX + padding + relX * (vbWidth - 2 * padding),
-      y: vbHeight - padding - relY * (vbHeight - 2 * padding)
-    };
-  }
-  
-  const svg = document.createElementNS(svgNS, 'svg');
-  svg.setAttribute('viewBox', `${vbX} 0 ${vbWidth} ${vbHeight}`);
-  svg.setAttribute('style', 'width:100%;height:100%;display:block;');
-  
-  // Meeres-Hintergrund
-  const bg = document.createElementNS(svgNS, 'rect');
-  bg.setAttribute('x', vbX); bg.setAttribute('y', '0');
-  bg.setAttribute('width', vbWidth); bg.setAttribute('height', vbHeight);
-  bg.setAttribute('fill', '#d0e8f5');
-  svg.appendChild(bg);
-  
-  // Bundesland-Grenzen
-  const borderGroup = document.createElementNS(svgNS, 'g');
-  for (const [, stateInfo] of Object.entries(borderData)) {
-    stateInfo.parts.forEach(partCoords => {
-      const path = document.createElementNS(svgNS, 'path');
-      let d = '';
-      partCoords.forEach((coord, i) => {
-        const p = toSVG(coord.lon, coord.lat);
-        d += (i === 0 ? 'M ' : ' L ') + `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
-      });
-      d += ' Z';
-      path.setAttribute('d', d);
-      path.setAttribute('fill', '#e8f5e9');
-      path.setAttribute('stroke', '#90a4ae');
-      path.setAttribute('stroke-width', '1.2');
-      path.setAttribute('stroke-linejoin', 'round');
-      borderGroup.appendChild(path);
-    });
-  }
-  svg.appendChild(borderGroup);
-  
-  // Marker
-  if (markerCoords) {
-    const p = toSVG(markerCoords.lon, markerCoords.lat);
-    
-    // Pulsierender Halo
-    const halo = document.createElementNS(svgNS, 'circle');
-    halo.setAttribute('cx', p.x); halo.setAttribute('cy', p.y);
-    halo.setAttribute('r', '20'); halo.setAttribute('fill', 'rgba(102,126,234,0.18)');
-    halo.setAttribute('stroke', 'rgba(102,126,234,0.35)'); halo.setAttribute('stroke-width', '2');
-    svg.appendChild(halo);
-    
-    // Marker-Kreis
-    const circle = document.createElementNS(svgNS, 'circle');
-    circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y);
-    circle.setAttribute('r', '11'); circle.setAttribute('fill', '#667eea');
-    circle.setAttribute('stroke', 'white'); circle.setAttribute('stroke-width', '2.5');
-    svg.appendChild(circle);
-    
-    // Ortsname-Label
-    const label = document.createElementNS(svgNS, 'text');
-    label.setAttribute('x', p.x); label.setAttribute('y', p.y - 18);
-    label.setAttribute('text-anchor', 'middle');
-    label.setAttribute('font-size', '20'); label.setAttribute('font-weight', 'bold');
-    label.setAttribute('font-family', 'sans-serif');
-    label.setAttribute('fill', '#333'); label.setAttribute('stroke', 'white');
-    label.setAttribute('stroke-width', '3'); label.setAttribute('paint-order', 'stroke');
-    label.textContent = ort;
-    svg.appendChild(label);
-    
-    // Hinweis wenn ausserhalb Deutschland
-    const inDE = markerCoords.lon >= lonMin - 3 && markerCoords.lon <= lonMax + 3 &&
-                 markerCoords.lat >= latMin - 3 && markerCoords.lat <= latMax + 3;
-    if (!inDE) {
-      const note = document.createElementNS(svgNS, 'text');
-      note.setAttribute('x', String(vbX + vbWidth / 2));
-      note.setAttribute('y', String(vbHeight - 12));
-      note.setAttribute('text-anchor', 'middle');
-      note.setAttribute('font-size', '15'); note.setAttribute('fill', '#777');
-      note.setAttribute('font-family', 'sans-serif');
-      note.textContent = 'Ort liegt ausserhalb der Kartenansicht';
-      svg.appendChild(note);
-    }
-  } else {
-    const note = document.createElementNS(svgNS, 'text');
-    note.setAttribute('x', String(vbX + vbWidth / 2));
-    note.setAttribute('y', String(vbHeight / 2));
-    note.setAttribute('text-anchor', 'middle');
-    note.setAttribute('font-size', '22'); note.setAttribute('fill', '#888');
-    note.setAttribute('font-family', 'sans-serif');
-    note.textContent = 'Ort nicht gefunden';
-    svg.appendChild(note);
-  }
-  
-  container.innerHTML = '';
-  container.appendChild(svg);
-  detailMap = svg;
-}
-
-async function initDetailChart(disziplin, highlightId) {
-  // Get all performances for this discipline using the global variable
-  const disziplinLeistungen = alleLeistungenFuerPBs
-    .filter(l => l.disziplin === disziplin)
-    .sort((a, b) => new Date(a.datum) - new Date(b.datum));
-  
-  if (disziplinLeistungen.length === 0) {
-    document.getElementById('detailChart').parentElement.innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Keine Leistungen vorhanden</p>';
-    return;
-  }
-  
-  const ctx = document.getElementById('detailChart').getContext('2d');
-  
-  // Prepare data
-  const labels = disziplinLeistungen.map(l => formatiereDatum(l.datum));
-  const dataPoints = disziplinLeistungen.map(l => parseFloat(l.leistung));
-  
-  // Find the highlighted point index
-  const highlightIndex = disziplinLeistungen.findIndex(l => l.id === highlightId);
-  
-  // Create point background colors (highlight the selected one)
-  const pointBackgroundColors = disziplinLeistungen.map((l, index) => 
-    index === highlightIndex ? '#ff6b6b' : '#667eea'
-  );
-  const pointBorderColors = disziplinLeistungen.map((l, index) => 
-    index === highlightIndex ? '#ff0000' : '#667eea'
-  );
-  const pointRadii = disziplinLeistungen.map((l, index) => 
-    index === highlightIndex ? 8 : 4
-  );
-  
-  // Determine if this is a time discipline (lower is better)
-  const isTimeDiscipline = disziplin.toLowerCase().includes('m') || 
-                           disziplin.toLowerCase().includes('hürden') || 
-                           disziplin.toLowerCase().includes('hindernis');
-  
-  detailChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: disziplin,
-        data: dataPoints,
-        borderColor: '#667eea',
-        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-        pointBackgroundColor: pointBackgroundColors,
-        pointBorderColor: pointBorderColors,
-        pointRadius: pointRadii,
-        pointHoverRadius: 10,
-        tension: 0.3,
-        fill: true
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          display: true,
-          position: 'top'
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              const leistung = context.parsed.y;
-              const formattedLeistung = formatiereLeistung(leistung, disziplin);
-              return `${disziplin}: ${formattedLeistung}`;
-            }
-          }
-        }
-      },
-      scales: {
-        y: {
-          reverse: isTimeDiscipline,
-          title: {
-            display: true,
-            text: 'Leistung'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Datum'
-          }
-        }
-      }
-    }
-  });
-}
-
-// Add row click handlers to tables
-function addRowClickHandlers() {
-  // Get all table rows in tbody
-  const rows = document.querySelectorAll('tbody tr');
-  
-  rows.forEach(row => {
-    // Skip if this is a separator row
-    if (row.classList.contains('year-separator')) {
-      return;
-    }
-    
-    row.style.cursor = 'pointer';
-    
-    // Remove old event listener if it exists (prevent duplicates)
-    const newRow = row.cloneNode(true);
-    row.parentNode.replaceChild(newRow, row);
-    
-    newRow.addEventListener('click', function(e) {
-      // Don't open if we're currently resizing
-      if (isResizing) {
-        return;
-      }
-      
-      // Don't open if clicking on a button
-      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
-        return;
-      }
-      
-      // Get leistung data from row
-      const leistungId = this.dataset.leistungId;
-      if (leistungId) {
-        const leistungData = alleLeistungenFuerPBs.find(l => l.id == leistungId);
-        if (leistungData) {
-          openDetailPopup(leistungData);
-        }
-      }
-    });
-  });
-}
-
-// Close detail popup with Escape key
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') {
-    const popup = document.getElementById('detailPopup');
-    if (popup && popup.style.display === 'flex') {
-      closeDetailPopup();
-    }
-  }
-});
-</script>
 
 </body>
 </html>
