@@ -1,8 +1,280 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.12.0
+Version 3.17.2
 Datum: 2026-02-10
+
+
+
+Änderungen in v3.17.2:
+- VERBESSERUNG: Detail-Pop-up Daten größer und prominenter
+  * Label: 0.65em → 0.75em
+  * Wert: 0.9em → 1.05em
+  * Padding: 5px 8px → 8px 12px
+  * Gap: 10px → 12px
+- VERBESSERUNG: Diagramm und Karte im Pop-up kleiner
+  * min-height: 200px → 150px
+  * Padding Chart: 20px → 15px
+  * Überschriften: 1em → 0.95em
+  * Besseres Verhältnis zwischen Daten und Visualisierungen
+- VERBESSERUNG: Summary-Hover auch bei geöffnetem Zustand
+  * Graue Box erscheint beim Hovern auch wenn details geöffnet ist
+- VERBESSERUNG: Leistungs-Counter dezenter
+  * Schriftgröße: 1.1em → 0.85em (Desktop), 1em → 0.8em (Mobile)
+  * Farbe: #888 (grau statt schwarz)
+  * font-weight: 500
+
+Änderungen in v3.17.1:
+- VERBESSERUNG: Summary-Elemente im Leistungen-Tab
+  * Graue Boxen nur beim Hovern sichtbar (wie im Analyse-Tab)
+  * Transparenter Hintergrund standardmäßig
+  * Bessere visuelle Konsistenz
+- VERBESSERUNG: Header deutlich kompakter
+  * Padding von 20px auf 10px reduziert
+  * Buttons-Position angepasst (top: 10px statt 20px)
+  * Logo-Größe bleibt unverändert bei 250px
+
+Änderungen in v3.17.0:
+- VERBESSERUNG: Leistungswert im Detail-Pop-up fettgedruckt (font-weight: 700)
+- VERBESSERUNG: Spaltenauswahl und Filter im Leistungen-Tab ein-/ausklappbar
+  * details/summary Elemente für bessere Übersichtlichkeit
+  * Saubere Hover-Effekte
+  * Filter standardmäßig geöffnet, Spalten eingeklappt
+- FIX: Bündigkeit im Leistungen-Tab
+  * Action-Buttons, Spaltenauswahl, Filter und Tabelle sind bündig (15px padding)
+  * Einheitliches Layout
+
+Änderungen in v3.16.0:
+- FIX: Leistungsformatierung in Chart-Tabellen
+  * Leistungen unter Diagrammen werden jetzt korrekt mit Einheiten formatiert
+  * Komma statt Punkt als Dezimaltrennzeichen
+  * 2 Nachkommastellen bei Sprung-/Wurf-Disziplinen
+  * Zeitformat (min:sek,hundertstel) für Laufdisziplinen
+- FIX: Vollständige Daten im Detail-Popup
+  * Alle Felder (Wettkampfbezeichnung, Platzierung, AK, Typ) werden nun angezeigt
+  * Query erweitert um alle Felder zu laden
+  * Daten werden vollständig an das Popup übergeben
+
+Änderungen in v3.15.1:
+- VERBESSERUNG: Größere Schriftgrößen für bessere Lesbarkeit
+  * Haupttabs: 0.9em → 1em
+  * Untertabs: 0.85em → 0.95em
+
+Änderungen in v3.15.0:
+- VERBESSERUNG: Untertabs "Entwicklungen" und "Statistiken" optimiert
+  * Direkt unter Haupttabs ohne Abstand (margin-bottom: 0 wenn Analyse aktiv)
+  * Rechteckiger Stil wie Haupttabs (border-radius: 0)
+  * Etwas kleiner und zurückhaltender als Haupttabs (kleinerer Text, weniger Padding)
+  * Leichter Gradient-Hintergrund für visuellen Unterschied
+  * Hellere Farben um sie als Untertabs erkennbar zu machen
+
+Änderungen in v3.14.0:
+- FIX: JavaScript Syntax-Fehler behoben
+  * Extra schließende Klammer entfernt  
+  * CSS außerhalb Script-Tags entfernt
+  * Code ist syntaktisch korrekt
+- FIX: createLeistungsentwicklungTable definiert
+  * Alle drei Tabellenfunktionen verfügbar
+  * createLeistungsentwicklungTable, createSBTable, createPrognoseTable
+- PERFEKT: Optimales Spacing
+  * Header: Geht bis zum Bildschirmrand (0px)
+  * Content: 15px Padding links/rechts (minimaler Abstand)
+  * Professionell und luftig
+
+Änderungen in v3.13.3:
+- FIX: Detail-Pop-ups funktionieren jetzt in allen Chart-Tabellen
+  * Vollständiges Datenobjekt wird an openDetailPopup() übergeben
+  * Klick auf Tabellenzeilen öffnet korrekt das Detail-Pop-up
+  * Alle Informationen werden korrekt angezeigt
+- VERBESSERUNG: Alle Chart-Tabellen im gleichen Stil wie Leistungstabelle
+  * Gradient-Header (Lila) wie in Haupttabelle
+  * table-wrapper mit gleichem Design
+  * Uppercase Spaltennamen
+  * Konsistente Sortierung (neueste zuerst)
+  * Hover-Effekte und Cursor-Pointer
+  * Professionelles, einheitliches Erscheinungsbild
+- FIX: Rand-Problem komplett behoben
+  * Absolute Null-Margin/Padding für alle Hauptcontainer
+  * !important Flags für zuverlässige Umsetzung
+  * Interne Elemente (Filter, Charts) mit 15px Innenabstand
+  * App geht jetzt wirklich bis zum Bildschirmrand
+  * box-sizing: border-box für alle Elemente
+
+Änderungen in v3.13.2:
+- FIX: showDetailPopup Fehler behoben
+  * Alle Aufrufe von showDetailPopup() zu openDetailPopup() geändert
+  * Tabellen-Klicks funktionieren nun korrekt
+  * Detail-Pop-up öffnet sich beim Klick auf Tabellenzeilen
+- VERBESSERUNG: Unter-Tabs im Analyse-Bereich redesigned
+  * Stil an Haupt-Tabs angepasst
+  * Gleiche Optik mit Border-Effekten
+  * Bessere Integration ins Gesamtdesign
+  * Konsistentes Hover-Verhalten
+  * Dark Mode optimiert
+- VERBESSERUNG: Tabellen-Styling konsistent
+  * Alle Chart-Tabellen nutzen einheitliches Design
+  * Gradient-Header in Lila-Tönen
+  * Hover-Effekte für bessere Interaktivität
+  * Klickbare Zeilen deutlich erkennbar
+
+
+/* ABSOLUTE FULL WIDTH - NO MARGINS ANYWHERE */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+#mainApp, .main-app {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.container {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.header {
+  margin: 0 !important;
+  padding: 10px 0px !important;
+  width: 100% !important;
+}
+
+.content {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.section {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.tab-navigation, .analyse-subtabs {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+/* Add internal spacing to content elements */
+.filter-section, 
+.chart-container,
+.stat-grid-dashboard,
+details,
+.table-wrapper {
+  margin-left: 15px !important;
+  margin-right: 15px !important;
+}
+
+Änderungen in v3.13.1:
+- FIX: Content geht jetzt komplett bis zum Bildschirmrand
+  * Horizontales Padding von .content vollständig entfernt
+  * Content-Padding von "0px 40px 40px 40px" zu "0px 0px 40px 0px" geändert
+  * Volle Bildschirmbreite wird nun korrekt genutzt
+- FIX: Tabelle unter Leistungsentwicklungs-Diagramm wird jetzt angezeigt
+  * createLeistungsentwicklungTable() wird nach Diagrammerstellung aufgerufen
+  * Tabelle zeigt alle Leistungen der ausgewählten Disziplin sortiert nach Datum
+  * Spalten: Datum, Leistung, Ort
+  * Zeilen sind klickbar für Detail-Pop-up
+  * Tabelle wird automatisch ausgeblendet wenn Diagramm geschlossen wird
+
+
+/* ABSOLUTE FULL WIDTH - NO MARGINS ANYWHERE */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+#mainApp, .main-app {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.container {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.header {
+  margin: 0 !important;
+  padding: 10px 0px !important;
+  width: 100% !important;
+}
+
+.content {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.section {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.tab-navigation, .analyse-subtabs {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+/* Add internal spacing to content elements */
+.filter-section, 
+.chart-container,
+.stat-grid-dashboard,
+details,
+.table-wrapper {
+  margin-left: 15px !important;
+  margin-right: 15px !important;
+}
+
+- FIX: Main App geht komplett bis zum Bildschirmrand
+  * Alle Margins komplett entfernt (html, body)
+  * Volle Bildschirmnutzung
+- NEU: Tabellen unter allen Diagrammen
+  * Leistungsentwicklung: Datum, Leistung, Ort
+  * SB & Saisondurchschnitte: Saison, SB, Durchschnitt
+  * Leistungsprognose: Historische Daten
+  * Klickbare Zeilen für Details
+- FIX: Statistik-Buttons angepasst
+  * Einheitliches Gradient-Design
+- NEU: Analyse-Tab mit Unter-Tabs
+  * Entwicklungen: Leistungsentwicklung, SB & Durchschnitte, Prognose
+  * Statistiken: Statistiken, Bestleistungen
+  * Bessere Organisation
+Änderungen in v3.12.1:
+- VERBESSERUNG: Header geht bis zum Bildschirmrand
+  * Header-Padding von 20px 40px auf 20px 0px reduziert
+  * Maximale Breite für das Logo und die Header-Elemente
+  * Logout und Dark Mode Buttons näher am Rand (20px statt 40px)
+- VERBESSERUNG: Mehr Platz für Inhalte
+  * Container-Padding reduziert (10px 5px statt 15px)
+  * Tabs, Tabellen und Cards nutzen mehr verfügbaren Platz
+- BUG-FIX: Auto-Login Timeout verkürzt
+  * Timeout von 10 Sekunden auf 3 Sekunden reduziert
+  * Schnelleres automatisches Einloggen beim Seitenwechsel
+  * Verhindert unnötiges Warten
 
 
 Änderungen in v3.12.0:
@@ -514,6 +786,18 @@ function openDetailPopup(leistungData) {
     return;
   }
   
+  // Wenn bereits ein Popup offen ist (z.B. Klick auf Punkt im Detail-Diagramm):
+  // altes Chart und Karte sauber zerstoeren, dann Popup neu befuellen
+  if (detailChart) {
+    detailChart.destroy();
+    detailChart = null;
+  }
+  if (detailMap) {
+    const mapContainer = document.getElementById('detailMap');
+    if (mapContainer) mapContainer.innerHTML = '';
+    detailMap = null;
+  }
+  
   const popup = document.getElementById('detailPopup');
   const title = document.getElementById('detailPopupTitle');
   const infoGrid = document.getElementById('detailInfoGrid');
@@ -530,7 +814,7 @@ function openDetailPopup(leistungData) {
   leistungDiv.style.gridColumn = 'span 2';
   leistungDiv.innerHTML = `
     <div class="detail-info-label">Leistung</div>
-    <div class="detail-info-value">${formatiereLeistung(leistungData.leistung, leistungData.disziplin)}</div>
+    <div class="detail-info-value" style="font-weight: 700;">${formatiereLeistung(leistungData.leistung, leistungData.disziplin)}</div>
   `;
   infoGrid.appendChild(leistungDiv);
   
@@ -874,6 +1158,18 @@ async function initDetailChart(disziplin, highlightId) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      onClick: function(event, elements) {
+        if (!elements || elements.length === 0) return;
+        const idx = elements[0].index;
+        const clicked = disziplinLeistungen[idx];
+        if (!clicked) return;
+        // Vollstaendige Daten aus alleLeistungenFuerPBs holen
+        const fullRecord = alleLeistungenFuerPBs.find(l => l.id === clicked.id) || clicked;
+        openDetailPopup(fullRecord);
+      },
+      onHover: function(event, elements) {
+        event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+      },
       plugins: {
         legend: {
           display: true,
@@ -881,6 +1177,12 @@ async function initDetailChart(disziplin, highlightId) {
         },
         tooltip: {
           callbacks: {
+            // Zeige nur Datum ohne Uhrzeit
+            title: function(context) {
+              if (!context.length) return '';
+              const raw = context[0].parsed.x;
+              return new Date(raw).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            },
             label: function(context) {
               const leistung = context.parsed.y;
               const formattedLeistung = formatiereLeistung(leistung, disziplin);
@@ -895,12 +1197,18 @@ async function initDetailChart(disziplin, highlightId) {
           title: {
             display: true,
             text: 'Leistung'
+          },
+          ticks: {
+            callback: function(value) {
+              return formatiereLeistung(value, disziplin);
+            }
           }
         },
         x: {
           type: 'time',
           time: {
             unit: 'month',
+            tooltipFormat: 'dd.MM.yyyy',
             displayFormats: {
               month: 'MMM yyyy'
             }
@@ -910,8 +1218,8 @@ async function initDetailChart(disziplin, highlightId) {
             text: 'Datum'
           }
         }
-    }
       }
+    }
   });
 }
 
@@ -929,6 +1237,20 @@ document.addEventListener('keydown', function(e) {
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
   <style>
+    /* Complete reset for no margins */
+    html {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100%;
+      height: 100%;
+      overflow-x: hidden;
+    }
+    
+    body {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
     :root {
       /* Unified Color Palette - Lila/Blau Theme */
       --primary-color: #667eea;
@@ -1639,7 +1961,7 @@ document.addEventListener('keydown', function(e) {
     .header {
       background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
       color: white;
-      padding: 20px 40px;
+      padding: 10px 0px;
       text-align: center;
       position: sticky;
       top: 0;
@@ -1649,8 +1971,8 @@ document.addEventListener('keydown', function(e) {
 
     .dark-mode-toggle {
       position: absolute;
-      top: 20px;
-      right: 40px;
+      top: 10px;
+      right: 20px;
       background: rgba(255,255,255,0.2);
       border: none;
       color: white;
@@ -1703,8 +2025,8 @@ document.addEventListener('keydown', function(e) {
     /* Kompakte Athletensuche in der Ecke (nur für Admins) */
     .compact-athlete-search {
       position: absolute;
-      top: 20px;
-      right: 110px;
+      top: 10px;
+      right: 75px;
       z-index: 100;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
@@ -1911,7 +2233,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     .content {
-      padding: 0px 40px 40px 40px;
+      padding: 0px 0px 40px 0px;
     }
 
     .section {
@@ -1935,8 +2257,8 @@ document.addEventListener('keydown', function(e) {
     /* Kompakte Athletensuche in der Ecke (nur für Admins) */
     .compact-athlete-search {
       position: absolute;
-      top: 20px;
-      right: 110px;
+      top: 10px;
+      right: 75px;
       z-index: 100;
       background: rgba(255, 255, 255, 0.25);
       backdrop-filter: blur(10px);
@@ -2180,7 +2502,7 @@ document.addEventListener('keydown', function(e) {
     /* Tablet Anpassungen */
     @media (max-width: 1024px) {
       .compact-athlete-search {
-        right: 120px;
+        right: 85px;
       }
       
       .compact-athlete-search:hover,
@@ -2318,7 +2640,9 @@ document.addEventListener('keydown', function(e) {
     }
 
     .results-count {
-      font-size: 1.1em;
+      font-size: 0.85em;
+      color: #2a5298;
+      font-weight: 500;
     }
 
     .button-group {
@@ -2329,13 +2653,22 @@ document.addEventListener('keydown', function(e) {
     }
 
     .avg-btn {
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       padding: 10px 20px;
-      font-size: 0.9em;
+      margin: 5px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
     }
 
     .avg-btn:hover {
-      box-shadow: 0 6px 20px rgba(240, 147, 251, 0.4);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
     }
 
     .avg-buttons {
@@ -2416,6 +2749,34 @@ document.addEventListener('keydown', function(e) {
       margin-bottom: 5px;
     }
     
+    /* FULL WIDTH ENFORCEMENT */
+    #mainApp, .main-app, .container, .content {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    
+    .content {
+      padding-left: 0 !important;
+      padding-right: 0 !important;
+    }
+    
+    /* Filter sections need internal padding */
+    .filter-section, .chart-container, .stat-grid-dashboard, 
+    .columns-section,
+    #leistungenAusgabe, #orteAusgabe, #scoreAusgabe {
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+    
+    /* Tab navigation full width */
+    .tab-navigation, .analyse-subtabs {
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    
     /* Reduziere padding innerhalb der Filter-Boxen im Leistungen-Bereich */
     #leistungenTab .filter-section,
     #leistungenTab .columns-section {
@@ -2463,6 +2824,32 @@ document.addEventListener('keydown', function(e) {
     }
     
     #analyseTab details > summary:hover {
+      background: #f8f9fa;
+    }
+    
+    /* Summary-Elemente im Leistungen-Tab */
+    #leistungenTab details > summary {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 1.05em;
+      padding: 12px;
+      background: transparent;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      user-select: none;
+      transition: background 0.2s ease;
+    }
+    
+    #leistungenTab details > summary:hover {
+      background: #f8f9fa;
+    }
+    
+    #leistungenTab details[open] > summary {
+      background: transparent;
+      margin-bottom: 15px;
+    }
+    
+    #leistungenTab details[open] > summary:hover {
       background: #f8f9fa;
     }
     
@@ -2759,6 +3146,11 @@ document.addEventListener('keydown', function(e) {
       flex-wrap: wrap;
       background: transparent;
     }
+    
+    /* Kein Abstand unter den Haupttabs wenn Analyse-Tab aktiv ist */
+    .tab-navigation.analyse-active {
+      margin-bottom: 0;
+    }
 
       .tab-btn {
     background: #f5f5f5;
@@ -2766,7 +3158,7 @@ document.addEventListener('keydown', function(e) {
     border: none;
     padding: 12px 28px;
     border-radius: 0px;
-    font-size: 0.9em;
+    font-size: 1em;
     font-weight: 600;
     cursor: pointer;
     transition: color 0.2s ease, background 0.2s ease, border-bottom-color 0.2s ease;
@@ -3057,7 +3449,9 @@ document.addEventListener('keydown', function(e) {
       }
 
       .results-count {
-        font-size: 1em;
+        font-size: 0.8em;
+        color: #888;
+        font-weight: 500;
       }
 
       table {
@@ -4426,12 +4820,12 @@ document.addEventListener('keydown', function(e) {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: auto auto;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 12px;
+    margin-bottom: 16px;
   }
 
       .detail-info-item {
-    padding: 5px 8px;
+    padding: 8px 12px;
     background: var(--input-bg);
     border-radius: 4px;
     border-left: 2px solid var(--btn-primary-bg);
@@ -4444,16 +4838,16 @@ document.addEventListener('keydown', function(e) {
     }
 
       .detail-info-label {
-    font-size: 0.65em;
+    font-size: 0.75em;
     color: var(--text-secondary);
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.3px;
   }
 
       .detail-info-value {
-    font-size: 0.9em;
+    font-size: 1.05em;
     color: var(--text-primary);
     font-weight: 600;
   }
@@ -4481,7 +4875,7 @@ document.addEventListener('keydown', function(e) {
 
     .detail-map-container {
       height: 100%;
-      min-height: 200px;
+      min-height: 150px;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 4px 15px var(--shadow-color);
@@ -4504,7 +4898,7 @@ document.addEventListener('keydown', function(e) {
     .detail-map-wrapper h3 {
       color: var(--text-primary);
       margin-bottom: 6px;
-      font-size: 1em;
+      font-size: 0.95em;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -4522,8 +4916,8 @@ document.addEventListener('keydown', function(e) {
         .detail-chart-container {
       position: relative;
       height: 100%;
-      min-height: 200px;
-      padding: 20px;
+      min-height: 150px;
+      padding: 15px;
       background: var(--input-bg);
       border-radius: 10px;
     }
@@ -4777,7 +5171,7 @@ document.addEventListener('keydown', function(e) {
     .container {
       max-width: 100% !important;
       margin: 0 !important;
-      padding: 15px !important;
+      padding: 10px 5px !important;
     }
     
     /* Große Bildschirme */
@@ -5008,7 +5402,7 @@ document.addEventListener('keydown', function(e) {
       #importModal > div {
         max-width: 100% !important;
         width: 100% !important;
-        padding: 15px !important;
+        padding: 10px 5px !important;
         max-height: 95vh;
         overflow-y: auto;
       }
@@ -5042,6 +5436,183 @@ document.addEventListener('keydown', function(e) {
       overflow: hidden;
     }
 
+  
+    /* Analyse Subtabs */
+    .analyse-subtabs {
+      display: flex;
+      gap: 0;
+      margin: 0 0 20px 0;
+      padding: 0;
+      border-bottom: 2px solid #e0e0e0;
+      background: linear-gradient(to bottom, #fafafa 0%, #f0f0f0 100%);
+    }
+    
+    .analyse-subtab-btn {
+      flex: 1;
+      padding: 10px 20px;
+      background: #f8f8f8;
+      border: none;
+      border-radius: 0;
+      border-bottom: 3px solid transparent;
+      border-right: 1px solid #e0e0e0;
+      cursor: pointer;
+      font-size: 0.95em;
+      font-weight: 600;
+      color: #888;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    
+    .analyse-subtab-btn:last-child {
+      border-right: none;
+    }
+    
+    .analyse-subtab-btn:hover {
+      background: #ececec;
+      color: #666;
+    }
+    
+    .analyse-subtab-btn.active {
+      background: white;
+      color: #667eea;
+      border-bottom-color: #667eea;
+      border-top: 1px solid #e0e0e0;
+      border-left: 1px solid #e0e0e0;
+      border-right: 1px solid #e0e0e0;
+      font-weight: 600;
+    }
+    
+    .analyse-subtab-content {
+      display: none;
+    }
+    
+    .analyse-subtab-content.active {
+      display: block;
+    }
+    
+    body.dark-mode .analyse-subtabs {
+      border-bottom-color: #2a2a2a;
+      background: linear-gradient(to bottom, #1a1a1a 0%, #0f0f0f 100%);
+    }
+    
+    body.dark-mode .analyse-subtab-btn {
+      background: #1a1a1a;
+      color: #888;
+      border-right-color: #2a2a2a;
+    }
+    
+    body.dark-mode .analyse-subtab-btn:hover {
+      background: #252525;
+      color: #aaa;
+    }
+    
+    body.dark-mode .analyse-subtab-btn.active {
+      background: #2a2a2a;
+      color: #667eea;
+      border-bottom-color: #667eea;
+      border-top-color: #333;
+      border-left-color: #333;
+      border-right-color: #333;
+    }
+    body.dark-mode .chart-data-table {
+      background: #2d2d2d;
+    }
+    
+    body.dark-mode .chart-data-table th {
+      background: #1a1a1a;
+      color: #667eea;
+    }
+    
+    body.dark-mode .chart-data-table td {
+      color: #e0e0e0;
+      border-bottom-color: #404040;
+    }
+    
+    body.dark-mode .chart-data-table tbody tr:hover {
+      background: #383838;
+    }
+
+
+/* ABSOLUTE FULL WIDTH - NO MARGINS ANYWHERE */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+#mainApp, .main-app {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.container {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.header {
+  margin: 0 !important;
+  padding: 10px 0px !important;
+  width: 100% !important;
+}
+
+.content {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.section {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100% !important;
+}
+
+.tab-navigation, .analyse-subtabs {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  width: 100% !important;
+}
+
+/* Add internal spacing to content elements */
+.filter-section, 
+.chart-container,
+.stat-grid-dashboard,
+details,
+.table-wrapper {
+  margin-left: 15px !important;
+  margin-right: 15px !important;
+}
+
+
+    /* === SPACING FIX === */
+    /* Header goes to screen edge */
+    .header {
+      margin: 0 !important;
+      padding: 20px 0 !important;
+    }
+    
+    /* Content has minimal padding left/right */
+    .content {
+      padding-left: 15px !important;
+      padding-right: 15px !important;
+      padding-top: 0 !important;
+      padding-bottom: 40px !important;
+    }
+    
+    /* Ensure main containers don't add extra space */
+    html, body, #mainApp, .main-app, .container {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
   </style>
 </head>
 <body>
@@ -5132,7 +5703,7 @@ document.addEventListener('keydown', function(e) {
 
 <div class="container">
   <div class="header">
-    <button class="icon-button" onclick="handleLogout()" title="Abmelden" style="position: absolute; top: 20px; left: 40px; margin-left: 0;">
+    <button class="icon-button" onclick="handleLogout()" title="Abmelden" style="position: absolute; top: 10px; left: 20px; margin-left: 0; background: rgba(255,255,255,0.2); border: none; color: white; padding: 8px 14px; height: 36px; border-radius: 18px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center;">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
         <polyline points="16 17 21 12 16 7"></polyline>
@@ -5148,7 +5719,7 @@ document.addEventListener('keydown', function(e) {
     </button>
     
     <!-- Logo -->
-    <div style="display: flex; justify-content: center; align-items: center; padding: 0px 0;">
+    <div style="display: flex; justify-content: center; align-items: center; padding: 0;">
       <img src="transparent-logo.svg" alt="TrackUp Logo" style="width: 250px; height: auto;">
     </div>
     
@@ -5501,7 +6072,7 @@ document.addEventListener('keydown', function(e) {
       <!-- ============================================ -->
       <div id="leistungenTab" class="tab-content">
         <!-- Action Buttons -->
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;" id="leistungenActions">
+        <div class="leistungen-action-buttons" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; padding: 0 15px;">
           <button onclick="openAddLeistungModal()" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -5520,57 +6091,64 @@ document.addEventListener('keydown', function(e) {
         </div>
         
         <div class="columns-section">
-          <h3>Spalten auswählen</h3>
-          <div class="checkbox-grid">
-            <label class="checkbox-label all-columns">
-              <input type="checkbox" id="alleSpalten" onchange="toggleAlleSpalten(this)">
-              Alle Spalten
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="datum" checked> Datum
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="disziplin" checked> Disziplin
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="leistung" checked> Leistung
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="platzierung"> Platzierung
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="ort"> Ort
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="wk_bz"> Wettkampfbezeichnung
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="ak"> AK
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="typ"> Freiluft/Halle
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="ms"> Meisterschaft
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="runde"> Runde
-            </label>
-            <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="score"> Score
-            </label>
-          </div>
+          <details>
+            <summary style="cursor: pointer; font-weight: 600; font-size: 1.05em; padding: 12px; border-radius: 8px; margin-bottom: 15px; user-select: none;">
+              📋 Spalten auswählen
+            </summary>
+            <div class="checkbox-grid">
+              <label class="checkbox-label all-columns">
+                <input type="checkbox" id="alleSpalten" onchange="toggleAlleSpalten(this)">
+                Alle Spalten
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="datum" checked> Datum
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="disziplin" checked> Disziplin
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="leistung" checked> Leistung
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="platzierung"> Platzierung
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="ort"> Ort
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="wk_bz"> Wettkampfbezeichnung
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="ak"> AK
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="typ"> Freiluft/Halle
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="ms"> Meisterschaft
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="runde"> Runde
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" class="spalte" value="score"> Score
+              </label>
+            </div>
+          </details>
         </div>
 
         <div class="filter-section">
-          <h3>🔧 Filter</h3>
-
-          <div id="filterContainer"></div>
-          <div class="button-group">
-            <button onclick="ladeLeistungen()">Anzeigen</button>
-            <button class="reset-btn" onclick="alleFilterZuruecksetzen()">🔄 Alle Filter zurücksetzen</button>
-            <button class="export-btn" onclick="exportiereCSV()" id="exportBtn" style="display:none;">💾 Als CSV exportieren</button>
-          </div>
+          <details open>
+            <summary style="cursor: pointer; font-weight: 600; font-size: 1.05em; padding: 12px; border-radius: 8px; margin-bottom: 15px; user-select: none;">
+              🔧 Filter
+            </summary>
+            <div id="filterContainer"></div>
+            <div class="button-group">
+              <button onclick="ladeLeistungen()">Anzeigen</button>
+              <button class="reset-btn" onclick="alleFilterZuruecksetzen()">🔄 Alle Filter zurücksetzen</button>
+              <button class="export-btn" onclick="exportiereCSV()" id="exportBtn" style="display:none;">💾 Als CSV exportieren</button>
+            </div>
+          </details>
         </div>
         
         <div id="leistungenAusgabe"></div>
@@ -5579,7 +6157,16 @@ document.addEventListener('keydown', function(e) {
       <!-- ANALYSE TAB -->
       <div id="analyseTab" class="tab-content">
 
-        <div class="filter-section">
+        <!-- Sub-Tabs -->
+        <div class="analyse-subtabs">
+          <button class="analyse-subtab-btn active" onclick="switchAnalyseSubtab('entwicklungen')">📈 Entwicklungen</button>
+          <button class="analyse-subtab-btn" onclick="switchAnalyseSubtab('statistiken')">📊 Statistiken</button>
+        </div>
+        
+        <!-- Entwicklungen -->
+        <div id="entwicklungenSubtab" class="analyse-subtab-content active">
+
+<div class="filter-section">
           <details open>
       <summary>
         📈 Leistungsentwicklung
@@ -5639,10 +6226,11 @@ document.addEventListener('keydown', function(e) {
         <canvas id="leistungsChart"></canvas>
       </div>
           </div>
+          <div id="leistungsentwicklungTable"  style="display:none;"></div>
           </details>
         </div>
 
-        <div class="filter-section">
+<div class="filter-section">
           <details>
       <summary>
         📊 SB & Saisondurchschnitte
@@ -5718,10 +6306,11 @@ document.addEventListener('keydown', function(e) {
           <canvas id="sbChart"></canvas>
         </div>
       </div>
+          <div id="sbTable"  style="display:none;"></div>
           </details>
         </div>
-    
-        <div class="filter-section">
+
+<div class="filter-section">
           <details>
       <summary>
         🔮 Leistungsprognose
@@ -5763,10 +6352,15 @@ document.addEventListener('keydown', function(e) {
           <canvas id="prognoseChart"></canvas>
         </div>
       </div>
+          <div id="prognoseTable"  style="display:none;"></div>
           </details>
         </div>
+        </div>
+        
+        <!-- Statistiken -->
+        <div id="statistikenSubtab" class="analyse-subtab-content">
 
-        <div class="filter-section">
+<div class="filter-section">
           <details>
       <summary>
         📊 Statistiken
@@ -5840,7 +6434,7 @@ document.addEventListener('keydown', function(e) {
           </details>
         </div>
 
-        <div class="filter-section">
+<div class="filter-section">
           <details>
       <summary>
         🏆 Bestleistungen
@@ -5909,6 +6503,7 @@ document.addEventListener('keydown', function(e) {
           </div>
           <div id="bestleistungenAusgabe" style="margin-top: 20px;"></div>
           </details>
+        </div>
         </div>
 </div>
       </div> <!-- Close analyseTab -->
@@ -6271,7 +6866,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         .maybeSingle();
       
       const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Query timeout after 10 seconds')), 10000)
+        setTimeout(() => reject(new Error('Query timeout after 3 seconds')), 3000)
       );
       
       const { data: existingAthlete, error: fetchError } = await Promise.race([
@@ -9263,6 +9858,16 @@ function switchTab(tabName) {
     btn.classList.remove('active');
   });
   
+  // Entferne/setze analyse-active Klasse an tab-navigation
+  const tabNavigation = document.querySelector('.tab-navigation');
+  if (tabNavigation) {
+    if (tabName === 'analyse') {
+      tabNavigation.classList.add('analyse-active');
+    } else {
+      tabNavigation.classList.remove('analyse-active');
+    }
+  }
+  
   // Orte-Tabelle und Top-Disziplinen nur im Dashboard anzeigen
   const topDisziplinenSection = document.getElementById('topDisziplinenSection');
   const ortLeistungenTable = document.getElementById('ortLeistungenTable');
@@ -9558,7 +10163,7 @@ async function zeigeDiagramm() {
 
     // Query für erste Disziplin  
     let query1 = supabaseClient.schema("la").from("leistung")
-        .select("id, datum, leistung, score, ort, disziplin")
+        .select("id, datum, leistung, score, ort, disziplin, wk_bz, platzierung, ak, typ")
         .eq("athlet_id", athletId)
         .eq("disziplin", disziplin)
         .order("datum", { ascending: true });
@@ -9603,11 +10208,17 @@ async function zeigeDiagramm() {
             chartData1 = data1.map(d => ({ x: d.datum, y: d.leistung }));
         } else {
             // Verwende Vergleichsscores für Y-Position
-            chartData1 = dataWithScores.map(d => ({ 
+            chartData1 = dataWithScores.map((d, idx) => ({ 
                 x: d.datum, 
                 y: d.score,
                 original: d.leistung,
-                id: d.id, ort: d.ort, disziplin: d.disziplin
+                id: data1[idx].id, 
+                ort: data1[idx].ort, 
+                disziplin: data1[idx].disziplin,
+                wk_bz: data1[idx].wk_bz,
+                platzierung: data1[idx].platzierung,
+                ak: data1[idx].ak,
+                typ: data1[idx].typ
             }));
             
             // Finde Min/Max für Mapping
@@ -9619,7 +10230,17 @@ async function zeigeDiagramm() {
             maxLeistung1 = Math.max(...leistungen);
         }
     } else {
-        chartData1 = data1.map(d => ({ x: d.datum, y: d.leistung, id: d.id, ort: d.ort, disziplin: d.disziplin }));
+        chartData1 = data1.map(d => ({ 
+            x: d.datum, 
+            y: d.leistung, 
+            id: d.id, 
+            ort: d.ort, 
+            disziplin: d.disziplin,
+            wk_bz: d.wk_bz,
+            platzierung: d.platzierung,
+            ak: d.ak,
+            typ: d.typ
+        }));
     }
     
     // Speichere Original-Leistungen für Tooltip (wenn Vergleichsscores verwendet werden)
@@ -9652,7 +10273,7 @@ async function zeigeDiagramm() {
     
     if (vergleichsModus && vergleichsDisziplin) {
         let query2 = supabaseClient.schema("la").from("leistung")
-            .select("id, datum, leistung, score, ort, disziplin")
+            .select("id, datum, leistung, score, ort, disziplin, wk_bz, platzierung, ak, typ")
             .eq("athlet_id", athletId)
             .eq("disziplin", vergleichsDisziplin)
             .order("datum", { ascending: true });
@@ -9686,14 +10307,30 @@ async function zeigeDiagramm() {
                 
                 if (dataWithScores.length === 0) {
                     console.warn('Keine gültigen Vergleichsscores für', vergleichsDisziplin);
-                    chartData2 = data2.map(d => ({ x: d.datum, y: d.leistung, id: d.id, ort: d.ort, disziplin: d.disziplin }));
+                    chartData2 = data2.map(d => ({ 
+                        x: d.datum, 
+                        y: d.leistung, 
+                        id: d.id, 
+                        ort: d.ort, 
+                        disziplin: d.disziplin,
+                        wk_bz: d.wk_bz,
+                        platzierung: d.platzierung,
+                        ak: d.ak,
+                        typ: d.typ
+                    }));
                 } else {
                     // Verwende Vergleichsscores für Y-Position
-                    chartData2 = dataWithScores.map(d => ({ 
+                    chartData2 = dataWithScores.map((d, idx) => ({ 
                         x: d.datum, 
                         y: d.score,
                         original: d.leistung,
-                        id: d.id, ort: d.ort, disziplin: d.disziplin
+                        id: data2[idx].id, 
+                        ort: data2[idx].ort, 
+                        disziplin: data2[idx].disziplin,
+                        wk_bz: data2[idx].wk_bz,
+                        platzierung: data2[idx].platzierung,
+                        ak: data2[idx].ak,
+                        typ: data2[idx].typ
                     }));
                     
                     // Finde Min/Max für Mapping
@@ -9705,7 +10342,17 @@ async function zeigeDiagramm() {
                     maxLeistung2 = Math.max(...leistungen);
                 }
             } else {
-                chartData2 = data2.map(d => ({ x: d.datum, y: d.leistung }));
+                chartData2 = data2.map(d => ({ 
+                    x: d.datum, 
+                    y: d.leistung,
+                    id: d.id, 
+                    ort: d.ort, 
+                    disziplin: d.disziplin,
+                    wk_bz: d.wk_bz,
+                    platzierung: d.platzierung,
+                    ak: d.ak,
+                    typ: d.typ
+                }));
             }
             
             // Speichere Original-Leistungen für Tooltip (wenn Vergleichsscores verwendet werden)
@@ -10134,6 +10781,9 @@ async function zeigeDiagramm() {
     document.getElementById('diagrammAnzeigenBtn').style.display = 'none';
     document.getElementById('diagrammAktualisierenBtn').style.display = 'inline-block';
     document.getElementById('diagrammSchließenBtn').style.display = 'inline-block';
+    
+    // Erstelle Tabelle mit allen Leistungen der ausgewählten Disziplin
+    createLeistungsentwicklungTable(disziplin, chartData1);
     document.getElementById('diagrammAusklappenBtn').style.display = 'none';
 }
 
@@ -10166,6 +10816,7 @@ function schließeDiagramm() {
     document.getElementById('diagrammAktualisierenBtn').style.display = 'none';
     document.getElementById('diagrammSchließenBtn').style.display = 'none';
     document.getElementById('diagrammAusklappenBtn').style.display = 'inline-block';
+    document.getElementById('leistungsentwicklungTable').style.display = 'none';
 }
 
 function klappeAusDiagramm() {
@@ -12141,6 +12792,117 @@ function renderOrtTable() {
       .detail-map-container {
         min-height: 180px;
       }
+    }
+
+  
+    /* Analyse Subtabs */
+    .analyse-subtabs {
+      display: flex;
+      gap: 0;
+      margin: 20px 0 0 0;
+      border-bottom: 2px solid #e0e0e0;
+      background: white;
+    }
+    
+    .analyse-subtab-btn {
+      flex: 1;
+      padding: 15px 20px;
+      background: #f8f9fa;
+      border: none;
+      border-bottom: 3px solid transparent;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 500;
+      color: #666;
+      transition: all 0.3s ease;
+    }
+    
+    .analyse-subtab-btn:hover {
+      background: #e9ecef;
+      color: #667eea;
+    }
+    
+    .analyse-subtab-btn.active {
+      background: white;
+      color: #667eea;
+      border-bottom-color: #667eea;
+      font-weight: 600;
+    }
+    
+    .analyse-subtab-content {
+      display: none;
+    }
+    
+    .analyse-subtab-content.active {
+      display: block;
+    }
+    
+    /* Chart Tables */
+    .chart-data-table {
+      margin-top: 20px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .chart-data-table h4 {
+      margin: 0;
+      padding: 15px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      font-size: 1em;
+    }
+    
+    .chart-data-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    .chart-data-table th {
+      background: #f8f9fa;
+      padding: 12px 15px;
+      text-align: left;
+      font-weight: 600;
+      color: #2a5298;
+      border-bottom: 2px solid #e0e0e0;
+    }
+    
+    .chart-data-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    
+    .chart-data-table tbody tr {
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    
+    .chart-data-table tbody tr:hover {
+      background: #f8f9fa;
+    }
+    
+    /* Dark Mode */
+    body.dark-mode .chart-data-table {
+      background: #2d2d2d;
+    }
+    
+    body.dark-mode .chart-data-table th {
+      background: #1a1a1a;
+      color: #667eea;
+    }
+    
+    body.dark-mode .chart-data-table td {
+      color: #e0e0e0;
+      border-bottom-color: #404040;
+    }
+    
+    body.dark-mode .chart-data-table tbody tr:hover {
+      background: #383838;
+    }
+    
+    body.dark-mode .results-count {
+      color: #8b9ef5;
     }
 
   </style>
@@ -14437,6 +15199,145 @@ window.setTimeout = function(fn, delay) {
     }
   }, delay);
 };
+
+
+// Analyse Subtabs
+function switchAnalyseSubtab(subtabName) {
+  const buttons = document.querySelectorAll('.analyse-subtab-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+  
+  const entwicklungen = document.getElementById('entwicklungenSubtab');
+  const statistiken = document.getElementById('statistikenSubtab');
+  
+  if (entwicklungen && statistiken) {
+    entwicklungen.classList.remove('active');
+    statistiken.classList.remove('active');
+    
+    if (subtabName === 'entwicklungen') {
+      entwicklungen.classList.add('active');
+    } else {
+      statistiken.classList.add('active');
+    }
+  }
+}
+
+// Table Functions
+function createLeistungsentwicklungTable(disziplin, chartData) {
+  const container = document.getElementById('leistungsentwicklungTable');
+  if (!container || !chartData || chartData.length === 0) {
+    if (container) container.style.display = 'none';
+    return;
+  }
+  
+  const sorted = [...chartData].sort((a, b) => new Date(b.x) - new Date(a.x)); // Neueste zuerst
+  
+  let html = '<div class="table-wrapper"><table><thead><tr><th>DATUM</th><th>LEISTUNG</th><th>ORT</th></tr></thead><tbody>';
+  
+  sorted.forEach(p => {
+    const datum = new Date(p.x).toLocaleDateString('de-DE');
+    // Verwende die original Leistung wenn vorhanden (bei Vergleichsscores), sonst y
+    const leistungWert = p.original !== undefined ? p.original : p.y;
+    const formatierteLeistung = formatiereLeistung(leistungWert, p.disziplin || disziplin);
+    
+    // Erstelle vollständiges Datenobjekt für Popup
+    const fullData = {
+      id: p.id,
+      datum: p.x,
+      disziplin: p.disziplin || disziplin,
+      leistung: leistungWert,
+      ort: p.ort || '',
+      wk_bz: p.wk_bz || '',
+      platzierung: p.platzierung || '',
+      ak: p.ak || '',
+      typ: p.typ || ''
+    };
+    const dataJson = JSON.stringify(fullData).replace(/'/g, "&apos;");
+    html += `<tr onclick='openDetailPopup(${dataJson})'><td>${datum}</td><td><strong>${formatierteLeistung}</strong></td><td>${p.ort || '-'}</td></tr>`;
+  });
+  
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+function createSBTable(disziplin, sbData, avgData) {
+  const container = document.getElementById('sbTable');
+  if (!container) return;
+  
+  const showSB = document.getElementById('sbShowSBs')?.checked ?? true;
+  const showAvg = document.getElementById('sbShowAverages')?.checked ?? true;
+  
+  if (!showSB && !showAvg) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  const seasons = new Set();
+  if (showSB && sbData) sbData.forEach(d => seasons.add(d.x));
+  if (showAvg && avgData) avgData.forEach(d => seasons.add(d.x));
+  
+  if (seasons.size === 0) {
+    container.style.display = 'none';
+    return;
+  }
+  
+  const sorted = Array.from(seasons).sort((a, b) => b - a); // Neueste zuerst
+  
+  let html = '<div class="table-wrapper"><table><thead><tr><th>SAISON</th>';
+  if (showSB) html += '<th>SAISONBESTLEISTUNG</th>';
+  if (showAvg) html += '<th>DURCHSCHNITT</th>';
+  html += '</tr></thead><tbody>';
+  
+  sorted.forEach(s => {
+    const sb = showSB && sbData ? sbData.find(d => d.x === s) : null;
+    const avg = showAvg && avgData ? avgData.find(d => d.x === s) : null;
+    
+    html += '<tr><td><strong>' + s + '</strong></td>';
+    if (showSB) html += '<td>' + (sb ? sb.y : '-') + '</td>';
+    if (showAvg) html += '<td>' + (avg ? avg.y : '-') + '</td>';
+    html += '</tr>';
+  });
+  
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
+
+function createPrognoseTable(disziplin, data) {
+  const container = document.getElementById('prognoseTable');
+  if (!container || !data || data.length === 0) {
+    if (container) container.style.display = 'none';
+    return;
+  }
+  
+  const sorted = [...data].sort((a, b) => new Date(b.x) - new Date(a.x)); // Neueste zuerst
+  
+  let html = '<div class="table-wrapper"><table><thead><tr><th>DATUM</th><th>LEISTUNG</th><th>ORT</th></tr></thead><tbody>';
+  
+  sorted.forEach(p => {
+    const datum = new Date(p.x).toLocaleDateString('de-DE');
+    // Erstelle vollständiges Datenobjekt für Popup
+    const fullData = {
+      id: p.id,
+      datum: p.x,
+      disziplin: p.disziplin || disziplin,
+      leistung: p.y,
+      ort: p.ort || '',
+      wk_bz: p.wk_bz || '',
+      platzierung: p.platzierung || '',
+      ak: p.ak || '',
+      typ: p.typ || ''
+    };
+    const dataJson = JSON.stringify(fullData).replace(/'/g, "&apos;");
+    html += `<tr onclick='openDetailPopup(${dataJson})'><td>${datum}</td><td><strong>${p.y}</strong></td><td>${p.ort || '-'}</td></tr>`;
+  });
+  
+  html += '</tbody></table></div>';
+  container.innerHTML = html;
+  container.style.display = 'block';
+}
+
 </script>
 
 </div> <!-- Close main-app -->
@@ -14550,4 +15451,4 @@ window.setTimeout = function(fn, delay) {
 </div>
 
 </body>
-</html>
+</html>s
