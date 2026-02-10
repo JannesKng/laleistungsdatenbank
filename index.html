@@ -6811,6 +6811,10 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
       let wert = z[sp];
       if(sp==="leistung" && wert!==null){
         wert = formatiereLeistung(wert, vollstaendigeDaten[index].disziplin);
+        // Füge goldenen Pokal für PBs hinzu
+        if(istPB) {
+          wert = `<span style="color: #d4af37; font-weight: bold;">🏆 ${wert}</span>`;
+        }
       }
       else if(sp==="platzierung" && wert!==null){
         wert = Number(wert).toFixed(0);
@@ -12694,8 +12698,10 @@ async function importCSV() {
 /* ================= RESIZABLE TABLE COLUMNS ================= */
 // Globale Variablen für Spaltengrößenanpassung
 let resizingColumn = null;
+let nextColumn = null;
 let startX = 0;
 let startWidth = 0;
+let startNextWidth = 0;
 
 // Event Listener für alle Tabellen hinzufügen
 document.addEventListener('DOMContentLoaded', function() {
@@ -12710,46 +12716,73 @@ function enableTableResize() {
     const headers = table.querySelectorAll('th');
     
     headers.forEach((th, index) => {
-      // Skip last column
-      if (index === headers.length - 1) return;
+      // Erstelle Resize-Handle am rechten Rand
+      const resizeHandle = document.createElement('div');
+      resizeHandle.style.cssText = `
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 5px;
+        height: 100%;
+        cursor: col-resize;
+        user-select: none;
+        z-index: 1;
+      `;
       
-      th.addEventListener('mousedown', function(e) {
-        // Nur wenn auf den rechten Rand geklickt wurde (resize handle)
-        const rect = th.getBoundingClientRect();
-        const isRightEdge = e.clientX > rect.right - 10;
+      // Nur wenn es nicht die letzte Spalte ist
+      if (index < headers.length - 1) {
+        th.style.position = 'relative';
+        th.appendChild(resizeHandle);
         
-        if (isRightEdge) {
+        resizeHandle.addEventListener('mousedown', function(e) {
           e.preventDefault();
+          e.stopPropagation();
+          
           resizingColumn = th;
+          nextColumn = headers[index + 1];
           startX = e.clientX;
           startWidth = th.offsetWidth;
+          startNextWidth = nextColumn.offsetWidth;
           
           document.addEventListener('mousemove', resizeColumn);
           document.addEventListener('mouseup', stopResize);
           
           // Verhindere Textauswahl während des Resizens
           document.body.style.userSelect = 'none';
-        }
-      });
+          th.style.cursor = 'col-resize';
+          document.body.style.cursor = 'col-resize';
+        });
+      }
     });
   });
 }
 
 function resizeColumn(e) {
-  if (!resizingColumn) return;
+  if (!resizingColumn || !nextColumn) return;
   
   const diff = e.clientX - startX;
-  const newWidth = Math.max(80, startWidth + diff); // Mindestbreite 80px
+  const newWidth = Math.max(60, startWidth + diff); // Mindestbreite 60px
+  const newNextWidth = Math.max(60, startNextWidth - diff); // Mindestbreite 60px für nächste Spalte
   
-  resizingColumn.style.width = newWidth + 'px';
-  resizingColumn.style.minWidth = newWidth + 'px';
+  // Nur resizen wenn beide Spalten die Mindestbreite einhalten
+  if (newWidth >= 60 && newNextWidth >= 60) {
+    resizingColumn.style.width = newWidth + 'px';
+    resizingColumn.style.minWidth = newWidth + 'px';
+    nextColumn.style.width = newNextWidth + 'px';
+    nextColumn.style.minWidth = newNextWidth + 'px';
+  }
 }
 
 function stopResize() {
+  if (resizingColumn) {
+    resizingColumn.style.cursor = '';
+  }
   resizingColumn = null;
+  nextColumn = null;
   document.removeEventListener('mousemove', resizeColumn);
   document.removeEventListener('mouseup', stopResize);
   document.body.style.userSelect = '';
+  document.body.style.cursor = '';
 }
 
 </script>
