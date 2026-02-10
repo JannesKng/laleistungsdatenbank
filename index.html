@@ -442,7 +442,7 @@ Datum: 2026-02-09
   <title>TrackUp</title>
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='faviconGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23667eea;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='64' y='90' font-family='Arial, sans-serif' font-size='72' font-weight='bold' fill='url(%23faviconGrad)' text-anchor='middle'%3ETU%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='faviconGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23FFD700;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='64' y='90' font-family='Arial, sans-serif' font-size='72' font-weight='bold' fill='url(%23faviconGrad)' text-anchor='middle'%3ETU%3C/text%3E%3C/svg%3E">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -2068,10 +2068,9 @@ Datum: 2026-02-09
     }
 
     thead {
-      position: sticky;
-      top: 0;
       z-index: 10;
     }
+
 
     th {
       background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
@@ -2079,16 +2078,15 @@ Datum: 2026-02-09
       padding: 14px 16px;
       text-align: center;
       font-weight: 600;
-      font-size: 0.9em;
-      cursor: pointer;
-      user-select: none;
+      font-size: 0.8em;
       transition: all 0.2s ease;
       white-space: nowrap;
-      position: relative;
       min-width: 80px;
       letter-spacing: 0.02em;
       text-transform: uppercase;
-      font-size: 0.8em;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
     
     /* Resizable columns */
@@ -2165,12 +2163,13 @@ Datum: 2026-02-09
       display: inline-block;
       width: 20px;
       height: 20px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>');
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23FFD700" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>');
       background-size: contain;
       background-repeat: no-repeat;
       vertical-align: middle;
       margin-right: 6px;
     }
+      filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.4));
 
     tr.year-separator {
       height: 4px;
@@ -12694,8 +12693,11 @@ async function importCSV() {
 /* ================= RESIZABLE TABLE COLUMNS ================= */
 // Globale Variablen für Spaltengrößenanpassung
 let resizingColumn = null;
+let nextColumn = null;
 let startX = 0;
 let startWidth = 0;
+let startNextWidth = 0;
+let isResizing = false;
 
 // Event Listener für alle Tabellen hinzufügen
 document.addEventListener('DOMContentLoaded', function() {
@@ -12713,6 +12715,15 @@ function enableTableResize() {
       // Skip last column
       if (index === headers.length - 1) return;
       
+      // Verhindere Default-Click beim Resizing
+      th.addEventListener('click', function(e) {
+        if (isResizing) {
+          e.stopPropagation();
+          e.preventDefault();
+          return false;
+        }
+      }, true);
+      
       th.addEventListener('mousedown', function(e) {
         // Nur wenn auf den rechten Rand geklickt wurde (resize handle)
         const rect = th.getBoundingClientRect();
@@ -12720,15 +12731,20 @@ function enableTableResize() {
         
         if (isRightEdge) {
           e.preventDefault();
+          e.stopPropagation();
+          isResizing = false; // Wird erst beim Bewegen auf true gesetzt
           resizingColumn = th;
+          nextColumn = headers[index + 1];
           startX = e.clientX;
           startWidth = th.offsetWidth;
+          startNextWidth = nextColumn ? nextColumn.offsetWidth : 0;
           
           document.addEventListener('mousemove', resizeColumn);
           document.addEventListener('mouseup', stopResize);
           
           // Verhindere Textauswahl während des Resizens
           document.body.style.userSelect = 'none';
+          document.body.style.cursor = 'col-resize';
         }
       });
     });
@@ -12738,18 +12754,47 @@ function enableTableResize() {
 function resizeColumn(e) {
   if (!resizingColumn) return;
   
-  const diff = e.clientX - startX;
-  const newWidth = Math.max(80, startWidth + diff); // Mindestbreite 80px
+  // Markiere als Resizing beim ersten Move
+  if (!isResizing) {
+    isResizing = true;
+  }
   
+  const diff = e.clientX - startX;
+  const newWidth = Math.max(80, startWidth + diff);
+  const newNextWidth = nextColumn ? Math.max(80, startNextWidth - diff) : 0;
+  
+  // Setze Breiten direkt ohne Verzögerung
   resizingColumn.style.width = newWidth + 'px';
   resizingColumn.style.minWidth = newWidth + 'px';
+  resizingColumn.style.maxWidth = newWidth + 'px';
+  
+  if (nextColumn) {
+    nextColumn.style.width = newNextWidth + 'px';
+    nextColumn.style.minWidth = newNextWidth + 'px';
+    nextColumn.style.maxWidth = newNextWidth + 'px';
+  }
 }
 
-function stopResize() {
+function stopResize(e) {
+  if (resizingColumn) {
+    // Verhindere Click-Event wenn wir gerade am Resizing waren
+    if (isResizing) {
+      e.stopPropagation();
+      e.preventDefault();
+      
+      // Verzögere das Zurücksetzen, damit der Click-Handler es mitbekommt
+      setTimeout(() => {
+        isResizing = false;
+      }, 50);
+    }
+  }
+  
   resizingColumn = null;
+  nextColumn = null;
   document.removeEventListener('mousemove', resizeColumn);
   document.removeEventListener('mouseup', stopResize);
   document.body.style.userSelect = '';
+  document.body.style.cursor = '';
 }
 
 </script>
