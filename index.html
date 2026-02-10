@@ -449,49 +449,86 @@ Datum: 2026-02-09
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
   <style>
     :root {
+      /* Unified Color Palette - Lila/Blau Theme */
+      --primary-color: #667eea;
+      --primary-dark: #5568d3;
+      --primary-light: #8b9ef5;
+      --secondary-color: #764ba2;
+      --secondary-dark: #5d3b82;
+      --secondary-light: #9165b8;
+      
+      /* Background Colors */
       --bg-gradient-start: #667eea;
       --bg-gradient-end: #764ba2;
       --container-bg: white;
-      --text-primary: #000;
+      
+      /* Text Colors */
+      --text-primary: #1a1a1a;
       --text-secondary: #495057;
-      --text-muted: #757575;
-      --header-bg-start: #1e3c72;
-      --header-bg-end: #2a5298;
+      --text-muted: #6c757d;
+      
+      /* Header */
+      --header-bg-start: #667eea;
+      --header-bg-end: #764ba2;
+      
+      /* UI Elements */
       --section-bg: #f8f9fa;
       --card-bg: white;
       --border-color: #e0e0e0;
+      --border-radius: 8px;
       --input-bg: white;
       --table-header-bg: #f8f9fa;
-      --table-hover-bg: #f1f3f5;
-      --shadow-color: rgba(0,0,0,0.1);
+      --table-hover-bg: #f5f7fa;
+      --shadow-color: rgba(0,0,0,0.08);
+      --shadow-hover: rgba(102, 126, 234, 0.15);
+      
+      /* Accent Colors */
       --accent-color: #667eea;
       --accent-secondary: #764ba2;
-      --stat-card-bg-start: #e3f2fd;
+      --stat-card-bg-start: #e8eeff;
       --stat-card-bg-end: #f3e5f5;
       --map-bg: #f8f9fa;
+      
+      /* Button Colors */
+      --btn-primary-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --btn-secondary-bg: #6c757d;
+      --btn-danger-bg: #dc3545;
     }
 
     body.dark-mode {
+      /* Dark Mode - Unified Purple/Blue */
+      --primary-color: #8b9ef5;
+      --primary-dark: #667eea;
+      --primary-light: #a8b7f7;
+      --secondary-color: #9165b8;
+      --secondary-dark: #764ba2;
+      --secondary-light: #a87dc4;
+      
       --bg-gradient-start: #1a1a2e;
       --bg-gradient-end: #16213e;
       --container-bg: #1f1f1f;
       --text-primary: #e0e0e0;
       --text-secondary: #b0b0b0;
       --text-muted: #888;
-      --header-bg-start: #0f3460;
-      --header-bg-end: #16537e;
+      --header-bg-start: #667eea;
+      --header-bg-end: #764ba2;
       --section-bg: #2a2a2a;
       --card-bg: #2d2d2d;
       --border-color: #404040;
+      --border-radius: 8px;
       --input-bg: #333;
       --table-header-bg: #2a2a2a;
       --table-hover-bg: #383838;
       --shadow-color: rgba(0,0,0,0.5);
-      --accent-color: #667eea;
-      --accent-secondary: #764ba2;
+      --shadow-hover: rgba(102, 126, 234, 0.25);
+      --accent-color: #8b9ef5;
+      --accent-secondary: #9165b8;
       --stat-card-bg-start: #1e3a5f;
       --stat-card-bg-end: #2d1b3d;
       --map-bg: #2a2a2a;
+      --btn-primary-bg: linear-gradient(135deg, #8b9ef5 0%, #9165b8 100%);
+      --btn-secondary-bg: #6c757d;
+      --btn-danger-bg: #dc3545;
     }
 
     /* Dark Mode zusätzliche Anpassungen */
@@ -1064,26 +1101,58 @@ Datum: 2026-02-09
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
       background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
       min-height: 100vh;
       padding: 20px;
       color: var(--text-primary);
       transition: background 0.3s ease, color 0.3s ease;
+      font-size: 15px;
+      line-height: 1.6;
+      letter-spacing: -0.01em;
+    }
+
+    /* Typography Hierarchy */
+    h1 { 
+      font-size: 2em; 
+      font-weight: 600; 
+      line-height: 1.2; 
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5em;
+    }
+    h2 { 
+      font-size: 1.5em; 
+      font-weight: 600; 
+      line-height: 1.3; 
+      letter-spacing: -0.015em;
+      margin-bottom: 0.75em;
+    }
+    h3 { 
+      font-size: 1.25em; 
+      font-weight: 600; 
+      line-height: 1.4; 
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5em;
+    }
+    h4 { 
+      font-size: 1.1em; 
+      font-weight: 600; 
+      line-height: 1.4;
+      margin-bottom: 0.5em;
     }
 
     .container {
       max-width: 1400px;
       margin: 0 auto;
       background: var(--container-bg);
-      border-radius: 12px;
-      box-shadow: 0 20px 60px var(--shadow-color);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 32px var(--shadow-color);
       overflow: hidden;
       transition: background 0.3s ease;
     }
 
     .header {
-      background: linear-gradient(135deg, #3b5998 0%, #4267B2 100%);
+      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
       color: white;
       padding: 15px 40px;
       text-align: center;
@@ -1261,7 +1330,7 @@ Datum: 2026-02-09
       right: 0;
       left: 0;
       background: white;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
       max-height: 300px;
       overflow-y: auto;
@@ -1497,7 +1566,7 @@ Datum: 2026-02-09
       right: 0;
       left: 0;
       background: white;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
       max-height: 300px;
       overflow-y: auto;
@@ -1646,7 +1715,7 @@ Datum: 2026-02-09
     .search-box {
       background: var(--card-bg);
       padding: 12px;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 10px var(--shadow-color);
       margin-bottom: 12px;
       transition: background 0.3s ease;
@@ -1704,44 +1773,48 @@ Datum: 2026-02-09
       -moz-appearance: textfield;
     }
 
+    /* Unified Button Styles */
     button {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: var(--btn-primary-bg);
       color: white;
       border: none;
-      padding: 12px 30px;
-      border-radius: 8px;
-      font-size: 1em;
-      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: var(--border-radius);
+      font-size: 0.95em;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+      transition: all 0.2s ease;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      font-family: inherit;
+      letter-spacing: -0.01em;
     }
 
     button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px var(--shadow-hover);
     }
 
     button:active {
       transform: translateY(0);
+      box-shadow: 0 2px 6px var(--shadow-color);
     }
 
     .export-btn {
-      background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+      background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
       margin-left: 10px;
     }
 
     .export-btn:hover {
-      box-shadow: 0 6px 20px rgba(86, 171, 47, 0.4);
+      box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
     }
 
     .reset-btn {
-      background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+      background: linear-gradient(135deg, #f44336 0%, #ef5350 100%);
       margin-left: 10px;
     }
 
     .reset-btn:hover {
-      box-shadow: 0 6px 20px rgba(235, 51, 73, 0.4);
+      box-shadow: 0 4px 12px rgba(244, 67, 54, 0.3);
     }
 
     .results-info {
@@ -1751,7 +1824,7 @@ Datum: 2026-02-09
       padding: 10px 15px;
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       margin-bottom: 15px;
       font-weight: 500;
       box-shadow: 0 2px 10px rgba(102, 126, 234, 0.3);
@@ -1787,7 +1860,7 @@ Datum: 2026-02-09
     .columns-section {
       background: white;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       margin-bottom: 12px;
     }
@@ -1842,7 +1915,7 @@ Datum: 2026-02-09
     .filter-section {
       background: white;
       padding: 12px;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       margin-bottom: 15px;
     }
@@ -1973,37 +2046,46 @@ Datum: 2026-02-09
       margin-top: 10px;
     }
 
+    /* Modern Table Styles */
     table {
       width: 100%;
       border-collapse: separate;
       border-spacing: 0;
       margin-top: 20px;
       background: var(--card-bg);
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       overflow: hidden;
-      box-shadow: 0 2px 10px var(--shadow-color);
+      box-shadow: 0 1px 3px var(--shadow-color);
       transition: background 0.3s ease;
-      table-layout: auto; /* Erlaubt Spaltengrößenanpassung */
+      table-layout: auto;
+      border: 1px solid var(--border-color);
     }
 
-    th {
-      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
-      color: white;
-      padding: 15px 12px;
-      text-align: center; /* Zentriert */
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.3s;
+    thead {
       position: sticky;
       top: 0;
       z-index: 10;
+    }
+
+    th {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      padding: 14px 16px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9em;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s ease;
       white-space: nowrap;
-      position: relative; /* Für resize handle */
-      min-width: 80px; /* Mindestbreite */
+      position: relative;
+      min-width: 80px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-size: 0.8em;
     }
     
-    /* Resizable columns - Trennlinie zwischen Spalten */
+    /* Resizable columns */
     th:not(:last-child)::after {
       content: '';
       position: absolute;
@@ -2022,37 +2104,50 @@ Datum: 2026-02-09
     }
 
     th:hover {
-      background: linear-gradient(135deg, #0D47A1 0%, var(--header-bg-end) 100%);
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--secondary-dark) 100%);
     }
 
     td {
-      padding: 12px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border-color);
-      color: var(--text-secondary);
-      text-align: center; /* Zentriert */
-      transition: background 0.2s ease;
+      color: var(--text-primary);
+      text-align: center;
+      transition: all 0.15s ease;
+      font-size: 0.9em;
     }
 
-    /* Zebrastreifen - jede 2. Zeile */
+    /* Subtle zebra stripes */
     tbody tr:nth-child(even) {
-      background: rgba(102, 126, 234, 0.03);
+      background: rgba(102, 126, 234, 0.02);
     }
     
     body.dark-mode tbody tr:nth-child(even) {
-      background: rgba(102, 126, 234, 0.08);
+      background: rgba(102, 126, 234, 0.05);
     }
 
-    tr:hover td {
+    /* Improved hover effect */
+    tbody tr:hover {
       background: var(--table-hover-bg) !important;
+      transform: scale(1.001);
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+
+    tbody tr {
+      transition: all 0.15s ease;
     }
 
     tr:last-child td {
       border-bottom: none;
     }
 
+    /* PB Row highlighting */
     tr.pb-row {
-      background: linear-gradient(90deg, #fff5e6 0%, #ffffff 100%) !important;
-      border-left: 4px solid #ffa500;
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.08) 0%, rgba(102, 126, 234, 0.02) 100%) !important;
+      border-left: 3px solid var(--primary-color);
+    }
+
+    body.dark-mode tr.pb-row {
+      background: linear-gradient(90deg, rgba(102, 126, 234, 0.15) 0%, rgba(102, 126, 234, 0.05) 100%) !important;
     }
 
     tr.pb-row:hover td {
@@ -2102,7 +2197,7 @@ Datum: 2026-02-09
 
     .dialog-box {
       background: white;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       padding: 30px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
       max-width: 400px;
@@ -2184,6 +2279,9 @@ Datum: 2026-02-09
       background: white;
       color: #667eea;
       border-bottom: 3px solid #667eea;
+      border-top: 1px solid #e0e0e0;
+      border-left: 1px solid #e0e0e0;
+      border-right: 1px solid #e0e0e0;
       box-shadow: none;
       transform: none;
       font-weight: 700;
@@ -2205,7 +2303,7 @@ Datum: 2026-02-09
     .chart-container {
       background: white;
       padding: 25px;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       margin-top: 20px;
     }
@@ -2265,7 +2363,7 @@ Datum: 2026-02-09
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       padding: 15px 20px;
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       margin-top: 15px;
       display: none;
       align-items: center;
@@ -2503,7 +2601,7 @@ Datum: 2026-02-09
     .stat-card-dashboard {
       background: linear-gradient(135deg, var(--stat-card-bg-start) 0%, var(--stat-card-bg-end) 100%);
       border-left: 4px solid var(--accent-color);
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       padding: 25px;
       box-shadow: 0 3px 10px var(--shadow-color);
       transition: all 0.3s ease;
@@ -2547,7 +2645,7 @@ Datum: 2026-02-09
     .pb-card-dashboard {
       background: var(--card-bg);
       border: 2px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       padding: 15px;
       position: relative;
       overflow: hidden;
@@ -2636,7 +2734,7 @@ Datum: 2026-02-09
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
       padding: 30px;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       margin-bottom: 25px;
       text-align: center;
     }
@@ -2655,7 +2753,7 @@ Datum: 2026-02-09
     .goal-card {
       background: var(--card-bg);
       border: 2px solid var(--border-color);
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       padding: 20px;
       margin-bottom: 15px;
       transition: all 0.3s ease;
@@ -2750,7 +2848,7 @@ Datum: 2026-02-09
       width: 100%;
       height: 30px;
       background: var(--section-bg);
-      border-radius: 15px;
+      border-radius: var(--border-radius);
       overflow: hidden;
       position: relative;
       margin-bottom: 10px;
@@ -2759,7 +2857,7 @@ Datum: 2026-02-09
     .goal-progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
-      border-radius: 15px;
+      border-radius: var(--border-radius);
       transition: width 0.5s ease;
       display: flex;
       align-items: center;
@@ -2783,7 +2881,7 @@ Datum: 2026-02-09
     .goal-form {
       background: var(--card-bg);
       padding: 20px;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       margin-bottom: 20px;
       border: 2px dashed var(--border-color);
     }
@@ -2805,7 +2903,7 @@ Datum: 2026-02-09
     .dashboard-goal-card {
       background: var(--card-bg);
       border: 2px solid var(--border-color);
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       padding: 15px;
       margin-bottom: 12px;
       transition: all 0.3s ease;
@@ -2842,7 +2940,7 @@ Datum: 2026-02-09
       width: 100%;
       height: 20px;
       background: var(--section-bg);
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       overflow: hidden;
       position: relative;
       margin-bottom: 8px;
@@ -2851,7 +2949,7 @@ Datum: 2026-02-09
     .dashboard-goal-progress-fill {
       height: 100%;
       background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary));
-      border-radius: 10px;
+      border-radius: var(--border-radius);
       transition: width 0.5s ease;
     }
     
@@ -3002,7 +3100,7 @@ Datum: 2026-02-09
       margin: 20px 0;
       padding: 20px;
       background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       border-left: 4px solid #667eea;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
@@ -3010,7 +3108,7 @@ Datum: 2026-02-09
     .dashboard-performance-container {
       background: var(--card-bg);
       padding: 20px;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
       display: flex;
       flex-direction: column;
@@ -3019,21 +3117,21 @@ Datum: 2026-02-09
     .dashboard-map-container {
       background: var(--card-bg);
       padding: 20px;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     
     .dashboard-top3-container {
       background: var(--card-bg);
       padding: 20px;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     
     .dashboard-goals-container {
       background: var(--card-bg);
       padding: 20px;
-      border-radius: 12px;
+      border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     
@@ -3384,7 +3482,7 @@ Datum: 2026-02-09
       /* Reduziere Seitenränder im gesamten Container */
       .container {
         margin: 0 8px;
-        border-radius: 12px;
+        border-radius: var(--border-radius);
       }
       
       /* Reduziere Header-Padding */
@@ -3731,7 +3829,7 @@ Datum: 2026-02-09
      EMAIL LOGIN SCREEN
      ============================================ -->
 <div id="loginScreen" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px;">
-  <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%;">
+  <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%;">
     
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 0px;">
@@ -3744,20 +3842,20 @@ Datum: 2026-02-09
     
     <div id="authContainer">
       <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-        <button id="loginTabBtn" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1em; font-weight: 600;">Anmelden</button>
-        <button id="registerTabBtn" style="flex: 1; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: 10px; cursor: pointer; font-size: 1em; font-weight: 600;">Registrieren</button>
+        <button id="loginTabBtn" style="flex: 1; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 1em; font-weight: 600;">Anmelden</button>
+        <button id="registerTabBtn" style="flex: 1; padding: 12px; background: #f0f0f0; color: #666; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 1em; font-weight: 600;">Registrieren</button>
       </div>
       
       <!-- Login Form -->
       <form id="loginForm">
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">E-Mail</label>
-          <input type="email" id="loginEmail" required placeholder="deine@email.de" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+          <input type="email" id="loginEmail" required placeholder="deine@email.de" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
         </div>
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">Passwort</label>
           <div style="position: relative;">
-            <input type="password" id="loginPassword" required placeholder="Passwort" style="width: 100%; padding: 12px 45px 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+            <input type="password" id="loginPassword" required placeholder="Passwort" style="width: 100%; padding: 12px 45px 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
             <button type="button" id="togglePasswordBtn" onclick="toggleLoginPassword()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 5px; color: #666; display: flex; align-items: center; justify-content: center;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -3772,36 +3870,36 @@ Datum: 2026-02-09
             <span style="color: #666; font-size: 0.9em;">Angemeldet bleiben</span>
           </label>
         </div>
-        <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 1.1em; font-weight: 600; cursor: pointer;">Anmelden</button>
+        <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: var(--border-radius); font-size: 1.1em; font-weight: 600; cursor: pointer;">Anmelden</button>
       </form>
       
       <!-- Register Form -->
       <form id="registerForm" style="display: none;">
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">Vorname</label>
-          <input type="text" id="registerVorname" required placeholder="Vorname" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+          <input type="text" id="registerVorname" required placeholder="Vorname" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
         </div>
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">Nachname</label>
-          <input type="text" id="registerNachname" required placeholder="Nachname" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+          <input type="text" id="registerNachname" required placeholder="Nachname" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
         </div>
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">Jahrgang</label>
-          <input type="number" id="registerJahrgang" required placeholder="z.B. 2005" min="1900" max="2030" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+          <input type="number" id="registerJahrgang" required placeholder="z.B. 2005" min="1900" max="2030" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
         </div>
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">E-Mail</label>
-          <input type="email" id="registerEmail" required placeholder="deine@email.de" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+          <input type="email" id="registerEmail" required placeholder="deine@email.de" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
         </div>
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">Passwort</label>
-          <input type="password" id="registerPassword" required placeholder="Mindestens 6 Zeichen" minlength="6" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+          <input type="password" id="registerPassword" required placeholder="Mindestens 6 Zeichen" minlength="6" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
         </div>
         <div style="margin-bottom: 20px;">
           <label style="display: block; margin-bottom: 8px; color: #333; font-weight: 600; font-size: 0.95em;">Passwort bestätigen</label>
-          <input type="password" id="registerPasswordConfirm" required placeholder="Passwort wiederholen" minlength="6" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 1em;">
+          <input type="password" id="registerPasswordConfirm" required placeholder="Passwort wiederholen" minlength="6" style="width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
         </div>
-        <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; font-size: 1.1em; font-weight: 600; cursor: pointer;">Registrieren</button>
+        <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: var(--border-radius); font-size: 1.1em; font-weight: 600; cursor: pointer;">Registrieren</button>
       </form>
     </div>
   </div>
@@ -3823,7 +3921,11 @@ Datum: 2026-02-09
       </svg>
     </button>
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Dark Mode umschalten">
-      <span id="darkModeIcon">🌙</span>
+      <span id="darkModeIcon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </span>
     </button>
     
     <!-- Logo -->
@@ -3833,7 +3935,12 @@ Datum: 2026-02-09
     
     <!-- Kompakte Athletensuche (nur für Admins) - im Header integriert -->
     <div id="compactAthleteSearch" class="compact-athlete-search" style="display: none;">
-      <span class="search-icon">🔍</span>
+      <span class="search-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+      </span>
       <input type="text" id="compactAthletSuche" placeholder="Athlet suchen..." autocomplete="off">
       <div id="compactAthletVorschlaege" class="autocomplete-suggestions"></div>
       <div id="compactSelectedInfo" class="selected-info" style="display: none;">
@@ -3851,10 +3958,41 @@ Datum: 2026-02-09
       
       <!-- Tab Navigation -->
       <div class="tab-navigation">
-        <button class="tab-btn active" onclick="switchTab('dashboard')">📊 Dashboard</button>
-        <button class="tab-btn" onclick="switchTab('leistungen')">📋 Leistungen</button>
-        <button class="tab-btn" onclick="switchTab('analyse')">📈 Analyse</button>
-        <button class="tab-btn" onclick="switchTab('ziele')">🎯 Ziele</button>
+        <button class="tab-btn active" onclick="switchTab('dashboard')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
+          </svg>
+          Dashboard
+        </button>
+        <button class="tab-btn" onclick="switchTab('leistungen')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Leistungen
+        </button>
+        <button class="tab-btn" onclick="switchTab('analyse')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <line x1="12" y1="20" x2="12" y2="10"></line>
+            <line x1="18" y1="20" x2="18" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="16"></line>
+          </svg>
+          Analyse
+        </button>
+        <button class="tab-btn" onclick="switchTab('ziele')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
+          </svg>
+          Ziele
+        </button>
       </div>
 
       <!-- ============================================ -->
@@ -4078,10 +4216,10 @@ Datum: 2026-02-09
       <div id="leistungenTab" class="tab-content">
         <!-- Action Buttons -->
         <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;" id="leistungenActions">
-          <button onclick="openAddLeistungModal()" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
+          <button onclick="openAddLeistungModal()" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 1.2em;">➕</span> Leistung hinzufügen
           </button>
-          <button onclick="openImportModal()" style="padding: 12px 24px; background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
+          <button onclick="openImportModal()" style="padding: 12px 24px; background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
             <span style="font-size: 1.2em;">📥</span> CSV Import
           </button>
         </div>
@@ -6133,7 +6271,7 @@ function renderScoreTable() {
 
   // Erstelle Tabelle im Stil der Leistungen-Tabelle
   let html = `
-    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <div></div>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -6326,7 +6464,7 @@ async function berechneDurchschnitt(typ) {
 
   // Tabellen-HTML mit der gewünschten Reihenfolge und Schließen-Button
   let html = `
-    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3 style="color: #2a5298; margin: 0;">${typ === 'leistung' ? '📈 Ø Leistung' : '🏅 Ø Platzierung'}</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -10219,7 +10357,7 @@ function renderOrtTable() {
   let tableHTML = `
     <div style="animation: slideIn 0.3s ease-out;">
       <h3 class="dashboard-section-title">📍 ${currentOrtName}</h3>
-      <div id="ortTableWhiteBox" style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+      <div id="ortTableWhiteBox" style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <div style="color: #757575; font-size: 0.95em;">${currentOrtLeistungen.length} ${currentOrtLeistungen.length === 1 ? 'Leistung' : 'Leistungen'}</div>
           <button onclick="hideOrtLeistungen()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -10641,8 +10779,27 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark-mode');
   const isDark = document.body.classList.contains('dark-mode');
   
-  // Icon ändern
-  document.getElementById('darkModeIcon').textContent = isDark ? '☀️' : '🌙';
+  // Icon ändern - SVG statt Emoji
+  const iconContainer = document.getElementById('darkModeIcon');
+  if (isDark) {
+    // Sun icon
+    iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>`;
+  } else {
+    // Moon icon
+    iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    </svg>`;
+  }
   
   // Speichere Präferenz
   localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
@@ -10653,7 +10810,20 @@ document.addEventListener('DOMContentLoaded', function() {
   const darkMode = localStorage.getItem('darkMode');
   if (darkMode === 'enabled') {
     document.body.classList.add('dark-mode');
-    document.getElementById('darkModeIcon').textContent = '☀️';
+    const iconContainer = document.getElementById('darkModeIcon');
+    if (iconContainer) {
+      iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>`;
+    }
   }
 });
 
@@ -11773,7 +11943,7 @@ async function berechneErfolgsquote() {
   
   // Erstelle HTML-Ausgabe
   const html = `
-    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">🎯 Erfolgsquote</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -11878,7 +12048,7 @@ async function zeigeSaisonvergleich() {
   // Berechne Durchschnitte pro Jahr
   const jahresArray = Object.keys(jahresStats).sort();
   let html = `
-    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">📅 Saisonvergleich</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -12015,7 +12185,7 @@ async function zeigeWettkampffrequenz() {
   
   // Erstelle HTML
   let html = `
-    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">🗓️ Wettkampffrequenz</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -12048,7 +12218,7 @@ async function zeigeWettkampffrequenz() {
           <span style="font-weight: bold;">${jahr}</span>
           <span>${anzahl} Wettkämpfe (${prozent}%)</span>
         </div>
-        <div style="background: #ddd; border-radius: 10px; height: 20px; overflow: hidden;">
+        <div style="background: #ddd; border-radius: var(--border-radius); height: 20px; overflow: hidden;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); height: 100%; width: ${prozent}%; transition: width 0.3s;"></div>
         </div>
       </div>
@@ -12158,7 +12328,7 @@ async function zeigePBTimeline() {
   
   // Erstelle HTML
   let html = `
-    <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">🏅 Persönliche Rekorde Timeline</h3>
         <button onclick="document.getElementById('bestleistungenAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -12187,7 +12357,7 @@ async function zeigePBTimeline() {
             <div>
               <div style="font-size: 1.2em; font-weight: bold; color: #2a5298; margin-bottom: 4px;">
                 ${pb.disziplin}
-                ${isFirst ? ' <span style="background: #FFD700; color: white; padding: 2px 10px; border-radius: 12px; font-size: 0.7em; font-weight: bold; margin-left: 8px;">NEUESTE</span>' : ''}
+                ${isFirst ? ' <span style="background: #FFD700; color: white; padding: 2px 10px; border-radius: var(--border-radius); font-size: 0.7em; font-weight: bold; margin-left: 8px;">NEUESTE</span>' : ''}
               </div>
               <div style="font-size: 1.4em; font-weight: bold; color: #667eea;">
                 ${formatiereLeistung(pb.leistung, pb.disziplin)}
@@ -12515,7 +12685,7 @@ window.setTimeout = function(fn, delay) {
 </div> <!-- Close mainApp -->
 <!-- Modal: Leistung hinzufügen/bearbeiten -->
 <div id="leistungModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-  <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+  <div style="background: white; padding: 30px; border-radius: var(--border-radius); max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2 id="modalTitle" style="color: #2a5298; margin: 0;">Leistung hinzufügen</h2>
       <button onclick="closeLeistungModal()" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
@@ -12572,7 +12742,7 @@ window.setTimeout = function(fn, delay) {
 
 <!-- Modal: CSV Import -->
 <div id="importModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-  <div style="background: white; padding: 30px; border-radius: 15px; max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+  <div style="background: white; padding: 30px; border-radius: var(--border-radius); max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2 style="color: #2a5298; margin: 0;">Leistungen importieren</h2>
       <button onclick="closeImportModal()" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
