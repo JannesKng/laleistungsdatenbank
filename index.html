@@ -91,7 +91,7 @@ Datum: 2026-02-09
   * Kompakte Athletensuche im Header wurde entfernt
   * Vereinfachte Benutzeroberfläche
 - NEU: Passwort anzeigen/verstecken beim Login
-  * Auge-Icon (<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx='12" cy='12" r='3"/></svg>) zum Ein-/Ausblenden des Passworts
+  * Auge-Icon (👁️) zum Ein-/Ausblenden des Passworts
   * Verbesserte Benutzerfreundlichkeit beim Login
 - INFO: Registrierung speichert automatisch Name, Vorname und Jahrgang
   * Athletenprofil wird bei Registrierung automatisch angelegt
@@ -107,7 +107,7 @@ Datum: 2026-02-09
   * loadUserAthlete() übernimmt die Verwaltung der Admin-Features
   * Verhindert Race-Conditions bei der Initialisierung
 - VERBESSERUNG: Neuer Icon-basierter Abmelden-Button oben links
-  * Ersetzt alten "<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points='16 17 21 12 16 7"/><line x1='21" y1='12" x2='9" y2='12"/></svg> Logout" Button durch modernen SVG-Icon
+  * Ersetzt alten "🚪 Logout" Button durch modernen SVG-Icon
   * Einheitliches Design mit anderen Header-Buttons
 - SICHERHEIT: Athleten-Sektion nur noch für Admins sichtbar
   * Normale Benutzer sehen keine Athleten-Tabelle mehr
@@ -301,7 +301,7 @@ Datum: 2026-02-09
 - VERBESSERUNG: Kleinere Schriftgröße (0.9em) und weniger Padding für kompakteres Design
 
 Änderungen in v3.4.6:
-- VERBESSERUNG: Athletensuche jetzt ultra-kompakt - nur Lupensymbol <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><circle cx='11" cy='11" r='8"/><path d='m21 21-4.35-4.35"/></svg> sichtbar
+- VERBESSERUNG: Athletensuche jetzt ultra-kompakt - nur Lupensymbol 🔍 sichtbar
 - NEU: Hover-Expansion - Suchleiste expandiert elegant beim Überfahren
 - VERBESSERUNG: Sanfte Animation mit cubic-bezier für professionelles Gefühl
 - VERBESSERUNG: Separate Ansicht für ausgewählten Athleten (has-selection Klasse)
@@ -2165,7 +2165,7 @@ Datum: 2026-02-09
       display: inline-block;
       width: 20px;
       height: 20px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg" width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='%23d4af37" stroke-width='2" stroke-linecap='round" stroke-linejoin='round"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>');
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>');
       background-size: contain;
       background-repeat: no-repeat;
       vertical-align: middle;
@@ -2673,7 +2673,7 @@ Datum: 2026-02-09
     }
 
     .pb-card-dashboard::before {
-      content: '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>';
+      content: '🏅';
       position: absolute;
       bottom: -10px;
       right: -10px;
@@ -3870,9 +3870,9 @@ Datum: 2026-02-09
           <div style="position: relative;">
             <input type="password" id="loginPassword" required placeholder="Passwort" style="width: 100%; padding: 12px 45px 12px 15px; border: 2px solid #e0e0e0; border-radius: var(--border-radius); font-size: 1em;">
             <button type="button" id="togglePasswordBtn" onclick="toggleLoginPassword()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; padding: 5px; color: #666; display: flex; align-items: center; justify-content: center;">
-              <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2">
-                <path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                <circle cx='12" cy='12" r='3"></circle>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
               </svg>
             </button>
           </div>
@@ -3927,16 +3927,16 @@ Datum: 2026-02-09
 <div class="container">
   <div class="header">
     <button class="icon-button" onclick="handleLogout()" title="Abmelden" style="position: absolute; top: 20px; left: 40px; margin-left: 0;">
-      <svg xmlns='http://www.w3.org/2000/svg" width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-        <path d='M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-        <polyline points='16 17 21 12 16 7"></polyline>
-        <line x1='21" y1='12" x2='9" y2='12"></line>
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+        <polyline points="16 17 21 12 16 7"></polyline>
+        <line x1="21" y1="12" x2="9" y2="12"></line>
       </svg>
     </button>
     <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Dark Mode umschalten">
       <span id="darkModeIcon">
-        <svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-          <path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
       </span>
     </button>
@@ -3949,16 +3949,16 @@ Datum: 2026-02-09
     <!-- Kompakte Athletensuche (nur für Admins) - im Header integriert -->
     <div id="compactAthleteSearch" class="compact-athlete-search" style="display: none;">
       <span class="search-icon">
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-          <circle cx='11" cy='11" r='8"></circle>
-          <path d='m21 21-4.35-4.35"></path>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
         </svg>
       </span>
       <input type="text" id="compactAthletSuche" placeholder="Athlet suchen..." autocomplete="off">
       <div id="compactAthletVorschlaege" class="autocomplete-suggestions"></div>
       <div id="compactSelectedInfo" class="selected-info" style="display: none;">
         <span id="compactAthletName"></span>
-        <span class="clear-btn" onclick="clearCompactAthlete()"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg></span>
+        <span class="clear-btn" onclick="clearCompactAthlete()">✕</span>
       </div>
     </div>
     
@@ -3972,37 +3972,37 @@ Datum: 2026-02-09
       <!-- Tab Navigation -->
       <div class="tab-navigation">
         <button class="tab-btn active" onclick="switchTab('dashboard')">
-          <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='margin-right: 6px; vertical-align: middle;'>
-            <rect x='3' y='3' width='7" height='7"></rect>
-            <rect x='14' y='3' width='7" height='7"></rect>
-            <rect x='14' y='14' width='7" height='7"></rect>
-            <rect x='3' y='14' width='7" height='7"></rect>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <rect x="3" y="3" width="7" height="7"></rect>
+            <rect x="14" y="3" width="7" height="7"></rect>
+            <rect x="14" y="14" width="7" height="7"></rect>
+            <rect x="3" y="14" width="7" height="7"></rect>
           </svg>
           Dashboard
         </button>
         <button class="tab-btn" onclick="switchTab('leistungen')">
-          <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='margin-right: 6px; vertical-align: middle;'>
-            <path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points='14 2 14 8 20 8"></polyline>
-            <line x1='16" y1='13" x2='8" y2='13"></line>
-            <line x1='16" y1='17" x2='8" y2='17"></line>
-            <polyline points='10 9 9 9 8 9"></polyline>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
           Leistungen
         </button>
         <button class="tab-btn" onclick="switchTab('analyse')">
-          <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='margin-right: 6px; vertical-align: middle;'>
-            <line x1='12" y1='20" x2='12" y2='10"></line>
-            <line x1='18" y1='20" x2='18" y2='4"></line>
-            <line x1='6" y1='20" x2='6" y2='16"></line>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <line x1="12" y1="20" x2="12" y2="10"></line>
+            <line x1="18" y1="20" x2="18" y2="4"></line>
+            <line x1="6" y1="20" x2="6" y2="16"></line>
           </svg>
           Analyse
         </button>
         <button class="tab-btn" onclick="switchTab('ziele')">
-          <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='margin-right: 6px; vertical-align: middle;'>
-            <circle cx='12" cy='12" r='10"></circle>
-            <circle cx='12" cy='12" r='6"></circle>
-            <circle cx='12" cy='12" r='2"></circle>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
           </svg>
           Ziele
         </button>
@@ -4052,18 +4052,18 @@ Datum: 2026-02-09
         <!-- Ziele Bereich -->
         <div id="dashboardGoalsSection" style="display: none; margin-bottom: 30px; overflow: visible;">
           <h3 class="dashboard-section-title">
-            <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 8px;'>
-              <circle cx='12" cy='12" r='10"></circle>
-              <circle cx='12" cy='12" r='6"></circle>
-              <circle cx='12" cy='12" r='2"></circle>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
             </svg>
             Aktuelle Ziele
           </h3>
           <div style="background: var(--section-bg); padding: 10px 15px; border-radius: 8px; margin-bottom: 10px; font-size: 0.85em; color: var(--text-secondary); border-left: 3px solid var(--accent-color); overflow: visible;">
-            <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 4px;'>
-              <circle cx='12" cy='12" r='10"></circle>
-              <line x1='12" y1='16" x2='12" y2='12"></line>
-              <line x1='12" y1='8" x2='12.01" y2='8"></line>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
             <strong>Hinweis:</strong> Saisonziele: Baseline = SB + letzte 3 Leistungen | Karriereziele: Baseline = PB + letzte 3 Leistungen
           </div>
@@ -4071,8 +4071,8 @@ Datum: 2026-02-09
             <!-- Saisonziele -->
             <div>
               <h4 class="dashboard-goals-subtitle">
-                <svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 6px;'>
-                  <polygon points='12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                 </svg>
                 Saisonziele
               </h4>
@@ -4085,9 +4085,9 @@ Datum: 2026-02-09
             <!-- Karriereziele -->
             <div>
               <h4 class="dashboard-goals-subtitle">
-                <svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 6px;'>
-                  <circle cx='12" cy='8" r='7"></circle>
-                  <polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;">
+                  <circle cx="12" cy="8" r="7"></circle>
+                  <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
                 </svg>
                 Karriereziele
               </h4>
@@ -4106,9 +4106,9 @@ Datum: 2026-02-09
           <!-- Top Bestleistungen (JETZT LINKS) -->
           <div>
             <h3 class="dashboard-section-title">
-              <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 8px;'>
-                <circle cx='12" cy='8" r='7"></circle>
-                <polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                <circle cx="12" cy="8" r="7"></circle>
+                <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
               </svg>
               Top Bestleistungen
             </h3>
@@ -4124,23 +4124,23 @@ Datum: 2026-02-09
           <!-- Wettkampforte Karte (JETZT RECHTS) -->
           <div>
             <h3 class="dashboard-section-title">
-              <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 8px;'>
-                <path d='M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx='12" cy='10" r='3"></circle>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
               </svg>
               Wettkampforte
             </h3>
             <div class="dashboard-map-container" style="height: 640px;">
               <div id="mapContainer" style="position: relative; height: 600px; background: #f8f9fa; border-radius: 8px; overflow: hidden; cursor: grab;" onmousedown="startMapDrag(event)" onwheel="zoomMap(event)">
-                <svg id='germanyMap" viewBox='-100 0 600 650" style='width: 100%; height: 100%; transform-origin: 0 0;'>
+                <svg id="germanyMap" viewBox="-100 0 600 650" style="width: 100%; height: 100%; transform-origin: 0 0;">
                   <!-- Hintergrund -->
-                  <rect x='-100' y='0' width='600" height='650" fill='#f8f9fa" opacity='1'/>
+                  <rect x="-100" y="0" width="600" height="650" fill="#f8f9fa" opacity="1"/>
                   
                   <!-- Deutschlandkarte - korrekte Grenze -->
-                  <g id='germanyBorder"></g>
+                  <g id="germanyBorder"></g>
                   
                   <!-- Orte werden hier dynamisch eingefügt -->
-                  <g id='locationMarkers"></g>
+                  <g id="locationMarkers"></g>
                 </svg>
                 <div id="mapLegend" class="map-legend">
                   <div style="margin-bottom: 8px; font-weight: bold; color: #2a5298;">Leistungen:</div>
@@ -4167,16 +4167,16 @@ Datum: 2026-02-09
                 </div>
                 <!-- Reset Button -->
                 <button onclick="resetMapView()" class="map-reset-btn">
-                  <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='margin-right: 6px;'>
-                    <polyline points='23 4 23 10 17 10"></polyline>
-                    <path d='M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
                   </svg>
                   <span>Zoom zurücksetzen</span>
                 </button>
                 <!-- Vollbild Button -->
                 <button onclick="toggleMapFullscreen()" class="map-fullscreen-btn" title="Vollbild">
-                  <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2">
-                    <path d='M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
                   </svg>
                 </button>
                 <!-- Tooltip -->
@@ -4198,10 +4198,10 @@ Datum: 2026-02-09
           <!-- Top 3 Disziplinen - immer links -->
           <div id="topDisziplinenSection">
             <h3 class="dashboard-section-title">
-              <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 8px;'>
-                <circle cx='12" cy='12" r='10"></circle>
-                <circle cx='12" cy='12" r='6"></circle>
-                <circle cx='12" cy='12" r='2"></circle>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <circle cx="12" cy="12" r="6"></circle>
+                <circle cx="12" cy="12" r="2"></circle>
               </svg>
               Top 3 Disziplinen
             </h3>
@@ -4226,10 +4226,10 @@ Datum: 2026-02-09
       <div id="zieleTab" class="tab-content">
         
         <div id="zieleNoAthlete" style="text-align: center; padding: 60px 20px; display: block;">
-          <svg width='80" height='80" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='1.5" stroke-linecap='round" stroke-linejoin='round" style='margin-bottom: 20px; color: var(--accent-color);'>
-            <circle cx='12" cy='12" r='10"></circle>
-            <circle cx='12" cy='12" r='6"></circle>
-            <circle cx='12" cy='12" r='2"></circle>
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom: 20px; color: var(--accent-color);">
+            <circle cx="12" cy="12" r="10"></circle>
+            <circle cx="12" cy="12" r="6"></circle>
+            <circle cx="12" cy="12" r="2"></circle>
           </svg>
           <h3 style="color: var(--text-primary); margin-bottom: 10px;">Keine Athleten ausgewählt</h3>
           <p style="color: var(--text-muted);">Wähle einen Athleten aus, um Ziele zu verwalten</p>
@@ -4237,10 +4237,10 @@ Datum: 2026-02-09
 
         <div id="zieleContent" style="display: none;">
           <h3 style="color: var(--text-primary); margin-bottom: 20px; font-size: 1.5em;">
-            <svg width='24" height='24" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 8px;'>
-              <circle cx='12" cy='12" r='10"></circle>
-              <circle cx='12" cy='12" r='6"></circle>
-              <circle cx='12" cy='12" r='2"></circle>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <circle cx="12" cy="12" r="6"></circle>
+              <circle cx="12" cy="12" r="2"></circle>
             </svg>
             Ziele für <span id="zieleAthletName"></span>
           </h3>
@@ -4249,10 +4249,10 @@ Datum: 2026-02-09
           <div class="goal-form">
             <h4 style="color: var(--text-primary); margin-bottom: 15px;">Neues Ziel hinzufügen</h4>
             <div style="background: var(--section-bg); padding: 10px 15px; border-radius: 8px; margin-bottom: 15px; font-size: 0.9em; color: var(--text-secondary); border-left: 3px solid var(--accent-color);">
-              <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 4px;'>
-                <circle cx='12" cy='12" r='10"></circle>
-                <line x1='12" y1='16" x2='12" y2='12"></line>
-                <line x1='12" y1='8" x2='12.01" y2='8"></line>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
               </svg>
               <strong>Hinweis:</strong> Der Ausgangswert berechnet sich aus der Personal Best (50%) und den letzten 3 Leistungen (25%, 16,5%, 8,5%).
             </div>
@@ -4275,9 +4275,9 @@ Datum: 2026-02-09
                 <input type="text" id="goalTarget" placeholder="z.B. 11.00">
               </div>
               <button onclick="addGoal()" style="white-space: nowrap;">
-                <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round" style='vertical-align: middle; margin-right: 4px;'>
-                  <line x1='12" y1='5" x2='12" y2='19"></line>
-                  <line x1='5" y1='12" x2='19" y2='12"></line>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
                 </svg>
                 Hinzufügen
               </button>
@@ -4297,17 +4297,17 @@ Datum: 2026-02-09
         <!-- Action Buttons -->
         <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;" id="leistungenActions">
           <button onclick="openAddLeistungModal()" style="padding: 12px 24px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
-            <svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-              <line x1='12" y1='5" x2='12" y2='19"></line>
-              <line x1='5" y1='12" x2='19" y2='12"></line>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="12" y1="5" x2="12" y2="19"></line>
+              <line x1="5" y1="12" x2="19" y2="12"></line>
             </svg>
             Leistung hinzufügen
           </button>
           <button onclick="openImportModal()" style="padding: 12px 24px; background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; border-radius: var(--border-radius); cursor: pointer; font-size: 1em; font-weight: 600; transition: all 0.3s; display: flex; align-items: center; gap: 8px;">
-            <svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-              <path d='M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-              <polyline points='7 10 12 15 17 10"></polyline>
-              <line x1='12" y1='15" x2='12" y2='3"></line>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
             </svg>
             CSV Import
           </button>
@@ -4357,13 +4357,13 @@ Datum: 2026-02-09
         </div>
 
         <div class="filter-section">
-          <h3><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><circle cx='12" cy='12" r='3"/><path d='M12 1v6m0 6v6m8.66-15.66l-4.24 4.24m-4.24 4.24l-4.24 4.24M23 12h-6m-6 0H1m20.66 8.66l-4.24-4.24m-4.24-4.24l-4.24-4.24"/></svg> Filter</h3>
+          <h3>🔧 Filter</h3>
 
           <div id="filterContainer"></div>
           <div class="button-group">
             <button onclick="ladeLeistungen()">Anzeigen</button>
-            <button class="reset-btn" onclick="alleFilterZuruecksetzen()"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Alle Filter zurücksetzen</button>
-            <button class="export-btn" onclick="exportiereCSV()" id="exportBtn" style="display:none;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points='17 21 17 13 7 13 7 21"/><polyline points='7 3 7 8 15 8"/></svg> Als CSV exportieren</button>
+            <button class="reset-btn" onclick="alleFilterZuruecksetzen()">🔄 Alle Filter zurücksetzen</button>
+            <button class="export-btn" onclick="exportiereCSV()" id="exportBtn" style="display:none;">💾 Als CSV exportieren</button>
           </div>
         </div>
         
@@ -4376,7 +4376,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details open>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points='17 6 23 6 23 12"/></svg> Leistungsentwicklung
+        📈 Leistungsentwicklung
       </summary>
     
           <!-- Filter -->
@@ -4423,7 +4423,7 @@ Datum: 2026-02-09
           <!-- Leistungsentwicklung Diagramm -->
           <div style="display: flex; gap: 10px; margin-bottom: 10px;">
       <button id="diagrammAnzeigenBtn" onclick="zeigeDiagramm()">Leistungsentwicklung anzeigen</button>
-      <button id="diagrammAktualisierenBtn" onclick="zeigeDiagramm()" style="display: none;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Aktualisieren</button>
+      <button id="diagrammAktualisierenBtn" onclick="zeigeDiagramm()" style="display: none;">🔄 Aktualisieren</button>
       <button id="diagrammSchließenBtn" onclick="schließeDiagramm()" style="display: none;">Einklappen</button>
       <button id="diagrammAusklappenBtn" onclick="klappeAusDiagramm()" style="display: none;">Ausklappen</button>
           </div>
@@ -4439,7 +4439,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='12" y1='20" x2='12" y2='10"/><line x1='18" y1='20" x2='18" y2='4"/><line x1='6" y1='20" x2='6" y2='16"/></svg> SB & Saisondurchschnitte
+        📊 SB & Saisondurchschnitte
       </summary>
     
           <!-- SB-Diagramm -->
@@ -4487,7 +4487,7 @@ Datum: 2026-02-09
       
       <div style="display: flex; gap: 10px;">
         <button id="sbDiagrammAnzeigenBtn" onclick="zeigeSBDiagramm()">SB-Diagramm anzeigen</button>
-        <button id="sbDiagrammAktualisierenBtn" onclick="zeigeSBDiagramm()" style="display: none;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Aktualisieren</button>
+        <button id="sbDiagrammAktualisierenBtn" onclick="zeigeSBDiagramm()" style="display: none;">🔄 Aktualisieren</button>
         <button id="sbDiagrammSchließenBtn" onclick="schließeSBDiagramm()" style="display: none;">Einklappen</button>
         <button id="sbDiagrammAusklappenBtn" onclick="klappeAusSBDiagramm()" style="display: none;">Ausklappen</button>
       </div>
@@ -4518,7 +4518,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><circle cx='12" cy='12" r='10"/><path d='M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> Leistungsprognose
+        🔮 Leistungsprognose
       </summary>
     
           <!-- PROGNOSE-DIAGRAMM -->
@@ -4546,7 +4546,7 @@ Datum: 2026-02-09
       
       <div style="display: flex; gap: 10px;">
         <button id="prognoseDiagrammAnzeigenBtn" onclick="zeigePrognoseDiagramm()">Prognose anzeigen</button>
-        <button id="prognoseDiagrammAktualisierenBtn" onclick="zeigePrognoseDiagramm()" style="display: none;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Aktualisieren</button>
+        <button id="prognoseDiagrammAktualisierenBtn" onclick="zeigePrognoseDiagramm()" style="display: none;">🔄 Aktualisieren</button>
         <button id="prognoseDiagrammSchließenBtn" onclick="schließePrognoseDiagramm()" style="display: none;">Einklappen</button>
         <button id="prognoseDiagrammAusklappenBtn" onclick="klappeAusPrognoseDiagramm()" style="display: none;">Ausklappen</button>
       </div>
@@ -4564,7 +4564,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='12" y1='20" x2='12" y2='10"/><line x1='18" y1='20" x2='18" y2='4"/><line x1='6" y1='20" x2='6" y2='16"/></svg> Statistiken
+        📊 Statistiken
       </summary>
     
           <!-- Filter -->
@@ -4617,7 +4617,7 @@ Datum: 2026-02-09
           </select>
         </div>
         <div style="text-align: right; grid-column: 1 / -1; margin-top: 10px;">
-          <button class="reset-btn" onclick="statistikFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Filter zurücksetzen</button>
+          <button class="reset-btn" onclick="statistikFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;">🔄 Filter zurücksetzen</button>
         </div>
       </div>
           </div>
@@ -4625,11 +4625,11 @@ Datum: 2026-02-09
           <div class="avg-buttons">
       <button class="avg-btn" onclick="zeigeLeistungsTabelle()">Score</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('leistung')">Ø Leistung</button>
-      <button class="avg-btn" onclick="berechneDurchschnitt('platzierung')"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Ø Platzierung</button>
+      <button class="avg-btn" onclick="berechneDurchschnitt('platzierung')">🏅 Ø Platzierung</button>
       <button class="avg-btn" onclick="berechneErfolgsquote()">Erfolgsquote</button>
-      <button class="avg-btn" onclick="zeigeSaisonvergleich()"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><rect x='3' y='4' width='18" height='18" rx='2" ry='2"/><line x1='16" y1='2" x2='16" y2='6"/><line x1='8" y1='2" x2='8" y2='6"/><line x1='3" y1='10" x2='21" y2='10"/></svg> Saisonvergleich</button>
-      <button class="avg-btn" onclick="zeigeWettkampffrequenz()"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><rect x='3' y='4' width='18" height='18" rx='2" ry='2"/><line x1='16" y1='2" x2='16" y2='6"/><line x1='8" y1='2" x2='8" y2='6"/><line x1='3" y1='10" x2='21" y2='10"/></svg> Wettkampffrequenz</button>
-      <button class="export-btn" onclick="exportiereAnalyseCSV()" id="analyseExportBtn" style="display:none;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points='17 21 17 13 7 13 7 21"/><polyline points='7 3 7 8 15 8"/></svg> Als CSV exportieren</button>
+      <button class="avg-btn" onclick="zeigeSaisonvergleich()">📅 Saisonvergleich</button>
+      <button class="avg-btn" onclick="zeigeWettkampffrequenz()">🗓️ Wettkampffrequenz</button>
+      <button class="export-btn" onclick="exportiereAnalyseCSV()" id="analyseExportBtn" style="display:none;">💾 Als CSV exportieren</button>
           </div>
           <div id="analyseAusgabe" style="margin-top: 20px;"></div>
           </details>
@@ -4638,7 +4638,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Bestleistungen
+        🏆 Bestleistungen
       </summary>
     
           <!-- Filter -->
@@ -4691,7 +4691,7 @@ Datum: 2026-02-09
           <input type="date" id="bestleistungenFilterBis" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
         <div style="text-align: right; grid-column: 1 / -1; margin-top: 10px;">
-          <button class="reset-btn" onclick="bestleistungenFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Filter zurücksetzen</button>
+          <button class="reset-btn" onclick="bestleistungenFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;">🔄 Filter zurücksetzen</button>
         </div>
       </div>
           </div>
@@ -4699,8 +4699,8 @@ Datum: 2026-02-09
           <div class="avg-buttons">
       <button class="avg-btn" style="background:#FFD700" onclick="zeigePBs()">PBs</button>
       <button class="avg-btn" style="background:#4facfe; color:white;" onclick="zeigeSBMenu()">⭐ SBs</button>
-      <button class="avg-btn" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);" onclick="zeigePBTimeline()"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> PB-Timeline</button>
-      <button class="export-btn" onclick="exportiereBestleistungenCSV()" id="bestleistungenExportBtn" style="display:none;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points='17 21 17 13 7 13 7 21"/><polyline points='7 3 7 8 15 8"/></svg> Als CSV exportieren</button>
+      <button class="avg-btn" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);" onclick="zeigePBTimeline()">🏅 PB-Timeline</button>
+      <button class="export-btn" onclick="exportiereBestleistungenCSV()" id="bestleistungenExportBtn" style="display:none;">💾 Als CSV exportieren</button>
           </div>
           <div id="bestleistungenAusgabe" style="margin-top: 20px;"></div>
           </details>
@@ -4871,7 +4871,7 @@ window.addEventListener('DOMContentLoaded', function() {
           password: password
         });
         
-        console.log(`🔐 Login-Versuch:`, { email, loginSuccessful: !error });
+        console.log("🔐 Login-Versuch:", { email, loginSuccessful: !error });
         if (error) {
           if (error.message.includes('Invalid login credentials')) {
             showMessage('❌ Falsche E-Mail oder Passwort.', 'error');
@@ -4893,7 +4893,7 @@ window.addEventListener('DOMContentLoaded', function() {
         
         showMessage('✅ Erfolgreich angemeldet!', 'success');
         
-        console.log(`✅ Login erfolgreich, Session:`, data.session ? "vorhanden" : "nicht vorhanden");
+        console.log("✅ Login erfolgreich, Session:", data.session ? "vorhanden" : "nicht vorhanden");
         // The onAuthStateChange handler will take care of the rest
         
       } catch (err) {
@@ -4937,7 +4937,7 @@ window.addEventListener('DOMContentLoaded', function() {
       const nachname = document.getElementById('registerNachname').value;
       const jahrgang = parseInt(document.getElementById('registerJahrgang').value);
       
-      console.log(`❌ Registrierungsdaten:`, { email, vorname, nachname, jahrgang });
+      console.log("📝 Registrierungsdaten:", { email, vorname, nachname, jahrgang });
       
       // Validate passwords match
       if (password !== passwordConfirm) {
@@ -5002,7 +5002,7 @@ window.addEventListener('DOMContentLoaded', function() {
             isSubmitting = false;
           }
         } else {
-          showMessage('❌ Unerwarteter Fehler bei der Registrierung.', 'error');
+          showMessage('⚠️ Unerwarteter Fehler bei der Registrierung.', 'error');
           submitBtn.disabled = false;
           submitBtn.textContent = originalText;
           isSubmitting = false;
@@ -5029,7 +5029,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
   
   // Prevent concurrent handling
   if (isHandlingAuth) {
-    console.log('❌ Already handling auth, skipping...');
+    console.log('⚠️ Already handling auth, skipping...');
     return;
   }
   
@@ -5053,11 +5053,11 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
     
     isHandlingAuth = true;
     currentUser = session.user;
-    console.log(' User signed in:', currentUser.id, currentUser.email);
-    console.log(` Starte Athlet-Suche für user_id:`, currentUser.id);
+    console.log('👤 User signed in:', currentUser.id, currentUser.email);
+    console.log("🔍 Starte Athlet-Suche für user_id:", currentUser.id);
     
     try {
-      console.log(` Sende Query an Supabase...`);
+      console.log("📡 Sende Query an Supabase...");
       
       // Add timeout to prevent hanging
       const queryPromise = supabaseClient
@@ -5075,20 +5075,20 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         timeoutPromise.then(() => ({ data: null, error: { message: 'Timeout' } }))
       ]);
       
-      console.log(`❌ Query-Ergebnis erhalten`);
-      console.log('❌ Existing athlete:', existingAthlete);
-      console.log('❌ Fetch error:', fetchError);
+      console.log("📦 Query-Ergebnis erhalten");
+      console.log('📊 Existing athlete:', existingAthlete);
+      console.log('❗ Fetch error:', fetchError);
       
       if (fetchError) {
-        console.error('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Database error:', fetchError);
-        showMessage('❌ Fehler beim Laden des Profils: ' + fetchError.message, 'error');
+        console.error('❌ Database error:', fetchError);
+        showMessage('⚠️ Fehler beim Laden des Profils: ' + fetchError.message, 'error');
         await supabaseClient.auth.signOut();
         isHandlingAuth = false;
         lastProcessedUserId = null;
         return;
       } else if (!existingAthlete) {
         console.log('❌ No athlete profile found for existing user');
-        console.log('❌ Waiting for database trigger to create profile...');
+        console.log('⚠️ Waiting for database trigger to create profile...');
         
         // Wait a moment for the trigger to execute (in case it's delayed)
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -5101,8 +5101,8 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
           .maybeSingle();
         
         if (retryError || !retryAthlete) {
-          console.error('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Still no athlete profile found after retry');
-          showMessage('❌ Kein Athleten-Profil gefunden. Bitte kontaktiere den Administrator.', 'error');
+          console.error('❌ Still no athlete profile found after retry');
+          showMessage('⚠️ Kein Athleten-Profil gefunden. Bitte kontaktiere den Administrator.', 'error');
           await supabaseClient.auth.signOut();
           isHandlingAuth = false;
           lastProcessedUserId = null;
@@ -5136,7 +5136,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         }
       }
       
-      console.log(' Initializing app...');
+      console.log('🔧 Initializing app...');
       await initializeApp();
       
       // Initialize compact athlete search for admins
@@ -5144,10 +5144,10 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         initCompactAthleteSearch();
       }
       
-      console.log(' Loading leistungen...');
+      console.log('📋 Loading leistungen...');
       await ladeLeistungen();
       
-      console.log('❌ Loading dashboard data...');
+      console.log('📊 Loading dashboard data...');
       await ladeDashboardDaten();
       
       // Mark this user as processed
@@ -5155,8 +5155,8 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
       console.log('✅✅✅ Auth handling complete, mainApp is now visible');
       
     } catch (error) {
-      console.error('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Error in auth handler:', error);
-      console.error('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Error stack:', error.stack);
+      console.error('❌ Error in auth handler:', error);
+      console.error('❌ Error stack:', error.stack);
       showMessage('Ein Fehler ist aufgetreten: ' + error.message, 'error');
       showLoginScreen();
       lastProcessedUserId = null;
@@ -5165,7 +5165,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
     }
     
   } else if (event === 'SIGNED_OUT') {
-    console.log(' User signed out');
+    console.log('🚪 User signed out');
     currentUser = null;
     currentAthlete = null;
     isAdmin = false;
@@ -5185,11 +5185,11 @@ function toggleLoginPassword() {
   if (passwordInput.type === 'password') {
     passwordInput.type = 'text';
     // Eye with slash (hidden/crossed out)
-    button.innerHTML = '<svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1='1" y1='1" x2='23" y2='23"></line></svg>';
+    button.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
   } else {
     passwordInput.type = 'password';
     // Normal eye (visible)
-    button.innerHTML = '<svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx='12" cy='12" r='3"></circle></svg>';
+    button.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
   }
 }
 
@@ -5215,7 +5215,7 @@ async function handleLogout() {
   const toggleBtn = document.getElementById('togglePasswordBtn');
   if (passwordInput.type === 'text') {
     passwordInput.type = 'password';
-    toggleBtn.innerHTML = '<svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx='12" cy='12" r='3"></circle></svg>';
+    toggleBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
   }
   
   showLoginScreen();
@@ -5240,9 +5240,9 @@ ladeLeistungen = async function() {
 
 // Warn if running from file:// protocol
 if (window.location.protocol === 'file:') {
-  console.warn('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> WARNUNG: Die Anwendung wird lokal geöffnet (file://).');
-  console.warn('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> Email-Login funktioniert NUR mit einem Webserver (http:// oder https://).');
-  console.warn('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> Bitte verwende einen lokalen Webserver, z.B.:');
+  console.warn('⚠️ WARNUNG: Die Anwendung wird lokal geöffnet (file://).');
+  console.warn('⚠️ Email-Login funktioniert NUR mit einem Webserver (http:// oder https://).');
+  console.warn('⚠️ Bitte verwende einen lokalen Webserver, z.B.:');
   console.warn('   python -m http.server 8000');
   console.warn('   Dann öffne: http://localhost:8000/index.html');
   
@@ -5250,7 +5250,7 @@ if (window.location.protocol === 'file:') {
   setTimeout(() => {
     const warning = document.createElement('div');
     warning.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: #ff6b6b; color: white; padding: 15px; text-align: center; z-index: 99999; font-weight: bold;';
-    warning.innerHTML = '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> WARNUNG: Email-Login funktioniert nur mit Webserver! Öffne die Datei mit "python -m http.server 8000" oder Live Server.';
+    warning.innerHTML = '⚠️ WARNUNG: Email-Login funktioniert nur mit Webserver! Öffne die Datei mit "python -m http.server 8000" oder Live Server.';
     document.body.appendChild(warning);
   }, 1000);
 }
@@ -5312,7 +5312,7 @@ window.addEventListener('DOMContentLoaded', () => {
       authMessage.style.display = 'block';
       authMessage.style.background = '#d1ecf1';
       authMessage.style.color = '#0c5460';
-      authMessage.textContent = '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Anmeldung wird verarbeitet...';
+      authMessage.textContent = '🔄 Anmeldung wird verarbeitet...';
     }
     
     // Clean URL after a short delay
@@ -5322,7 +5322,7 @@ window.addEventListener('DOMContentLoaded', () => {
 if (window.location.hostname === 'localhost' || window.location.hostname.includes('netlify')) {
   window.addEventListener('DOMContentLoaded', () => {
     const debugBtn = document.createElement('button');
-    debugBtn.textContent = '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='m8 2 1.88 1.88M14.12 3.88 16 2M9 7.13v-1a3.003 3.003 0 1 1 6 0v1M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6M12 20v-9M6.53 9C4.6 8.8 3 7.1 3 5M6 13H2M3 21c0-2.1 1.7-3.9 3.8-4M20.97 5c0 2.1-1.6 3.8-3.5 4M22 13h-4M17.2 17c2.1.1 3.8 1.9 3.8 4"/></svg> Debug';
+    debugBtn.textContent = '🐛 Debug';
     debugBtn.style.cssText = 'position: fixed; bottom: 20px; right: 20px; z-index: 99999; padding: 10px 15px; background: #333; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 12px;';
     
     debugBtn.onclick = async () => {
@@ -5334,17 +5334,17 @@ if (window.location.hostname === 'localhost' || window.location.hostname.include
       }
       
       const info = `
-<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='m8 2 1.88 1.88M14.12 3.88 16 2M9 7.13v-1a3.003 3.003 0 1 1 6 0v1M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6M12 20v-9M6.53 9C4.6 8.8 3 7.1 3 5M6 13H2M3 21c0-2.1 1.7-3.9 3.8-4M20.97 5c0 2.1-1.6 3.8-3.5 4M22 13h-4M17.2 17c2.1.1 3.8 1.9 3.8 4"/></svg> DEBUG INFO:
+🐛 DEBUG INFO:
 ━━━━━━━━━━━━━━━━━━━━━━
-Session: ${session ? '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#28a745" stroke-width='2"><polyline points='20 6 9 17 4 12"/></svg> Aktiv' : '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Keine'}
+Session: ${session ? '✅ Aktiv' : '❌ Keine'}
 User Email: ${session?.user?.email || 'Keine'}
 User ID: ${session?.user?.id || 'Keine'}
 ━━━━━━━━━━━━━━━━━━━━━━
-Current User: ${currentUser ? '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#28a745" stroke-width='2"><polyline points='20 6 9 17 4 12"/></svg>' : '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg>'}
-Current Athlete: ${currentAthlete ? '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#28a745" stroke-width='2"><polyline points='20 6 9 17 4 12"/></svg>' : '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg>'}
+Current User: ${currentUser ? '✅' : '❌'}
+Current Athlete: ${currentAthlete ? '✅' : '❌'}
 ${athleteInfo}
 Selected Athlete ID: ${selectedAthleteId || 'Keine'}
-Is Admin: ${isAdmin ? '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#28a745" stroke-width='2"><polyline points='20 6 9 17 4 12"/></svg>' : '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg>'}
+Is Admin: ${isAdmin ? '✅' : '❌'}
 ━━━━━━━━━━━━━━━━━━━━━━
 Auth Initialized: ${isAuthInitialized}
 Handling Auth: ${isHandlingAuth}
@@ -5637,14 +5637,14 @@ function initAthleteSearch() {
       
       if (error) {
         console.error('FEHLER beim Laden der Athleten:', error);
-        suggestionsDiv.innerHTML = `<div class="autocomplete-item" style="color: red;"><strong><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> Datenbankfehler</strong><br>${error.message || 'Unbekannter Fehler'}</div>`;
+        suggestionsDiv.innerHTML = `<div class="autocomplete-item" style="color: red;"><strong>⚠️ Datenbankfehler</strong><br>${error.message || 'Unbekannter Fehler'}</div>`;
         suggestionsDiv.classList.add('active');
         return;
       }
       
       if (!allAthletes || allAthletes.length === 0) {
         console.warn('Keine Athleten in der Datenbank');
-        suggestionsDiv.innerHTML = '<div class="autocomplete-item"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> Keine Athleten in der Datenbank gefunden</div>';
+        suggestionsDiv.innerHTML = '<div class="autocomplete-item">⚠️ Keine Athleten in der Datenbank gefunden</div>';
         suggestionsDiv.classList.add('active');
         return;
       }
@@ -5673,12 +5673,12 @@ function initAthleteSearch() {
         suggestionsDiv.classList.add('active');
         console.log('Vorschläge angezeigt');
       } else {
-        suggestionsDiv.innerHTML = '<div class="autocomplete-item"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Keine passenden Athleten gefunden</div>';
+        suggestionsDiv.innerHTML = '<div class="autocomplete-item">❌ Keine passenden Athleten gefunden</div>';
         suggestionsDiv.classList.add('active');
       }
     } catch (e) {
       console.error('EXCEPTION beim Athleten-Suchen:', e);
-      suggestionsDiv.innerHTML = `<div class="autocomplete-item" style="color: red;"><strong><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> Fehler</strong><br>${e.message}</div>`;
+      suggestionsDiv.innerHTML = `<div class="autocomplete-item" style="color: red;"><strong>⚠️ Fehler</strong><br>${e.message}</div>`;
       suggestionsDiv.classList.add('active');
     }
   });
@@ -6034,7 +6034,7 @@ function handleDisziplinChange() {
           <option value="">– alle –</option>
           ${disziplinenListe.map(d=>`<option value="${d}">${d}</option>`).join("")}
         </select>
-        <button type="button" onclick="entferneDisziplinFilter(this)" style="padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg></button>
+        <button type="button" onclick="entferneDisziplinFilter(this)" style="padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer;">✕</button>
       `;
       container.appendChild(neueRow);
     }
@@ -6216,7 +6216,7 @@ async function ladeLeistungen() {
       document.getElementById("exportBtn").style.display = "none";
       return;
     }
-    document.getElementById("leistungenAusgabe").innerHTML = `<div class="no-data"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> ${error.message}</div>`;
+    document.getElementById("leistungenAusgabe").innerHTML = `<div class="no-data">❌ ${error.message}</div>`;
     document.getElementById("exportBtn").style.display = "none";
     return;
   }
@@ -6287,7 +6287,7 @@ async function zeigeLeistungsTabelle() {
   const athletId = selectedAthleteId; // Verwende ausgewählten Athleten
   
   if (!athletId) {
-    alert("❌ Bitte wählen Sie zuerst einen Athleten aus!");
+    alert("⚠️ Bitte wählen Sie zuerst einen Athleten aus!");
     return;
   }
   
@@ -6335,7 +6335,7 @@ async function zeigeLeistungsTabelle() {
   }
   
   if (!data || data.length === 0) {
-    alert("🔐 Keine Daten für diese Auswahl gefunden");
+    alert("📭 Keine Daten für diese Auswahl gefunden");
     return;
   }
 
@@ -6363,7 +6363,7 @@ function renderScoreTable() {
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <div></div>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Schließen</button>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
       </div>
       <div class="table-wrapper">
         <table>
@@ -6469,7 +6469,7 @@ async function berechneDurchschnitt(typ) {
   const athletId = selectedAthleteId; // Verwende ausgewählten Athleten
   
   if (!athletId) {
-    alert("❌ Bitte wählen Sie zuerst einen Athleten aus!");
+    alert("⚠️ Bitte wählen Sie zuerst einen Athleten aus!");
     return;
   }
   
@@ -6484,7 +6484,7 @@ async function berechneDurchschnitt(typ) {
 
   // Disziplin ist ERFORDERLICH
   if (!filterDisziplin) {
-    alert("❌ Bitte Disziplin im Filter auswählen");
+    alert("⚠️ Bitte Disziplin im Filter auswählen");
     return;
   }
 
@@ -6536,7 +6536,7 @@ async function berechneDurchschnitt(typ) {
   }
   
   if (!data || data.length === 0) {
-    alert("🔐 Keine Daten für diese Auswahl gefunden");
+    alert("📭 Keine Daten für diese Auswahl gefunden");
     return;
   }
 
@@ -6544,7 +6544,7 @@ async function berechneDurchschnitt(typ) {
   const werte = data.map(d => d[typ]).filter(v => v !== null && v !== undefined);
   
   if (werte.length === 0) {
-    alert("🔐 Keine gültigen Werte für die Berechnung vorhanden");
+    alert("📭 Keine gültigen Werte für die Berechnung vorhanden");
     return;
   }
   
@@ -6556,7 +6556,7 @@ async function berechneDurchschnitt(typ) {
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3 style="color: #2a5298; margin: 0;">${typ === 'leistung' ? 'Ø Leistung' : 'Ø Platzierung'}</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Schließen</button>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
       </div>
       <div class="table-wrapper">
         <table>
@@ -6705,14 +6705,14 @@ function getEinheit(disziplin) {
 /* ================= ZEIGE TABELLE MIT PBS ================= */
 function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierbar=false){
   if(!angezeigteDaten || angezeigteDaten.length===0){
-    document.getElementById(ziel).innerHTML="<div class='no-data'><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><rect x='3' y='11' width='18" height='11" rx='2" ry='2"/><path d='M7 11V7a5 5 0 0 1 10 0v4"/></svg> Keine Daten gefunden</div>";
+    document.getElementById(ziel).innerHTML="<div class='no-data'>📭 Keine Daten gefunden</div>";
     return;
   }
 
   let infoHtml = "";
   if(ziel === "leistungenAusgabe"){
     infoHtml = `<div class="results-info">
-                  <div class="results-count"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x='8' y='2' width='8" height='4" rx='1" ry='1"/></svg> ${angezeigteDaten.length} ${angezeigteDaten.length === 1 ? 'Leistung' : 'Leistungen'} gefunden</div>
+                  <div class="results-count">📋 ${angezeigteDaten.length} ${angezeigteDaten.length === 1 ? 'Leistung' : 'Leistungen'} gefunden</div>
                 </div>`;
   }
 
@@ -6770,13 +6770,13 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
   const hatAktionsSpalte = currentAthlete && (!isAdmin || selectedAthleteId === currentAthlete.id);
   const gesamtSpaltenAnzahl = hatAktionsSpalte ? spaltenAnzahl + 1 : spaltenAnzahl;
 
-  let html = infoHtml + '<div class="table-wrapper"><table><thead><tr>';
+  let html = infoHtml + '<div class="table-wrapper"><table><tr>';
   Object.keys(angezeigteDaten[0]).forEach(sp=>{
     let name = SPALTEN_ANZEIGE[sp]||sp;
     
     if(sortierbar){
       const pfeil = sortSpalte===sp ? (sortAsc?" ▲":" ▼") : "";
-      html += `<th onclick="if(!this.dataset.isResizing || this.dataset.isResizing==='false') setSort('${sp}')">${name}${pfeil}</th>`;
+      html += `<th onclick="setSort('${sp}')">${name}${pfeil}</th>`;
     } else {
       html += `<th>${name}</th>`;
     }
@@ -6787,7 +6787,7 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
     html += `<th>Aktionen</th>`;
   }
   
-  html += "</tr></thead><tbody>";
+  html += "</tr>";
 
   let letzesJahr = null;
   
@@ -6830,17 +6830,14 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
     // Add Edit button if user can edit
     if (currentAthlete && (!isAdmin || selectedAthleteId === currentAthlete.id)) {
       const leistungId = vollstaendigeDaten[index].id;
-      html += `<td><button onclick="openEditLeistungModal(${leistungId})" style="padding: 6px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Bearbeiten</button></td>`;
+      html += `<td><button onclick="openEditLeistungModal(${leistungId})" style="padding: 6px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">✏️ Bearbeiten</button></td>`;
     }
     
     html+="</tr>";
   });
 
-  html+="</tbody></table></div>";
+  html+="</table></div>";
   document.getElementById(ziel).innerHTML = html;
-  
-  // Re-enable resize after table render
-  setTimeout(enableTableResize, 50);
 }
 
 /* ================= ZEIGE TABELLE ================= */
@@ -7144,7 +7141,7 @@ async function zeigePBs() {
   document.getElementById("bestleistungenExportBtn").style.display = "none";
   
   if (!selectedAthleteId) {
-    alert('❌ Bitte wählen Sie zuerst einen Athleten aus!');
+    alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
     return;
   }
 
@@ -7155,7 +7152,7 @@ async function zeigePBs() {
     selectedAthleteId;
   
   if(!athletId) {
-    alert('❌ Bitte geben Sie eine Athlet-ID ein, um die persönlichen Bestleistungen anzuzeigen!');
+    alert('⚠️ Bitte geben Sie eine Athlet-ID ein, um die persönlichen Bestleistungen anzuzeigen!');
     return;
   }
   
@@ -7204,7 +7201,7 @@ async function zeigePBs() {
   }
   
   if(!data || data.length === 0) {
-    alert('🔐 Keine Leistungen für diesen Athleten gefunden');
+    alert('📭 Keine Leistungen für diesen Athleten gefunden');
     return;
   }
   
@@ -7252,7 +7249,7 @@ async function zeigePBs() {
   window.aktuellePBsDaten = pbs;
   window.istPBsTabelle = true;
   
-  zeigePBsSBsTabelle(pbs, "<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>", "Persönliche Bestleistungen");
+  zeigePBsSBsTabelle(pbs, "🏆", "Persönliche Bestleistungen");
 }
 
 /* ================= PBS/SBS TABELLE ANZEIGEN (KORRIGIERT) ================= */
@@ -7305,13 +7302,13 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
   const tatsaechlicheSpalten = Object.keys(angezeigteDaten[0]);
   const spaltenAnzahl = tatsaechlicheSpalten.length;
   
-  let html = infoHtml + '<div class="table-wrapper"><table><thead><tr>';
+  let html = infoHtml + '<div class="table-wrapper"><table><tr>';
   tatsaechlicheSpalten.forEach(sp=>{
     let name = SPALTEN_ANZEIGE[sp]||sp;
     const pfeil = sortSpalte===sp ? (sortAsc?" ▲":" ▼") : "";
-    html += `<th onclick="if(!this.dataset.isResizing || this.dataset.isResizing==='false') setSortPBsSBs('${sp}')" style="cursor: pointer;">${name}${pfeil}</th>`;
+    html += `<th onclick="setSortPBsSBs('${sp}')" style="cursor: pointer;">${name}${pfeil}</th>`;
   });
-  html += "</tr></thead><tbody>";
+  html += "</tr>";
 
   let letzesJahr = null;
 
@@ -7346,7 +7343,7 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
     html+="</tr>";
   });
 
-  html+="</tbody></table></div>";
+  html+="</table></div>";
   
   if(istAnalyseTabAktiv) {
     document.getElementById("bestleistungenAusgabe").innerHTML = html;
@@ -7403,7 +7400,7 @@ function setSortPBsSBs(spalte) {
   
   // Zeige neu sortierte Tabelle
   if(istPBs) {
-    zeigePBsSBsTabelle(daten, "<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>", "Persönliche Bestleistungen", null, false);
+    zeigePBsSBsTabelle(daten, "🏆", "Persönliche Bestleistungen", null, false);
   } else if(jahr === "alle") {
     zeigePBsSBsTabelle(daten, "⭐", "Saisonbestleistungen (alle Jahre)", null, true);
   } else {
@@ -7420,7 +7417,7 @@ function zeigeSBMenu() {
     selectedAthleteId;
   
   if(!athletId) {
-    alert('❌ Bitte geben Sie eine Athlet-ID ein, um die Saisonbestleistungen anzuzeigen!');
+    alert('⚠️ Bitte geben Sie eine Athlet-ID ein, um die Saisonbestleistungen anzuzeigen!');
     return;
   }
   
@@ -7472,7 +7469,7 @@ async function zeigeSBs() {
   document.getElementById("bestleistungenExportBtn").style.display = "none";
   
   if (!selectedAthleteId) {
-    alert('❌ Bitte wählen Sie zuerst einen Athleten aus!');
+    alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
     return;
   }
 
@@ -7484,12 +7481,12 @@ async function zeigeSBs() {
   const jahr = document.getElementById('sbJahr').value;
   
   if(!athletId) {
-    alert('❌ Bitte geben Sie eine Athlet-ID ein!');
+    alert('⚠️ Bitte geben Sie eine Athlet-ID ein!');
     return;
   }
   
   if(!jahr) {
-    alert('❌ Bitte wählen Sie ein Jahr aus!');
+    alert('⚠️ Bitte wählen Sie ein Jahr aus!');
     return;
   }
   
@@ -7531,7 +7528,7 @@ async function zeigeSBs() {
   }
   
   if(!data || data.length === 0) {
-    alert(`🔐 Keine Leistungen für diesen Athleten im Jahr ${jahr} gefunden`);
+    alert(`📭 Keine Leistungen für diesen Athleten im Jahr ${jahr} gefunden`);
     return;
   }
   
@@ -7592,7 +7589,7 @@ async function zeigeAlleSBs() {
     selectedAthleteId;
   
   if(!athletId) {
-    alert('❌ Bitte geben Sie eine Athlet-ID ein!');
+    alert('⚠️ Bitte geben Sie eine Athlet-ID ein!');
     return;
   }
   
@@ -7613,7 +7610,7 @@ async function zeigeAlleSBs() {
   }
   
   if(!data || data.length === 0) {
-    alert('🔐 Keine Leistungen für diesen Athleten gefunden');
+    alert('📭 Keine Leistungen für diesen Athleten gefunden');
     return;
   }
   
@@ -7868,7 +7865,7 @@ async function ladeDashboardDaten() {
       athletIst18Plus = alter >= 18;
       console.log(`🎂 Athlet Jahrgang: ${jahrgang}, Alter: ${alter} Jahre (18+: ${athletIst18Plus})`);
     } else {
-      console.log('❌ Kein Jahrgang vorhanden - Filter deaktiviert');
+      console.log('⚠️ Kein Jahrgang vorhanden - Filter deaktiviert');
     }
   }
   
@@ -7960,7 +7957,7 @@ async function ladeDashboardDaten() {
     .slice(0, 3);
   
   const topDisziplinenHTML = topDisziplinen.map(([ disziplin, count], index) => {
-    const medals = ['<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='12" r='10"/><text x='12' y='16' text-anchor='middle" fill='#d4af37" font-size='12" font-weight='bold">1</text></svg>', '🥈', '🥉'];
+    const medals = ['🥇', '🥈', '🥉'];
     // Platz 1 nimmt volle Breite, Platz 2 und 3 jeweils halbe Breite
     const style = index === 0 
       ? "width: 100%; padding: 15px; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 8px; border-left: 4px solid #667eea; margin-bottom: 15px;"
@@ -8239,7 +8236,7 @@ function normalizeLeistung(leistung, disziplin) {
     // Konvertiere von cm zu m wenn Wert > 100 (typisch für cm-Speicherung)
     // Bei Hochsprung und Stabhochsprung sind auch Werte zwischen 10-100 möglich
     if (istMeterDisziplin && leistung > 100) {
-        console.log(` Normalisiere ${disziplin}: ${leistung} cm → ${leistung/100} m`);
+        console.log(`🔄 Normalisiere ${disziplin}: ${leistung} cm → ${leistung/100} m`);
         return leistung / 100;
     }
     
@@ -8292,7 +8289,7 @@ window.onload = function() {
 /* ================= DIAGRAMM ANZEIGEN ================= */
 async function zeigeDiagramm() {
     if (!selectedAthleteId) {
-        alert("❌ Bitte wählen Sie zuerst einen Athleten aus!");
+        alert("⚠️ Bitte wählen Sie zuerst einen Athleten aus!");
         return;
     }
     
@@ -8300,7 +8297,7 @@ async function zeigeDiagramm() {
     const disziplin = document.getElementById("analyseDisziplin").value;
     
     if (!disziplin) {
-        alert("❌ Bitte Disziplin angeben");
+        alert("⚠️ Bitte Disziplin angeben");
         return;
     }
 
@@ -8500,7 +8497,7 @@ async function zeigeDiagramm() {
     document.getElementById("diagrammContainer").style.display = "block";
     document.getElementById("diagrammSchließenBtn").style.display = "inline-block";
     document.getElementById("diagrammAusklappenBtn").style.display = "none";
-    document.getElementById("diagrammAnzeigenBtn").textContent = "<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Diagramm aktualisieren";
+    document.getElementById("diagrammAnzeigenBtn").textContent = "🔄 Diagramm aktualisieren";
     
     const canvas = document.getElementById('leistungsChart');
     const ctx = canvas.getContext('2d');
@@ -8879,14 +8876,14 @@ function toggleVergleichsModus() {
         container.style.display = 'block';
         // Wenn Diagramm bereits sichtbar, Button-Text auf "aktualisieren" ändern
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Diagramm aktualisieren';
+            diagrammBtn.textContent = '🔄 Diagramm aktualisieren';
         }
     } else {
         container.style.display = 'none';
         document.getElementById('vergleichsDisziplin').value = '';
         // Button-Text zurücksetzen wenn Diagramm sichtbar
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Diagramm aktualisieren';
+            diagrammBtn.textContent = '🔄 Diagramm aktualisieren';
         }
     }
 }
@@ -8919,7 +8916,7 @@ let sbChartInstance = null;
 
 async function zeigeSBDiagramm() {
     if (!selectedAthleteId) {
-        alert("❌ Bitte wählen Sie zuerst einen Athleten aus!");
+        alert("⚠️ Bitte wählen Sie zuerst einen Athleten aus!");
         return;
     }
     
@@ -8927,7 +8924,7 @@ async function zeigeSBDiagramm() {
     const disziplin = document.getElementById("sbDisziplin").value;
     
     if (!disziplin) {
-        alert("❌ Bitte Disziplin angeben");
+        alert("⚠️ Bitte Disziplin angeben");
         return;
     }
 
@@ -8999,7 +8996,7 @@ async function zeigeSBDiagramm() {
         });
 
         
-        console.log(`❌ berechneSaisonWerte für ${disziplinName}:`, {
+        console.log(`📊 berechneSaisonWerte für ${disziplinName}:`, {
             anzahlDaten: daten.length,
             beispielWert: daten[0]?.leistung,
             istZeitDisziplin
@@ -9091,7 +9088,7 @@ async function zeigeSBDiagramm() {
         const scores1 = [...werte1.sbWerte.map(d => d.score), ...werte1.durchschnittsWerte.map(d => d.score)].filter(s => s !== null && s !== undefined);
         const scores2 = [...werte2.sbWerte.map(d => d.score), ...werte2.durchschnittsWerte.map(d => d.score)].filter(s => s !== null && s !== undefined);
         
-        console.log('❌ Verwende DB-Scores für SB-Diagramm:', {
+        console.log('📊 Verwende DB-Scores für SB-Diagramm:', {
             disziplin1: disziplin,
             scores1: scores1,
             disziplin2: vergleichsDisziplin,
@@ -9516,14 +9513,14 @@ function toggleSBVergleichsModus() {
         container.style.display = 'block';
         // Wenn Diagramm bereits sichtbar, Button-Text auf "aktualisieren" ändern
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> SB-Diagramm aktualisieren';
+            diagrammBtn.textContent = '🔄 SB-Diagramm aktualisieren';
         }
     } else {
         container.style.display = 'none';
         document.getElementById('sbVergleichsDisziplin').value = '';
         // Button-Text zurücksetzen wenn Diagramm sichtbar
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 4 23 10 17 10"/><polyline points='1 20 1 14 7 14"/><path d='M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> SB-Diagramm aktualisieren';
+            diagrammBtn.textContent = '🔄 SB-Diagramm aktualisieren';
         }
     }
 }
@@ -9535,14 +9532,14 @@ let prognoseChartInstance = null;
 
 async function zeigePrognoseDiagramm() {
     if (!selectedAthleteId) {
-        alert("❌ Bitte wählen Sie zuerst einen Athleten aus!");
+        alert("⚠️ Bitte wählen Sie zuerst einen Athleten aus!");
         return;
     }
     
     const disziplin = document.getElementById("prognoseDisziplin").value;
     
     if (!disziplin) {
-        alert("❌ Bitte Disziplin angeben");
+        alert("⚠️ Bitte Disziplin angeben");
         return;
     }
     
@@ -9609,7 +9606,7 @@ async function zeigePrognoseDiagramm() {
     });
     
     if (alleLeistungen.length < 2) {
-        alert("❌ Mindestens 2 Leistungen erforderlich für eine Prognose");
+        alert("⚠️ Mindestens 2 Leistungen erforderlich für eine Prognose");
         return;
     }
     
@@ -9621,11 +9618,11 @@ async function zeigePrognoseDiagramm() {
     const relevanteLeistungen = alleLeistungen.filter(l => l.datum >= startDatum);
     
     if (relevanteLeistungen.length < 2) {
-        alert(`❌ Nicht genug Leistungen in den letzten ${istJahresPrognose ? '5 Jahren' : '12 Monaten'} gefunden`);
+        alert(`⚠️ Nicht genug Leistungen in den letzten ${istJahresPrognose ? '5 Jahren' : '12 Monaten'} gefunden`);
         return;
     }
     
-    console.log('❌ Prognose-Berechnung:', {
+    console.log('📊 Prognose-Berechnung:', {
         disziplin,
         zeitraum: istJahresPrognose ? '5 Jahre' : '12 Monate',
         anzahlLeistungen: relevanteLeistungen.length,
@@ -9728,8 +9725,8 @@ async function zeigePrognoseDiagramm() {
     
     const infoDiv = document.getElementById('prognoseInfo');
     infoDiv.innerHTML = `
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points='17 6 23 6 23 12"/></svg> <strong>Trend:</strong> ${trendRichtung} um ${trendText} pro Jahr<br>
-        <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='12" y1='20" x2='12" y2='10"/><line x1='18" y1='20" x2='18" y2='4"/><line x1='6" y1='20" x2='6" y2='16"/></svg> <strong>Basis:</strong> ${relevanteLeistungen.length} Leistungen (${startDatum.toLocaleDateString('de-DE')} - ${heute.toLocaleDateString('de-DE')})<br>
+        📈 <strong>Trend:</strong> ${trendRichtung} um ${trendText} pro Jahr<br>
+        📊 <strong>Basis:</strong> ${relevanteLeistungen.length} Leistungen (${startDatum.toLocaleDateString('de-DE')} - ${heute.toLocaleDateString('de-DE')})<br>
         ${prognoseText}
     `;
     
@@ -9739,7 +9736,7 @@ async function zeigePrognoseDiagramm() {
     // Erstelle Chart - mit Fehlerbehandlung
     const canvasElement = document.getElementById("prognoseChart");
     if (!canvasElement) {
-        console.error("<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> prognoseChart Canvas-Element nicht gefunden!");
+        console.error("❌ prognoseChart Canvas-Element nicht gefunden!");
         alert("Fehler: Chart-Element konnte nicht gefunden werden. Bitte Seite neu laden.");
         return;
     }
@@ -9803,7 +9800,7 @@ async function zeigePrognoseDiagramm() {
         minWert = 0;
     }
     
-    console.log('❌ Prognose-Achsen:', {
+    console.log('📊 Prognose-Achsen:', {
         alleWerte,
         minWert,
         maxWert,
@@ -10452,7 +10449,7 @@ function renderOrtTable() {
       <div id="ortTableWhiteBox" style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <div style="color: #757575; font-size: 0.95em;">${currentOrtLeistungen.length} ${currentOrtLeistungen.length === 1 ? 'Leistung' : 'Leistungen'}</div>
-          <button onclick="hideOrtLeistungen()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Schließen</button>
+          <button onclick="hideOrtLeistungen()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
         </div>
         <div class="table-wrapper" id="ortTableScrollArea" style="overflow-y: auto;">
           <table>
@@ -10738,8 +10735,8 @@ function toggleMapFullscreen() {
     // Vollbild verlassen
     mapContainer.classList.remove('fullscreen');
     fullscreenBtn.innerHTML = `
-      <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2">
-        <path d='M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
       </svg>
     `;
     fullscreenBtn.title = "Vollbild";
@@ -10747,8 +10744,8 @@ function toggleMapFullscreen() {
     // Vollbild aktivieren
     mapContainer.classList.add('fullscreen');
     fullscreenBtn.innerHTML = `
-      <svg width='20" height='20" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2">
-        <path d='M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
       </svg>
     `;
     fullscreenBtn.title = "Vollbild verlassen";
@@ -10875,21 +10872,21 @@ function toggleDarkMode() {
   const iconContainer = document.getElementById('darkModeIcon');
   if (isDark) {
     // Sun icon
-    iconContainer.innerHTML = `<svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-      <circle cx='12" cy='12" r='5"></circle>
-      <line x1='12" y1='1" x2='12" y2='3"></line>
-      <line x1='12" y1='21" x2='12" y2='23"></line>
-      <line x1='4.22" y1='4.22" x2='5.64" y2='5.64"></line>
-      <line x1='18.36" y1='18.36" x2='19.78" y2='19.78"></line>
-      <line x1='1" y1='12" x2='3" y2='12"></line>
-      <line x1='21" y1='12" x2='23" y2='12"></line>
-      <line x1='4.22" y1='19.78" x2='5.64" y2='18.36"></line>
-      <line x1='18.36" y1='5.64" x2='19.78" y2='4.22"></line>
+    iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
     </svg>`;
   } else {
     // Moon icon
-    iconContainer.innerHTML = `<svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-      <path d='M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+    iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
     </svg>`;
   }
   
@@ -10904,16 +10901,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.add('dark-mode');
     const iconContainer = document.getElementById('darkModeIcon');
     if (iconContainer) {
-      iconContainer.innerHTML = `<svg width='18" height='18" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2" stroke-linecap='round" stroke-linejoin='round">
-        <circle cx='12" cy='12" r='5"></circle>
-        <line x1='12" y1='1" x2='12" y2='3"></line>
-        <line x1='12" y1='21" x2='12" y2='23"></line>
-        <line x1='4.22" y1='4.22" x2='5.64" y2='5.64"></line>
-        <line x1='18.36" y1='18.36" x2='19.78" y2='19.78"></line>
-        <line x1='1" y1='12" x2='3" y2='12"></line>
-        <line x1='21" y1='12" x2='23" y2='12"></line>
-        <line x1='4.22" y1='19.78" x2='5.64" y2='18.36"></line>
-        <line x1='18.36" y1='5.64" x2='19.78" y2='4.22"></line>
+      iconContainer.innerHTML = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
       </svg>`;
     }
   }
@@ -11104,7 +11101,7 @@ async function displayGoals(athletId) {
   const container = document.getElementById('goalsList');
   
   if (!goals[athletId] || goals[athletId].length === 0) {
-    container.innerHTML = '<div class="no-goals-message">Noch keine Ziele definiert. Füge oben ein neues Ziel hinzu! <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><circle cx='12" cy='12" r='10"/><circle cx='12" cy='12" r='6"/><circle cx='12" cy='12" r='2"/></svg></div>';
+    container.innerHTML = '<div class="no-goals-message">Noch keine Ziele definiert. Füge oben ein neues Ziel hinzu! 🎯</div>';
     return;
   }
   
@@ -11311,7 +11308,7 @@ async function createGoalCard(goal, athletId, index, leistungen) {
     }
   };
   
-  const goalTypeLabel = goalType === 'season' ? '🌟 Saisonziel' : '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Karriereziel';
+  const goalTypeLabel = goalType === 'season' ? '🌟 Saisonziel' : '🏆 Karriereziel';
   
   card.innerHTML = `
     <div class="goal-header">
@@ -11320,8 +11317,8 @@ async function createGoalCard(goal, athletId, index, leistungen) {
         <div class="goal-type-label">${goalTypeLabel}</div>
       </div>
       <div>
-        <button class="goal-edit-btn" onclick="editGoal(${athletId}, ${index})"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Bearbeiten</button>
-        <button class="goal-delete-btn" onclick="deleteGoal(${athletId}, ${index})"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='3 6 5 6 21 6"/><path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Löschen</button>
+        <button class="goal-edit-btn" onclick="editGoal(${athletId}, ${index})">✏️ Bearbeiten</button>
+        <button class="goal-delete-btn" onclick="deleteGoal(${athletId}, ${index})">🗑️ Löschen</button>
       </div>
     </div>
     
@@ -11351,9 +11348,9 @@ async function createGoalCard(goal, athletId, index, leistungen) {
     
     <div class="goal-status">
       ${baselineValue === null ? 
-        '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1='12" y1='9" x2='12" y2='13"/><line x1='12" y1='17" x2='12.01" y2='17"/></svg> Keine Leistungsdaten vorhanden' :
+        '⚠️ Keine Leistungsdaten vorhanden' :
         isComplete ? 
-          '<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Herzlichen Glückwunsch! Ziel erreicht!' : 
+          '🏆 Herzlichen Glückwunsch! Ziel erreicht!' : 
           isTime ? 
             `Dein ${referenceLabel} muss noch ${formatValue(remainingFromReference)} schneller werden` : 
             `Dein ${referenceLabel} muss noch ${formatValue(remainingFromReference)} weiter/höher sein`
@@ -11383,8 +11380,8 @@ function editGoal(athletId, index) {
         </div>
       </div>
       <div class="button-group">
-        <button class="goal-save-btn" onclick="saveEditedGoal(${athletId}, ${index})"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><path d='M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points='17 21 17 13 7 13 7 21"/><polyline points='7 3 7 8 15 8"/></svg> Speichern</button>
-        <button class="goal-cancel-btn" onclick="cancelEditGoal(${athletId})"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Abbrechen</button>
+        <button class="goal-save-btn" onclick="saveEditedGoal(${athletId}, ${index})">💾 Speichern</button>
+        <button class="goal-cancel-btn" onclick="cancelEditGoal(${athletId})">❌ Abbrechen</button>
       </div>
     </div>
   `;
@@ -11676,7 +11673,7 @@ loadGoals();
 
 // ========== RESET FUNKTION ==========
 function resetAllFiltersAndSettings() {
-  console.log(' Resetze alle Filter und Einstellungen...');
+  console.log('🔄 Resetze alle Filter und Einstellungen...');
   
   // FILTER ZURÜCKSETZEN - Leistungen
   const filterElemente = [
@@ -11831,12 +11828,12 @@ function resetAllFiltersAndSettings() {
 
 // ========== KOMPAKTE ATHLETENSUCHE (für Admins) ==========
 function initCompactAthleteSearch() {
-  console.log(' initCompactAthleteSearch aufgerufen');
+  console.log('🔍 initCompactAthleteSearch aufgerufen');
   const searchInput = document.getElementById('compactAthletSuche');
   const suggestionsDiv = document.getElementById('compactAthletVorschlaege');
   
   if (!searchInput) {
-    console.log('❌ CompactAthletSuche nicht gefunden - überspringe Initialisierung');
+    console.log('⚠️ CompactAthletSuche nicht gefunden - überspringe Initialisierung');
     return;
   }
   
@@ -11860,7 +11857,7 @@ function initCompactAthleteSearch() {
         .order('name');
       
       if (error) {
-        console.error('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Supabase Error:', error);
+        console.error('❌ Supabase Error:', error);
         throw error;
       }
       
@@ -11877,7 +11874,7 @@ function initCompactAthleteSearch() {
         suggestionsDiv.classList.add('show');
       }
     } catch (err) {
-      console.error('<svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Fehler beim Laden der Athleten:', err);
+      console.error('❌ Fehler beim Laden der Athleten:', err);
       suggestionsDiv.innerHTML = '<div class="suggestion-item">Fehler beim Laden</div>';
       suggestionsDiv.classList.add('show');
     }
@@ -11915,7 +11912,7 @@ function selectCompactAthlete(id, vorname, name, jahrgang) {
   if (athletName) athletName.textContent = `${vorname} ${name} (${jahrgang})`;
   
   // Lade Daten für den neuen Athleten
-  console.log('❌ Lade Daten für Athlet:', selectedAthleteId);
+  console.log('📊 Lade Daten für Athlet:', selectedAthleteId);
   ladeLeistungen();
   ladeDashboardDaten();
 }
@@ -11972,10 +11969,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* ================= NEUE STATISTIK-FUNKTIONEN ================= */
 
-// <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><circle cx='12" cy='12" r='10"/><circle cx='12" cy='12" r='6"/><circle cx='12" cy='12" r='2"/></svg> Erfolgsquote
+// 🎯 Erfolgsquote
 async function berechneErfolgsquote() {
   if (!selectedAthleteId) {
-    alert('❌ Bitte wählen Sie zuerst einen Athleten aus!');
+    alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
     return;
   }
   
@@ -12019,7 +12016,7 @@ async function berechneErfolgsquote() {
   }
   
   if (!data || data.length === 0) {
-    alert('🔐 Keine Leistungen mit Platzierungen gefunden');
+    alert('📭 Keine Leistungen mit Platzierungen gefunden');
     return;
   }
   
@@ -12038,16 +12035,16 @@ async function berechneErfolgsquote() {
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">Erfolgsquote</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Schließen</button>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
         <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${siegProzent}%</div>
-          <div style="font-size: 0.9em; margin-top: 5px;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='12" r='10"/><text x='12' y='16' text-anchor='middle" fill='#d4af37" font-size='12" font-weight='bold">1</text></svg> Siegquote (${siege} Siege)</div>
+          <div style="font-size: 0.9em; margin-top: 5px;">🥇 Siegquote (${siege} Siege)</div>
         </div>
         <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${podiumProzent}%</div>
-          <div style="font-size: 0.9em; margin-top: 5px;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Podiumsplätze (${podium} / ${gesamt})</div>
+          <div style="font-size: 0.9em; margin-top: 5px;">🏆 Podiumsplätze (${podium} / ${gesamt})</div>
         </div>
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${top6Prozent}%</div>
@@ -12055,7 +12052,7 @@ async function berechneErfolgsquote() {
         </div>
       </div>
       <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 0.9em;">
-        <strong><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='12" y1='20" x2='12" y2='10"/><line x1='18" y1='20" x2='18" y2='4"/><line x1='6" y1='20" x2='6" y2='16"/></svg> Gesamt:</strong> ${gesamt} Leistungen mit Platzierungen
+        <strong>📊 Gesamt:</strong> ${gesamt} Leistungen mit Platzierungen
       </div>
     </div>
   `;
@@ -12064,10 +12061,10 @@ async function berechneErfolgsquote() {
   document.getElementById("analyseExportBtn").style.display = "none";
 }
 
-// <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><rect x='3' y='4' width='18" height='18" rx='2" ry='2"/><line x1='16" y1='2" x2='16" y2='6"/><line x1='8" y1='2" x2='8" y2='6"/><line x1='3" y1='10" x2='21" y2='10"/></svg> Saisonvergleich
+// 📅 Saisonvergleich
 async function zeigeSaisonvergleich() {
   if (!selectedAthleteId) {
-    alert('❌ Bitte wählen Sie zuerst einen Athleten aus!');
+    alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
     return;
   }
   
@@ -12101,7 +12098,7 @@ async function zeigeSaisonvergleich() {
   }
   
   if (!data || data.length === 0) {
-    alert('🔐 Keine Leistungen gefunden');
+    alert('📭 Keine Leistungen gefunden');
     return;
   }
   
@@ -12142,8 +12139,8 @@ async function zeigeSaisonvergleich() {
   let html = `
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="color: #2a5298; margin: 0;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><rect x='3' y='4' width='18" height='18" rx='2" ry='2"/><line x1='16" y1='2" x2='16" y2='6"/><line x1='8" y1='2" x2='8" y2='6"/><line x1='3" y1='10" x2='21" y2='10"/></svg> Saisonvergleich</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Schließen</button>
+        <h3 style="color: #2a5298; margin: 0;">📅 Saisonvergleich</h3>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
       </div>
       <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -12186,10 +12183,10 @@ async function zeigeSaisonvergleich() {
   document.getElementById("analyseExportBtn").style.display = "none";
 }
 
-// <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><rect x='3' y='4' width='18" height='18" rx='2" ry='2"/><line x1='16" y1='2" x2='16" y2='6"/><line x1='8" y1='2" x2='8" y2='6"/><line x1='3" y1='10" x2='21" y2='10"/></svg> Wettkampffrequenz
+// 🗓️ Wettkampffrequenz
 async function zeigeWettkampffrequenz() {
   if (!selectedAthleteId) {
-    alert('❌ Bitte wählen Sie zuerst einen Athleten aus!');
+    alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
     return;
   }
   
@@ -12234,7 +12231,7 @@ async function zeigeWettkampffrequenz() {
   }
   
   if (!data || data.length === 0) {
-    alert('🔐 Keine Leistungen gefunden');
+    alert('📭 Keine Leistungen gefunden');
     return;
   }
   
@@ -12242,7 +12239,7 @@ async function zeigeWettkampffrequenz() {
   const wettkämpfe = gruppiereNachWettkämpfen(data);
   
   if (wettkämpfe.length === 0) {
-    alert('🔐 Keine Wettkämpfe mit wk_bz gefunden');
+    alert('📭 Keine Wettkämpfe mit wk_bz gefunden');
     return;
   }
   
@@ -12279,14 +12276,14 @@ async function zeigeWettkampffrequenz() {
   let html = `
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="color: #2a5298; margin: 0;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><rect x='3' y='4' width='18" height='18" rx='2" ry='2"/><line x1='16" y1='2" x2='16" y2='6"/><line x1='8" y1='2" x2='8" y2='6"/><line x1='3" y1='10" x2='21" y2='10"/></svg> Wettkampffrequenz</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Schließen</button>
+        <h3 style="color: #2a5298; margin: 0;">🗓️ Wettkampffrequenz</h3>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
       </div>
       
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${wettkämpfe.length}</div>
-          <div style="font-size: 0.9em; margin-top: 5px;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='12" y1='20" x2='12" y2='10"/><line x1='18" y1='20" x2='18" y2='4"/><line x1='6" y1='20" x2='6" y2='16"/></svg> Gesamt Wettkämpfe</div>
+          <div style="font-size: 0.9em; margin-top: 5px;">📊 Gesamt Wettkämpfe</div>
         </div>
         <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${durchschnittAbstand}</div>
@@ -12326,10 +12323,10 @@ async function zeigeWettkampffrequenz() {
   document.getElementById("analyseExportBtn").style.display = "none";
 }
 
-// <svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> PB-Timeline
+// 🏅 PB-Timeline
 async function zeigePBTimeline() {
   if (!selectedAthleteId) {
-    alert('❌ Bitte wählen Sie zuerst einen Athleten aus!');
+    alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
     return;
   }
   
@@ -12373,7 +12370,7 @@ async function zeigePBTimeline() {
   }
   
   if (!data || data.length === 0) {
-    alert('🔐 Keine Leistungen gefunden');
+    alert('📭 Keine Leistungen gefunden');
     return;
   }
   
@@ -12414,7 +12411,7 @@ async function zeigePBTimeline() {
   })).sort((a, b) => new Date(b.datum) - new Date(a.datum));
   
   if (allePBs.length === 0) {
-    alert('🔐 Keine persönlichen Bestleistungen gefunden');
+    alert('📭 Keine persönlichen Bestleistungen gefunden');
     return;
   }
   
@@ -12422,8 +12419,8 @@ async function zeigePBTimeline() {
   let html = `
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="color: #2a5298; margin: 0;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='#d4af37" stroke-width='2"><circle cx='12" cy='8" r='7"/><polyline points='8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg> Persönliche Rekorde Timeline</h3>
-        <button onclick="document.getElementById('bestleistungenAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><line x1='18" y1='6" x2='6" y2='18"/><line x1='6" y1='6" x2='18" y2='18"/></svg> Schließen</button>
+        <h3 style="color: #2a5298; margin: 0;">🏅 Persönliche Rekorde Timeline</h3>
+        <button onclick="document.getElementById('bestleistungenAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
       </div>
       
       <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
@@ -12697,10 +12694,8 @@ async function importCSV() {
 /* ================= RESIZABLE TABLE COLUMNS ================= */
 // Globale Variablen für Spaltengrößenanpassung
 let resizingColumn = null;
-let nextColumn = null;
 let startX = 0;
 let startWidth = 0;
-let startNextWidth = 0;
 
 // Event Listener für alle Tabellen hinzufügen
 document.addEventListener('DOMContentLoaded', function() {
@@ -12712,126 +12707,65 @@ function enableTableResize() {
   const tables = document.querySelectorAll('table');
   
   tables.forEach(table => {
-    // Prüfe ob bereits initialisiert
-    if (table.dataset.resizeEnabled === 'true') return;
-    table.dataset.resizeEnabled = 'true';
-    
     const headers = table.querySelectorAll('th');
     
     headers.forEach((th, index) => {
-      // Nur wenn es nicht die letzte Spalte ist
-      if (index < headers.length - 1) {
-        // Prüfe ob bereits ein Handle existiert
-        if (th.querySelector('.resize-handle')) return;
+      // Skip last column
+      if (index === headers.length - 1) return;
+      
+      th.addEventListener('mousedown', function(e) {
+        // Nur wenn auf den rechten Rand geklickt wurde (resize handle)
+        const rect = th.getBoundingClientRect();
+        const isRightEdge = e.clientX > rect.right - 10;
         
-        // Erstelle Resize-Handle am rechten Rand
-        const resizeHandle = document.createElement('div');
-        resizeHandle.className = 'resize-handle';
-        resizeHandle.style.cssText = `
-          position: absolute;
-          right: 0;
-          top: 0;
-          width: 8px;
-          height: 100%;
-          cursor: col-resize;
-          user-select: none;
-          z-index: 1;
-        `;
-        
-        th.style.position = 'relative';
-        th.appendChild(resizeHandle);
-        
-        resizeHandle.addEventListener('mousedown', function(e) {
+        if (isRightEdge) {
           e.preventDefault();
-          e.stopPropagation();
-          
           resizingColumn = th;
-          nextColumn = headers[index + 1];
           startX = e.clientX;
           startWidth = th.offsetWidth;
-          startNextWidth = nextColumn.offsetWidth;
-          
-          // Verhindere Click-Events auf th während des Resize
-          th.style.pointerEvents = 'none';
-          if (nextColumn) nextColumn.style.pointerEvents = 'none';
           
           document.addEventListener('mousemove', resizeColumn);
           document.addEventListener('mouseup', stopResize);
           
           // Verhindere Textauswahl während des Resizens
           document.body.style.userSelect = 'none';
-          document.body.style.cursor = 'col-resize';
-        });
-      }
+        }
+      });
     });
   });
 }
 
-let rafId = null;
 function resizeColumn(e) {
-  if (!resizingColumn || !nextColumn) return;
+  if (!resizingColumn) return;
   
-  // Verwende requestAnimationFrame für flüssiges Resizing
-  if (rafId) {
-    cancelAnimationFrame(rafId);
-  }
+  const diff = e.clientX - startX;
+  const newWidth = Math.max(80, startWidth + diff); // Mindestbreite 80px
   
-  rafId = requestAnimationFrame(() => {
-    const diff = e.clientX - startX;
-    const newWidth = Math.max(60, startWidth + diff);
-    const newNextWidth = Math.max(60, startNextWidth - diff);
-    
-    if (newWidth >= 60 && newNextWidth >= 60) {
-      resizingColumn.style.width = newWidth + 'px';
-      resizingColumn.style.minWidth = newWidth + 'px';
-      nextColumn.style.width = newNextWidth + 'px';
-      nextColumn.style.minWidth = newNextWidth + 'px';
-    }
-  });
+  resizingColumn.style.width = newWidth + 'px';
+  resizingColumn.style.minWidth = newWidth + 'px';
 }
 
 function stopResize() {
-  // Stelle sicher dass Click-Events wieder funktionieren
-  if (resizingColumn) {
-    resizingColumn.style.pointerEvents = '';
-  }
-  if (nextColumn) {
-    nextColumn.style.pointerEvents = '';
-  }
-  
   resizingColumn = null;
-  nextColumn = null;
   document.removeEventListener('mousemove', resizeColumn);
   document.removeEventListener('mouseup', stopResize);
   document.body.style.userSelect = '';
-  document.body.style.cursor = '';
 }
 
 </script>
 
 <script>
 // Re-enable table resize nach jedem Table-Update
-// Verwende MutationObserver für bessere Performance
-const tableObserver = new MutationObserver(function(mutations) {
-  // Nur wenn tatsächlich Tabellen hinzugefügt wurden
-  let hasNewTables = false;
-  mutations.forEach(mutation => {
-    mutation.addedNodes.forEach(node => {
-      if (node.nodeName === 'TABLE' || (node.querySelectorAll && node.querySelectorAll('table').length > 0)) {
-        hasNewTables = true;
-      }
-    });
-  });
-  if (hasNewTables) {
-    setTimeout(enableTableResize, 50);
-  }
-});
-
-// Beobachte das Hauptdokument
-const mainApp = document.getElementById('mainApp');
-if (mainApp) {
-  tableObserver.observe(mainApp, { childList: true, subtree: true });
-}
+const originalSetTimeout = window.setTimeout;
+window.setTimeout = function(fn, delay) {
+  return originalSetTimeout(function() {
+    fn();
+    // Nach jedem Timeout, der vermutlich eine Tabelle aktualisiert hat
+    if (delay > 0) {
+      originalSetTimeout(enableTableResize, 100);
+    }
+  }, delay);
+};
 </script>
 
 </div> <!-- Close main-app -->
@@ -12885,7 +12819,7 @@ if (mainApp) {
       </div>
       
       <div style="display: flex; gap: 10px; justify-content: space-between;">
-        <button type="button" id="deleteLeistungBtn" onclick="deleteLeistung()" style="display: none; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #dc3545; color: white;"><svg width='16" height='16" viewBox='0 0 24 24" fill='none" stroke='currentColor" stroke-width='2"><polyline points='3 6 5 6 21 6"/><path d='M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> Löschen</button>
+        <button type="button" id="deleteLeistungBtn" onclick="deleteLeistung()" style="display: none; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #dc3545; color: white;">🗑️ Löschen</button>
         <div style="display: flex; gap: 10px;">
           <button type="button" onclick="closeLeistungModal()" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #6c757d; color: white;">Abbrechen</button>
           <button type="submit" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">Speichern</button>
