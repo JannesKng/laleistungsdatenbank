@@ -107,7 +107,7 @@ Datum: 2026-02-09
   * loadUserAthlete() übernimmt die Verwaltung der Admin-Features
   * Verhindert Race-Conditions bei der Initialisierung
 - VERBESSERUNG: Neuer Icon-basierter Abmelden-Button oben links
-  * Ersetzt alten "🚪 Logout" Button durch modernen SVG-Icon
+  * Ersetzt alten "<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"></path><path d="M13 2h5a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-5"></path><circle cx="16" cy="12" r="1"></circle></svg> Logout" Button durch modernen SVG-Icon
   * Einheitliches Design mit anderen Header-Buttons
 - SICHERHEIT: Athleten-Sektion nur noch für Admins sichtbar
   * Normale Benutzer sehen keine Athleten-Tabelle mehr
@@ -2048,8 +2048,11 @@ Datum: 2026-02-09
 
     .table-wrapper {
       overflow-x: auto;
+      overflow-y: auto;
+      max-height: 600px;
       -webkit-overflow-scrolling: touch;
       margin-top: 10px;
+      position: relative;
     }
 
     /* Modern Table Styles */
@@ -2168,8 +2171,8 @@ Datum: 2026-02-09
       background-repeat: no-repeat;
       vertical-align: middle;
       margin-right: 6px;
-    }
       filter: drop-shadow(0 0 2px rgba(255, 215, 0, 0.4));
+    }
 
     tr.year-separator {
       height: 4px;
@@ -2672,7 +2675,7 @@ Datum: 2026-02-09
     }
 
     .pb-card-dashboard::before {
-      content: '🏅';
+      content: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>';
       position: absolute;
       bottom: -10px;
       right: -10px;
@@ -3957,7 +3960,7 @@ Datum: 2026-02-09
       <div id="compactAthletVorschlaege" class="autocomplete-suggestions"></div>
       <div id="compactSelectedInfo" class="selected-info" style="display: none;">
         <span id="compactAthletName"></span>
-        <span class="clear-btn" onclick="clearCompactAthlete()">✕</span>
+        <span class="clear-btn" onclick="clearCompactAthlete()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></span>
       </div>
     </div>
     
@@ -4356,13 +4359,13 @@ Datum: 2026-02-09
         </div>
 
         <div class="filter-section">
-          <h3>🔧 Filter</h3>
+          <h3><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Filter</h3>
 
           <div id="filterContainer"></div>
           <div class="button-group">
             <button onclick="ladeLeistungen()">Anzeigen</button>
-            <button class="reset-btn" onclick="alleFilterZuruecksetzen()">🔄 Alle Filter zurücksetzen</button>
-            <button class="export-btn" onclick="exportiereCSV()" id="exportBtn" style="display:none;">💾 Als CSV exportieren</button>
+            <button class="reset-btn" onclick="alleFilterZuruecksetzen()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Alle Filter zurücksetzen</button>
+            <button class="export-btn" onclick="exportiereCSV()" id="exportBtn" style="display:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Als CSV exportieren</button>
           </div>
         </div>
         
@@ -4375,7 +4378,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details open>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        📈 Leistungsentwicklung
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg> Leistungsentwicklung
       </summary>
     
           <!-- Filter -->
@@ -4422,7 +4425,7 @@ Datum: 2026-02-09
           <!-- Leistungsentwicklung Diagramm -->
           <div style="display: flex; gap: 10px; margin-bottom: 10px;">
       <button id="diagrammAnzeigenBtn" onclick="zeigeDiagramm()">Leistungsentwicklung anzeigen</button>
-      <button id="diagrammAktualisierenBtn" onclick="zeigeDiagramm()" style="display: none;">🔄 Aktualisieren</button>
+      <button id="diagrammAktualisierenBtn" onclick="zeigeDiagramm()" style="display: none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Aktualisieren</button>
       <button id="diagrammSchließenBtn" onclick="schließeDiagramm()" style="display: none;">Einklappen</button>
       <button id="diagrammAusklappenBtn" onclick="klappeAusDiagramm()" style="display: none;">Ausklappen</button>
           </div>
@@ -4438,7 +4441,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        📊 SB & Saisondurchschnitte
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> SB & Saisondurchschnitte
       </summary>
     
           <!-- SB-Diagramm -->
@@ -4486,7 +4489,7 @@ Datum: 2026-02-09
       
       <div style="display: flex; gap: 10px;">
         <button id="sbDiagrammAnzeigenBtn" onclick="zeigeSBDiagramm()">SB-Diagramm anzeigen</button>
-        <button id="sbDiagrammAktualisierenBtn" onclick="zeigeSBDiagramm()" style="display: none;">🔄 Aktualisieren</button>
+        <button id="sbDiagrammAktualisierenBtn" onclick="zeigeSBDiagramm()" style="display: none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Aktualisieren</button>
         <button id="sbDiagrammSchließenBtn" onclick="schließeSBDiagramm()" style="display: none;">Einklappen</button>
         <button id="sbDiagrammAusklappenBtn" onclick="klappeAusSBDiagramm()" style="display: none;">Ausklappen</button>
       </div>
@@ -4545,7 +4548,7 @@ Datum: 2026-02-09
       
       <div style="display: flex; gap: 10px;">
         <button id="prognoseDiagrammAnzeigenBtn" onclick="zeigePrognoseDiagramm()">Prognose anzeigen</button>
-        <button id="prognoseDiagrammAktualisierenBtn" onclick="zeigePrognoseDiagramm()" style="display: none;">🔄 Aktualisieren</button>
+        <button id="prognoseDiagrammAktualisierenBtn" onclick="zeigePrognoseDiagramm()" style="display: none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Aktualisieren</button>
         <button id="prognoseDiagrammSchließenBtn" onclick="schließePrognoseDiagramm()" style="display: none;">Einklappen</button>
         <button id="prognoseDiagrammAusklappenBtn" onclick="klappeAusPrognoseDiagramm()" style="display: none;">Ausklappen</button>
       </div>
@@ -4563,7 +4566,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        📊 Statistiken
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Statistiken
       </summary>
     
           <!-- Filter -->
@@ -4616,7 +4619,7 @@ Datum: 2026-02-09
           </select>
         </div>
         <div style="text-align: right; grid-column: 1 / -1; margin-top: 10px;">
-          <button class="reset-btn" onclick="statistikFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;">🔄 Filter zurücksetzen</button>
+          <button class="reset-btn" onclick="statistikFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Filter zurücksetzen</button>
         </div>
       </div>
           </div>
@@ -4624,11 +4627,11 @@ Datum: 2026-02-09
           <div class="avg-buttons">
       <button class="avg-btn" onclick="zeigeLeistungsTabelle()">Score</button>
       <button class="avg-btn" onclick="berechneDurchschnitt('leistung')">Ø Leistung</button>
-      <button class="avg-btn" onclick="berechneDurchschnitt('platzierung')">🏅 Ø Platzierung</button>
+      <button class="avg-btn" onclick="berechneDurchschnitt('platzierung')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Ø Platzierung</button>
       <button class="avg-btn" onclick="berechneErfolgsquote()">Erfolgsquote</button>
-      <button class="avg-btn" onclick="zeigeSaisonvergleich()">📅 Saisonvergleich</button>
+      <button class="avg-btn" onclick="zeigeSaisonvergleich()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Saisonvergleich</button>
       <button class="avg-btn" onclick="zeigeWettkampffrequenz()">🗓️ Wettkampffrequenz</button>
-      <button class="export-btn" onclick="exportiereAnalyseCSV()" id="analyseExportBtn" style="display:none;">💾 Als CSV exportieren</button>
+      <button class="export-btn" onclick="exportiereAnalyseCSV()" id="analyseExportBtn" style="display:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Als CSV exportieren</button>
           </div>
           <div id="analyseAusgabe" style="margin-top: 20px;"></div>
           </details>
@@ -4637,7 +4640,7 @@ Datum: 2026-02-09
         <div class="filter-section">
           <details>
       <summary style="cursor: pointer; font-size: 1.1em; font-weight: 600; padding: 10px; background: #f8f9fa; border-radius: 6px; margin-bottom: 15px;">
-        🏆 Bestleistungen
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg> Bestleistungen
       </summary>
     
           <!-- Filter -->
@@ -4690,7 +4693,7 @@ Datum: 2026-02-09
           <input type="date" id="bestleistungenFilterBis" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
         <div style="text-align: right; grid-column: 1 / -1; margin-top: 10px;">
-          <button class="reset-btn" onclick="bestleistungenFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;">🔄 Filter zurücksetzen</button>
+          <button class="reset-btn" onclick="bestleistungenFilterZuruecksetzen()" style="padding: 8px 20px; font-size: 0.9em;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Filter zurücksetzen</button>
         </div>
       </div>
           </div>
@@ -4698,8 +4701,8 @@ Datum: 2026-02-09
           <div class="avg-buttons">
       <button class="avg-btn" style="background:#FFD700" onclick="zeigePBs()">PBs</button>
       <button class="avg-btn" style="background:#4facfe; color:white;" onclick="zeigeSBMenu()">⭐ SBs</button>
-      <button class="avg-btn" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);" onclick="zeigePBTimeline()">🏅 PB-Timeline</button>
-      <button class="export-btn" onclick="exportiereBestleistungenCSV()" id="bestleistungenExportBtn" style="display:none;">💾 Als CSV exportieren</button>
+      <button class="avg-btn" style="background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);" onclick="zeigePBTimeline()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> PB-Timeline</button>
+      <button class="export-btn" onclick="exportiereBestleistungenCSV()" id="bestleistungenExportBtn" style="display:none;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Als CSV exportieren</button>
           </div>
           <div id="bestleistungenAusgabe" style="margin-top: 20px;"></div>
           </details>
@@ -4873,7 +4876,7 @@ window.addEventListener('DOMContentLoaded', function() {
         console.log("🔐 Login-Versuch:", { email, loginSuccessful: !error });
         if (error) {
           if (error.message.includes('Invalid login credentials')) {
-            showMessage('❌ Falsche E-Mail oder Passwort.', 'error');
+            showMessage('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Falsche E-Mail oder Passwort.', 'error');
           } else {
             showMessage('Fehler: ' + error.message, 'error');
           }
@@ -4890,9 +4893,9 @@ window.addEventListener('DOMContentLoaded', function() {
           localStorage.removeItem('rememberMe');
         }
         
-        showMessage('✅ Erfolgreich angemeldet!', 'success');
+        showMessage('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Erfolgreich angemeldet!', 'success');
         
-        console.log("✅ Login erfolgreich, Session:", data.session ? "vorhanden" : "nicht vorhanden");
+        console.log("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Login erfolgreich, Session:", data.session ? "vorhanden" : "nicht vorhanden");
         // The onAuthStateChange handler will take care of the rest
         
       } catch (err) {
@@ -4940,7 +4943,7 @@ window.addEventListener('DOMContentLoaded', function() {
       
       // Validate passwords match
       if (password !== passwordConfirm) {
-        showMessage('❌ Die Passwörter stimmen nicht überein.', 'error');
+        showMessage('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Die Passwörter stimmen nicht überein.', 'error');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
         isSubmitting = false;
@@ -4949,7 +4952,7 @@ window.addEventListener('DOMContentLoaded', function() {
       
       // Validate password length
       if (password.length < 6) {
-        showMessage('❌ Das Passwort muss mindestens 6 Zeichen lang sein.', 'error');
+        showMessage('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Das Passwort muss mindestens 6 Zeichen lang sein.', 'error');
         submitBtn.disabled = false;
         submitBtn.textContent = originalText;
         isSubmitting = false;
@@ -4972,7 +4975,7 @@ window.addEventListener('DOMContentLoaded', function() {
         
         if (authError) {
           if (authError.message.includes('already registered') || authError.message.includes('User already registered')) {
-            showMessage('❌ Diese Email ist bereits registriert. Bitte melde dich stattdessen an.', 'error');
+            showMessage('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Diese Email ist bereits registriert. Bitte melde dich stattdessen an.', 'error');
           } else {
             showMessage('Fehler: ' + authError.message, 'error');
           }
@@ -4986,16 +4989,16 @@ window.addEventListener('DOMContentLoaded', function() {
         
         // Check if user was created successfully
         if (authData.user) {
-          console.log('✅ User created, database trigger will create athlete profile automatically');
+          console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> User created, database trigger will create athlete profile automatically');
           
           // Check if email confirmation is required
           if (authData.session) {
             // User is logged in immediately (no email confirmation required)
-            showMessage('✅ Registrierung erfolgreich! Du wirst automatisch angemeldet...', 'success');
+            showMessage('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Registrierung erfolgreich! Du wirst automatisch angemeldet...', 'success');
             // The onAuthStateChange will load the user data
           } else {
             // Email confirmation required
-            showMessage('✅ Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, um dich anzumelden.', 'success');
+            showMessage('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, um dich anzumelden.', 'success');
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
             isSubmitting = false;
@@ -5035,11 +5038,11 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
   if (event === 'INITIAL_SESSION') {
     isAuthInitialized = true;
     if (!session) {
-      console.log('❌ No initial session, showing login screen');
+      console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> No initial session, showing login screen');
       showLoginScreen();
       return;
     }
-    console.log('✅ Initial session found, will process...');
+    console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Initial session found, will process...');
     // Fall through to handle session
   }
   
@@ -5075,18 +5078,18 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
       ]);
       
       console.log("📦 Query-Ergebnis erhalten");
-      console.log('📊 Existing athlete:', existingAthlete);
+      console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Existing athlete:', existingAthlete);
       console.log('❗ Fetch error:', fetchError);
       
       if (fetchError) {
-        console.error('❌ Database error:', fetchError);
+        console.error('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Database error:', fetchError);
         showMessage('⚠️ Fehler beim Laden des Profils: ' + fetchError.message, 'error');
         await supabaseClient.auth.signOut();
         isHandlingAuth = false;
         lastProcessedUserId = null;
         return;
       } else if (!existingAthlete) {
-        console.log('❌ No athlete profile found for existing user');
+        console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> No athlete profile found for existing user');
         console.log('⚠️ Waiting for database trigger to create profile...');
         
         // Wait a moment for the trigger to execute (in case it's delayed)
@@ -5100,7 +5103,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
           .maybeSingle();
         
         if (retryError || !retryAthlete) {
-          console.error('❌ Still no athlete profile found after retry');
+          console.error('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Still no athlete profile found after retry');
           showMessage('⚠️ Kein Athleten-Profil gefunden. Bitte kontaktiere den Administrator.', 'error');
           await supabaseClient.auth.signOut();
           isHandlingAuth = false;
@@ -5108,20 +5111,20 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
           return;
         }
         
-        console.log('✅ Athlete profile found after retry:', retryAthlete);
+        console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Athlete profile found after retry:', retryAthlete);
         currentAthlete = retryAthlete;
         selectedAthleteId = retryAthlete.id;
         isAdmin = retryAthlete.ist_admin || false;
         selectedAthleteName = `${retryAthlete.vorname || ''} ${retryAthlete.name || ''}`.trim();
       } else {
-        console.log('✅ Athlete profile found:', existingAthlete.vorname, existingAthlete.name);
+        console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Athlete profile found:', existingAthlete.vorname, existingAthlete.name);
         currentAthlete = existingAthlete;
         selectedAthleteId = existingAthlete.id;
         isAdmin = existingAthlete.ist_admin || false;
         selectedAthleteName = `${existingAthlete.vorname || ''} ${existingAthlete.name || ''}`.trim();
       }
       
-      console.log('🎨 Showing main app...');
+      console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M12 2a10 10 0 0 0-9.95 9h11.64L12 6.06 10.3 11H4.05a10 10 0 1 0 16.9 0h-5.64l-1.88 3.94L12 9.06 9.34 14H6.05"></path><circle cx="12" cy="12" r="3"></circle></svg> Showing main app...');
       // Show main app
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'block';
@@ -5135,7 +5138,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         }
       }
       
-      console.log('🔧 Initializing app...');
+      console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg> Initializing app...');
       await initializeApp();
       
       // Initialize compact athlete search for admins
@@ -5143,19 +5146,19 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
         initCompactAthleteSearch();
       }
       
-      console.log('📋 Loading leistungen...');
+      console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> Loading leistungen...');
       await ladeLeistungen();
       
-      console.log('📊 Loading dashboard data...');
+      console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Loading dashboard data...');
       await ladeDashboardDaten();
       
       // Mark this user as processed
       lastProcessedUserId = session.user.id;
-      console.log('✅✅✅ Auth handling complete, mainApp is now visible');
+      console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Auth handling complete, mainApp is now visible');
       
     } catch (error) {
-      console.error('❌ Error in auth handler:', error);
-      console.error('❌ Error stack:', error.stack);
+      console.error('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Error in auth handler:', error);
+      console.error('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Error stack:', error.stack);
       showMessage('Ein Fehler ist aufgetreten: ' + error.message, 'error');
       showLoginScreen();
       lastProcessedUserId = null;
@@ -5164,7 +5167,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
     }
     
   } else if (event === 'SIGNED_OUT') {
-    console.log('🚪 User signed out');
+    console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h7"></path><path d="M13 2h5a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-5"></path><circle cx="16" cy="12" r="1"></circle></svg> User signed out');
     currentUser = null;
     currentAthlete = null;
     isAdmin = false;
@@ -5311,7 +5314,7 @@ window.addEventListener('DOMContentLoaded', () => {
       authMessage.style.display = 'block';
       authMessage.style.background = '#d1ecf1';
       authMessage.style.color = '#0c5460';
-      authMessage.textContent = '🔄 Anmeldung wird verarbeitet...';
+      authMessage.textContent = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Anmeldung wird verarbeitet...';
     }
     
     // Clean URL after a short delay
@@ -5335,15 +5338,15 @@ if (window.location.hostname === 'localhost' || window.location.hostname.include
       const info = `
 🐛 DEBUG INFO:
 ━━━━━━━━━━━━━━━━━━━━━━
-Session: ${session ? '✅ Aktiv' : '❌ Keine'}
+Session: ${session ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Aktiv' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Keine'}
 User Email: ${session?.user?.email || 'Keine'}
 User ID: ${session?.user?.id || 'Keine'}
 ━━━━━━━━━━━━━━━━━━━━━━
-Current User: ${currentUser ? '✅' : '❌'}
-Current Athlete: ${currentAthlete ? '✅' : '❌'}
+Current User: ${currentUser ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'}
+Current Athlete: ${currentAthlete ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'}
 ${athleteInfo}
 Selected Athlete ID: ${selectedAthleteId || 'Keine'}
-Is Admin: ${isAdmin ? '✅' : '❌'}
+Is Admin: ${isAdmin ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>'}
 ━━━━━━━━━━━━━━━━━━━━━━
 Auth Initialized: ${isAuthInitialized}
 Handling Auth: ${isHandlingAuth}
@@ -5672,7 +5675,7 @@ function initAthleteSearch() {
         suggestionsDiv.classList.add('active');
         console.log('Vorschläge angezeigt');
       } else {
-        suggestionsDiv.innerHTML = '<div class="autocomplete-item">❌ Keine passenden Athleten gefunden</div>';
+        suggestionsDiv.innerHTML = '<div class="autocomplete-item"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Keine passenden Athleten gefunden</div>';
         suggestionsDiv.classList.add('active');
       }
     } catch (e) {
@@ -5770,7 +5773,7 @@ async function ladeAlleAthleten() {
       Jahrgang: a.jahrgang
     }));
     
-    console.log('✅ Athleten geladen:', alleAthleten.length);
+    console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Athleten geladen:', alleAthleten.length);
   } catch (err) {
     console.error('Fehler beim Laden der Athleten:', err);
     alleAthleten = [];
@@ -6033,7 +6036,7 @@ function handleDisziplinChange() {
           <option value="">– alle –</option>
           ${disziplinenListe.map(d=>`<option value="${d}">${d}</option>`).join("")}
         </select>
-        <button type="button" onclick="entferneDisziplinFilter(this)" style="padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer;">✕</button>
+        <button type="button" onclick="entferneDisziplinFilter(this)" style="padding: 8px 15px; background: #dc3545; color: white; border: none; border-radius: 8px; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg></button>
       `;
       container.appendChild(neueRow);
     }
@@ -6093,7 +6096,7 @@ function alleFilterZuruecksetzen() {
   document.getElementById("exportBtn").style.display = "none";
   aktuelleLeistungsdaten = null;
   
-  alert("✅ Alle Filter wurden zurückgesetzt!");
+  alert("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Alle Filter wurden zurückgesetzt!");
 }
 
 /* ================= LEISTUNGEN ================= */
@@ -6215,7 +6218,7 @@ async function ladeLeistungen() {
       document.getElementById("exportBtn").style.display = "none";
       return;
     }
-    document.getElementById("leistungenAusgabe").innerHTML = `<div class="no-data">❌ ${error.message}</div>`;
+    document.getElementById("leistungenAusgabe").innerHTML = `<div class="no-data"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> ${error.message}</div>`;
     document.getElementById("exportBtn").style.display = "none";
     return;
   }
@@ -6329,12 +6332,12 @@ async function zeigeLeistungsTabelle() {
   
   if (error) {
     console.error("Fehler beim Laden der Daten:", error);
-    alert("❌ Fehler beim Laden der Daten: " + error.message);
+    alert("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler beim Laden der Daten: " + error.message);
     return;
   }
   
   if (!data || data.length === 0) {
-    alert("📭 Keine Daten für diese Auswahl gefunden");
+    alert("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Daten für diese Auswahl gefunden");
     return;
   }
 
@@ -6362,7 +6365,7 @@ function renderScoreTable() {
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <div></div>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Schließen</button>
       </div>
       <div class="table-wrapper">
         <table>
@@ -6530,12 +6533,12 @@ async function berechneDurchschnitt(typ) {
   
   if (error) {
     console.error("Fehler beim Laden der Daten:", error);
-    alert("❌ Fehler beim Laden der Daten: " + error.message);
+    alert("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler beim Laden der Daten: " + error.message);
     return;
   }
   
   if (!data || data.length === 0) {
-    alert("📭 Keine Daten für diese Auswahl gefunden");
+    alert("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Daten für diese Auswahl gefunden");
     return;
   }
 
@@ -6543,7 +6546,7 @@ async function berechneDurchschnitt(typ) {
   const werte = data.map(d => d[typ]).filter(v => v !== null && v !== undefined);
   
   if (werte.length === 0) {
-    alert("📭 Keine gültigen Werte für die Berechnung vorhanden");
+    alert("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine gültigen Werte für die Berechnung vorhanden");
     return;
   }
   
@@ -6555,7 +6558,7 @@ async function berechneDurchschnitt(typ) {
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3 style="color: #2a5298; margin: 0;">${typ === 'leistung' ? 'Ø Leistung' : 'Ø Platzierung'}</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Schließen</button>
       </div>
       <div class="table-wrapper">
         <table>
@@ -6704,14 +6707,14 @@ function getEinheit(disziplin) {
 /* ================= ZEIGE TABELLE MIT PBS ================= */
 function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierbar=false){
   if(!angezeigteDaten || angezeigteDaten.length===0){
-    document.getElementById(ziel).innerHTML="<div class='no-data'>📭 Keine Daten gefunden</div>";
+    document.getElementById(ziel).innerHTML="<div class='no-data'><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Daten gefunden</div>";
     return;
   }
 
   let infoHtml = "";
   if(ziel === "leistungenAusgabe"){
     infoHtml = `<div class="results-info">
-                  <div class="results-count">📋 ${angezeigteDaten.length} ${angezeigteDaten.length === 1 ? 'Leistung' : 'Leistungen'} gefunden</div>
+                  <div class="results-count"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg> ${angezeigteDaten.length} ${angezeigteDaten.length === 1 ? 'Leistung' : 'Leistungen'} gefunden</div>
                 </div>`;
   }
 
@@ -6829,7 +6832,7 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
     // Add Edit button if user can edit
     if (currentAthlete && (!isAdmin || selectedAthleteId === currentAthlete.id)) {
       const leistungId = vollstaendigeDaten[index].id;
-      html += `<td><button onclick="openEditLeistungModal(${leistungId})" style="padding: 6px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">✏️ Bearbeiten</button></td>`;
+      html += `<td><button onclick="openEditLeistungModal(${leistungId})" style="padding: 6px 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Bearbeiten</button></td>`;
     }
     
     html+="</tr>";
@@ -7195,12 +7198,12 @@ async function zeigePBs() {
   const { data, error } = await query;
   
   if(error) {
-    alert(`❌ Fehler: ${error.message}`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler: ${error.message}`);
     return;
   }
   
   if(!data || data.length === 0) {
-    alert('📭 Keine Leistungen für diesen Athleten gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Leistungen für diesen Athleten gefunden');
     return;
   }
   
@@ -7248,7 +7251,7 @@ async function zeigePBs() {
   window.aktuellePBsDaten = pbs;
   window.istPBsTabelle = true;
   
-  zeigePBsSBsTabelle(pbs, "🏆", "Persönliche Bestleistungen");
+  zeigePBsSBsTabelle(pbs, "<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>", "Persönliche Bestleistungen");
 }
 
 /* ================= PBS/SBS TABELLE ANZEIGEN (KORRIGIERT) ================= */
@@ -7399,7 +7402,7 @@ function setSortPBsSBs(spalte) {
   
   // Zeige neu sortierte Tabelle
   if(istPBs) {
-    zeigePBsSBsTabelle(daten, "🏆", "Persönliche Bestleistungen", null, false);
+    zeigePBsSBsTabelle(daten, "<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>", "Persönliche Bestleistungen", null, false);
   } else if(jahr === "alle") {
     zeigePBsSBsTabelle(daten, "⭐", "Saisonbestleistungen (alle Jahre)", null, true);
   } else {
@@ -7522,12 +7525,12 @@ async function zeigeSBs() {
   const { data, error } = await query;
   
   if(error) {
-    alert(`❌ Fehler: ${error.message}`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler: ${error.message}`);
     return;
   }
   
   if(!data || data.length === 0) {
-    alert(`📭 Keine Leistungen für diesen Athleten im Jahr ${jahr} gefunden`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Leistungen für diesen Athleten im Jahr ${jahr} gefunden`);
     return;
   }
   
@@ -7604,12 +7607,12 @@ async function zeigeAlleSBs() {
     .order("datum", { ascending: false }); // Neueste zuerst
   
   if(error) {
-    alert(`❌ Fehler: ${error.message}`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler: ${error.message}`);
     return;
   }
   
   if(!data || data.length === 0) {
-    alert('📭 Keine Leistungen für diesen Athleten gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Leistungen für diesen Athleten gefunden');
     return;
   }
   
@@ -7675,18 +7678,18 @@ async function initializeApp() {
   console.log('=== APP INIT START ===');
   
   await ladeDisziplinen();
-  console.log('✅ Disziplinen geladen:', disziplinenListe.length);
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Disziplinen geladen:', disziplinenListe.length);
   
   await ladeFilterOptionen();
-  console.log('✅ Filter-Optionen geladen');
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Filter-Optionen geladen');
   
   // Baue Filter
   baueFilter();
-  console.log('✅ Filter gebaut');
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Filter gebaut');
   
   // Event Listener für Spalten-Checkboxen
   const spaltenCheckboxen = document.querySelectorAll("#leistungenTab .spalte");
-  console.log('✅ Spalten-Checkboxen gefunden:', spaltenCheckboxen.length);
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Spalten-Checkboxen gefunden:', spaltenCheckboxen.length);
   spaltenCheckboxen.forEach(cb => {
     cb.addEventListener("change", baueFilter);
   });
@@ -7696,7 +7699,7 @@ async function initializeApp() {
   if(analyseDisziplinSelect && disziplinenListe.length > 0) {
     analyseDisziplinSelect.innerHTML = '<option value="">– Disziplin wählen –</option>' + 
       disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
-    console.log('✅ Analyse-Dropdown befüllt');
+    console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Analyse-Dropdown befüllt');
   }
   
   // Befülle Vergleichs-Disziplin Dropdown
@@ -7741,7 +7744,7 @@ async function initializeApp() {
       disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
   }
   
-  console.log('=== ✅ APP INIT COMPLETE ===');
+  console.log('=== <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> APP INIT COMPLETE ===');
 }
 
 window.addEventListener('DOMContentLoaded', async function() {
@@ -8235,7 +8238,7 @@ function normalizeLeistung(leistung, disziplin) {
     // Konvertiere von cm zu m wenn Wert > 100 (typisch für cm-Speicherung)
     // Bei Hochsprung und Stabhochsprung sind auch Werte zwischen 10-100 möglich
     if (istMeterDisziplin && leistung > 100) {
-        console.log(`🔄 Normalisiere ${disziplin}: ${leistung} cm → ${leistung/100} m`);
+        console.log(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Normalisiere ${disziplin}: ${leistung} cm → ${leistung/100} m`);
         return leistung / 100;
     }
     
@@ -8496,7 +8499,7 @@ async function zeigeDiagramm() {
     document.getElementById("diagrammContainer").style.display = "block";
     document.getElementById("diagrammSchließenBtn").style.display = "inline-block";
     document.getElementById("diagrammAusklappenBtn").style.display = "none";
-    document.getElementById("diagrammAnzeigenBtn").textContent = "🔄 Diagramm aktualisieren";
+    document.getElementById("diagrammAnzeigenBtn").textContent = "<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Diagramm aktualisieren";
     
     const canvas = document.getElementById('leistungsChart');
     const ctx = canvas.getContext('2d');
@@ -8875,14 +8878,14 @@ function toggleVergleichsModus() {
         container.style.display = 'block';
         // Wenn Diagramm bereits sichtbar, Button-Text auf "aktualisieren" ändern
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '🔄 Diagramm aktualisieren';
+            diagrammBtn.textContent = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Diagramm aktualisieren';
         }
     } else {
         container.style.display = 'none';
         document.getElementById('vergleichsDisziplin').value = '';
         // Button-Text zurücksetzen wenn Diagramm sichtbar
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '🔄 Diagramm aktualisieren';
+            diagrammBtn.textContent = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Diagramm aktualisieren';
         }
     }
 }
@@ -8995,7 +8998,7 @@ async function zeigeSBDiagramm() {
         });
 
         
-        console.log(`📊 berechneSaisonWerte für ${disziplinName}:`, {
+        console.log(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> berechneSaisonWerte für ${disziplinName}:`, {
             anzahlDaten: daten.length,
             beispielWert: daten[0]?.leistung,
             istZeitDisziplin
@@ -9087,7 +9090,7 @@ async function zeigeSBDiagramm() {
         const scores1 = [...werte1.sbWerte.map(d => d.score), ...werte1.durchschnittsWerte.map(d => d.score)].filter(s => s !== null && s !== undefined);
         const scores2 = [...werte2.sbWerte.map(d => d.score), ...werte2.durchschnittsWerte.map(d => d.score)].filter(s => s !== null && s !== undefined);
         
-        console.log('📊 Verwende DB-Scores für SB-Diagramm:', {
+        console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Verwende DB-Scores für SB-Diagramm:', {
             disziplin1: disziplin,
             scores1: scores1,
             disziplin2: vergleichsDisziplin,
@@ -9512,14 +9515,14 @@ function toggleSBVergleichsModus() {
         container.style.display = 'block';
         // Wenn Diagramm bereits sichtbar, Button-Text auf "aktualisieren" ändern
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '🔄 SB-Diagramm aktualisieren';
+            diagrammBtn.textContent = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> SB-Diagramm aktualisieren';
         }
     } else {
         container.style.display = 'none';
         document.getElementById('sbVergleichsDisziplin').value = '';
         // Button-Text zurücksetzen wenn Diagramm sichtbar
         if (diagrammSichtbar) {
-            diagrammBtn.textContent = '🔄 SB-Diagramm aktualisieren';
+            diagrammBtn.textContent = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> SB-Diagramm aktualisieren';
         }
     }
 }
@@ -9621,7 +9624,7 @@ async function zeigePrognoseDiagramm() {
         return;
     }
     
-    console.log('📊 Prognose-Berechnung:', {
+    console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Prognose-Berechnung:', {
         disziplin,
         zeitraum: istJahresPrognose ? '5 Jahre' : '12 Monate',
         anzahlLeistungen: relevanteLeistungen.length,
@@ -9724,8 +9727,8 @@ async function zeigePrognoseDiagramm() {
     
     const infoDiv = document.getElementById('prognoseInfo');
     infoDiv.innerHTML = `
-        📈 <strong>Trend:</strong> ${trendRichtung} um ${trendText} pro Jahr<br>
-        📊 <strong>Basis:</strong> ${relevanteLeistungen.length} Leistungen (${startDatum.toLocaleDateString('de-DE')} - ${heute.toLocaleDateString('de-DE')})<br>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg> <strong>Trend:</strong> ${trendRichtung} um ${trendText} pro Jahr<br>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> <strong>Basis:</strong> ${relevanteLeistungen.length} Leistungen (${startDatum.toLocaleDateString('de-DE')} - ${heute.toLocaleDateString('de-DE')})<br>
         ${prognoseText}
     `;
     
@@ -9735,7 +9738,7 @@ async function zeigePrognoseDiagramm() {
     // Erstelle Chart - mit Fehlerbehandlung
     const canvasElement = document.getElementById("prognoseChart");
     if (!canvasElement) {
-        console.error("❌ prognoseChart Canvas-Element nicht gefunden!");
+        console.error("<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> prognoseChart Canvas-Element nicht gefunden!");
         alert("Fehler: Chart-Element konnte nicht gefunden werden. Bitte Seite neu laden.");
         return;
     }
@@ -9799,7 +9802,7 @@ async function zeigePrognoseDiagramm() {
         minWert = 0;
     }
     
-    console.log('📊 Prognose-Achsen:', {
+    console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Prognose-Achsen:', {
         alleWerte,
         minWert,
         maxWert,
@@ -10444,11 +10447,11 @@ function renderOrtTable() {
   
   let tableHTML = `
     <div style="animation: slideIn 0.3s ease-out;">
-      <h3 class="dashboard-section-title">📍 ${currentOrtName}</h3>
+      <h3 class="dashboard-section-title"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg> ${currentOrtName}</h3>
       <div id="ortTableWhiteBox" style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <div style="color: #757575; font-size: 0.95em;">${currentOrtLeistungen.length} ${currentOrtLeistungen.length === 1 ? 'Leistung' : 'Leistungen'}</div>
-          <button onclick="hideOrtLeistungen()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+          <button onclick="hideOrtLeistungen()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Schließen</button>
         </div>
         <div class="table-wrapper" id="ortTableScrollArea" style="overflow-y: auto;">
           <table>
@@ -11100,7 +11103,7 @@ async function displayGoals(athletId) {
   const container = document.getElementById('goalsList');
   
   if (!goals[athletId] || goals[athletId].length === 0) {
-    container.innerHTML = '<div class="no-goals-message">Noch keine Ziele definiert. Füge oben ein neues Ziel hinzu! 🎯</div>';
+    container.innerHTML = '<div class="no-goals-message">Noch keine Ziele definiert. Füge oben ein neues Ziel hinzu! <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg></div>';
     return;
   }
   
@@ -11307,7 +11310,7 @@ async function createGoalCard(goal, athletId, index, leistungen) {
     }
   };
   
-  const goalTypeLabel = goalType === 'season' ? '🌟 Saisonziel' : '🏆 Karriereziel';
+  const goalTypeLabel = goalType === 'season' ? '🌟 Saisonziel' : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg> Karriereziel';
   
   card.innerHTML = `
     <div class="goal-header">
@@ -11316,8 +11319,8 @@ async function createGoalCard(goal, athletId, index, leistungen) {
         <div class="goal-type-label">${goalTypeLabel}</div>
       </div>
       <div>
-        <button class="goal-edit-btn" onclick="editGoal(${athletId}, ${index})">✏️ Bearbeiten</button>
-        <button class="goal-delete-btn" onclick="deleteGoal(${athletId}, ${index})">🗑️ Löschen</button>
+        <button class="goal-edit-btn" onclick="editGoal(${athletId}, ${index})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg> Bearbeiten</button>
+        <button class="goal-delete-btn" onclick="deleteGoal(${athletId}, ${index})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Löschen</button>
       </div>
     </div>
     
@@ -11349,7 +11352,7 @@ async function createGoalCard(goal, athletId, index, leistungen) {
       ${baselineValue === null ? 
         '⚠️ Keine Leistungsdaten vorhanden' :
         isComplete ? 
-          '🏆 Herzlichen Glückwunsch! Ziel erreicht!' : 
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg> Herzlichen Glückwunsch! Ziel erreicht!' : 
           isTime ? 
             `Dein ${referenceLabel} muss noch ${formatValue(remainingFromReference)} schneller werden` : 
             `Dein ${referenceLabel} muss noch ${formatValue(remainingFromReference)} weiter/höher sein`
@@ -11379,8 +11382,8 @@ function editGoal(athletId, index) {
         </div>
       </div>
       <div class="button-group">
-        <button class="goal-save-btn" onclick="saveEditedGoal(${athletId}, ${index})">💾 Speichern</button>
-        <button class="goal-cancel-btn" onclick="cancelEditGoal(${athletId})">❌ Abbrechen</button>
+        <button class="goal-save-btn" onclick="saveEditedGoal(${athletId}, ${index})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg> Speichern</button>
+        <button class="goal-cancel-btn" onclick="cancelEditGoal(${athletId})"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Abbrechen</button>
       </div>
     </div>
   `;
@@ -11672,7 +11675,7 @@ loadGoals();
 
 // ========== RESET FUNKTION ==========
 function resetAllFiltersAndSettings() {
-  console.log('🔄 Resetze alle Filter und Einstellungen...');
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg> Resetze alle Filter und Einstellungen...');
   
   // FILTER ZURÜCKSETZEN - Leistungen
   const filterElemente = [
@@ -11822,7 +11825,7 @@ function resetAllFiltersAndSettings() {
   if (prognoseDiagrammSchließenBtn) prognoseDiagrammSchließenBtn.style.display = 'none';
   if (prognoseDiagrammAusklappenBtn) prognoseDiagrammAusklappenBtn.style.display = 'none';
   
-  console.log('✅ Alle Filter und Einstellungen wurden zurückgesetzt');
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Alle Filter und Einstellungen wurden zurückgesetzt');
 }
 
 // ========== KOMPAKTE ATHLETENSUCHE (für Admins) ==========
@@ -11836,7 +11839,7 @@ function initCompactAthleteSearch() {
     return;
   }
   
-  console.log('✅ Event Listener wird hinzugefügt...');
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Event Listener wird hinzugefügt...');
   
   searchInput.addEventListener('input', async function(e) {
     const query = this.value.trim().toLowerCase();
@@ -11856,12 +11859,12 @@ function initCompactAthleteSearch() {
         .order('name');
       
       if (error) {
-        console.error('❌ Supabase Error:', error);
+        console.error('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Supabase Error:', error);
         throw error;
       }
       
       if (data && data.length > 0) {
-        console.log(`✅ ${data.length} Athleten gefunden`);
+        console.log(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> ${data.length} Athleten gefunden`);
         suggestionsDiv.innerHTML = data.map(athlete => `
           <div class="suggestion-item" onclick="selectCompactAthlete(${athlete.id}, '${athlete.vorname.replace(/'/g, "\\'")}', '${athlete.name.replace(/'/g, "\\'")}', ${athlete.jahrgang})">
             ${athlete.vorname} ${athlete.name} (${athlete.jahrgang})
@@ -11873,7 +11876,7 @@ function initCompactAthleteSearch() {
         suggestionsDiv.classList.add('show');
       }
     } catch (err) {
-      console.error('❌ Fehler beim Laden der Athleten:', err);
+      console.error('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler beim Laden der Athleten:', err);
       suggestionsDiv.innerHTML = '<div class="suggestion-item">Fehler beim Laden</div>';
       suggestionsDiv.classList.add('show');
     }
@@ -11886,7 +11889,7 @@ function initCompactAthleteSearch() {
     }
   });
   
-  console.log('✅ initCompactAthleteSearch abgeschlossen');
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28a745" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> initCompactAthleteSearch abgeschlossen');
 }
 
 function selectCompactAthlete(id, vorname, name, jahrgang) {
@@ -11911,7 +11914,7 @@ function selectCompactAthlete(id, vorname, name, jahrgang) {
   if (athletName) athletName.textContent = `${vorname} ${name} (${jahrgang})`;
   
   // Lade Daten für den neuen Athleten
-  console.log('📊 Lade Daten für Athlet:', selectedAthleteId);
+  console.log('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Lade Daten für Athlet:', selectedAthleteId);
   ladeLeistungen();
   ladeDashboardDaten();
 }
@@ -11968,7 +11971,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 /* ================= NEUE STATISTIK-FUNKTIONEN ================= */
 
-// 🎯 Erfolgsquote
+// <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> Erfolgsquote
 async function berechneErfolgsquote() {
   if (!selectedAthleteId) {
     alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
@@ -12010,12 +12013,12 @@ async function berechneErfolgsquote() {
   const { data, error } = await query;
   
   if (error) {
-    alert(`❌ Fehler: ${error.message}`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler: ${error.message}`);
     return;
   }
   
   if (!data || data.length === 0) {
-    alert('📭 Keine Leistungen mit Platzierungen gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Leistungen mit Platzierungen gefunden');
     return;
   }
   
@@ -12034,7 +12037,7 @@ async function berechneErfolgsquote() {
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">Erfolgsquote</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Schließen</button>
       </div>
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
         <div style="background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); padding: 15px; border-radius: 8px; color: white;">
@@ -12043,7 +12046,7 @@ async function berechneErfolgsquote() {
         </div>
         <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${podiumProzent}%</div>
-          <div style="font-size: 0.9em; margin-top: 5px;">🏆 Podiumsplätze (${podium} / ${gesamt})</div>
+          <div style="font-size: 0.9em; margin-top: 5px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg> Podiumsplätze (${podium} / ${gesamt})</div>
         </div>
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${top6Prozent}%</div>
@@ -12051,7 +12054,7 @@ async function berechneErfolgsquote() {
         </div>
       </div>
       <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; font-size: 0.9em;">
-        <strong>📊 Gesamt:</strong> ${gesamt} Leistungen mit Platzierungen
+        <strong><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Gesamt:</strong> ${gesamt} Leistungen mit Platzierungen
       </div>
     </div>
   `;
@@ -12060,7 +12063,7 @@ async function berechneErfolgsquote() {
   document.getElementById("analyseExportBtn").style.display = "none";
 }
 
-// 📅 Saisonvergleich
+// <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Saisonvergleich
 async function zeigeSaisonvergleich() {
   if (!selectedAthleteId) {
     alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
@@ -12092,12 +12095,12 @@ async function zeigeSaisonvergleich() {
   const { data, error } = await query;
   
   if (error) {
-    alert(`❌ Fehler: ${error.message}`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler: ${error.message}`);
     return;
   }
   
   if (!data || data.length === 0) {
-    alert('📭 Keine Leistungen gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Leistungen gefunden');
     return;
   }
   
@@ -12138,8 +12141,8 @@ async function zeigeSaisonvergleich() {
   let html = `
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="color: #2a5298; margin: 0;">📅 Saisonvergleich</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+        <h3 style="color: #2a5298; margin: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg> Saisonvergleich</h3>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Schließen</button>
       </div>
       <div style="overflow-x: auto;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -12225,12 +12228,12 @@ async function zeigeWettkampffrequenz() {
   const { data, error } = await query;
   
   if (error) {
-    alert(`❌ Fehler: ${error.message}`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler: ${error.message}`);
     return;
   }
   
   if (!data || data.length === 0) {
-    alert('📭 Keine Leistungen gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Leistungen gefunden');
     return;
   }
   
@@ -12238,7 +12241,7 @@ async function zeigeWettkampffrequenz() {
   const wettkämpfe = gruppiereNachWettkämpfen(data);
   
   if (wettkämpfe.length === 0) {
-    alert('📭 Keine Wettkämpfe mit wk_bz gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Wettkämpfe mit wk_bz gefunden');
     return;
   }
   
@@ -12276,13 +12279,13 @@ async function zeigeWettkampffrequenz() {
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">🗓️ Wettkampffrequenz</h3>
-        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+        <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Schließen</button>
       </div>
       
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 20px;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${wettkämpfe.length}</div>
-          <div style="font-size: 0.9em; margin-top: 5px;">📊 Gesamt Wettkämpfe</div>
+          <div style="font-size: 0.9em; margin-top: 5px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="12" y1="20" x2="12" y2="10"></line><line x1="18" y1="20" x2="18" y2="4"></line><line x1="6" y1="20" x2="6" y2="16"></line></svg> Gesamt Wettkämpfe</div>
         </div>
         <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); padding: 15px; border-radius: 8px; color: white;">
           <div style="font-size: 2em; font-weight: bold;">${durchschnittAbstand}</div>
@@ -12322,7 +12325,7 @@ async function zeigeWettkampffrequenz() {
   document.getElementById("analyseExportBtn").style.display = "none";
 }
 
-// 🏅 PB-Timeline
+// <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> PB-Timeline
 async function zeigePBTimeline() {
   if (!selectedAthleteId) {
     alert('⚠️ Bitte wählen Sie zuerst einen Athleten aus!');
@@ -12364,12 +12367,12 @@ async function zeigePBTimeline() {
   const { data, error } = await query;
   
   if (error) {
-    alert(`❌ Fehler: ${error.message}`);
+    alert(`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#dc3545" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> Fehler: ${error.message}`);
     return;
   }
   
   if (!data || data.length === 0) {
-    alert('📭 Keine Leistungen gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine Leistungen gefunden');
     return;
   }
   
@@ -12410,7 +12413,7 @@ async function zeigePBTimeline() {
   })).sort((a, b) => new Date(b.datum) - new Date(a.datum));
   
   if (allePBs.length === 0) {
-    alert('📭 Keine persönlichen Bestleistungen gefunden');
+    alert('<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><path d="M22 17a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V9.5C2 7 4 5 6.5 5H18c2.2 0 4 1.8 4 4v8Z"></path><polyline points="15,9 18,9 18,11"></polyline><path d="M6.5 5C9 5 11 7 11 9.5V17a2 2 0 0 1-2 2"></path></svg> Keine persönlichen Bestleistungen gefunden');
     return;
   }
   
@@ -12418,8 +12421,8 @@ async function zeigePBTimeline() {
   let html = `
     <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 style="color: #2a5298; margin: 0;">🏅 Persönliche Rekorde Timeline</h3>
-        <button onclick="document.getElementById('bestleistungenAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
+        <h3 style="color: #2a5298; margin: 0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2" style="vertical-align: middle; display: inline-block;"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg> Persönliche Rekorde Timeline</h3>
+        <button onclick="document.getElementById('bestleistungenAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg> Schließen</button>
       </div>
       
       <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; text-align: center;">
@@ -12864,7 +12867,7 @@ window.setTimeout = function(fn, delay) {
       </div>
       
       <div style="display: flex; gap: 10px; justify-content: space-between;">
-        <button type="button" id="deleteLeistungBtn" onclick="deleteLeistung()" style="display: none; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #dc3545; color: white;">🗑️ Löschen</button>
+        <button type="button" id="deleteLeistungBtn" onclick="deleteLeistung()" style="display: none; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #dc3545; color: white;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; display: inline-block;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg> Löschen</button>
         <div style="display: flex; gap: 10px;">
           <button type="button" onclick="closeLeistungModal()" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #6c757d; color: white;">Abbrechen</button>
           <button type="submit" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">Speichern</button>
