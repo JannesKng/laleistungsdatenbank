@@ -6456,7 +6456,7 @@ async function ladeLeistungen() {
   if(selectedAthleteId && (alleLeistungenFuerPBs.length === 0 || alleLeistungenFuerPBs[0]?.athlet_id !== selectedAthleteId)) {
     const { data: allData } = await supabaseClient
       .schema("la").from("leistung")
-      .select("athlet_id, disziplin, leistung, datum")
+      .select("id, athlet_id, disziplin, leistung, datum, ort, wk_bz, ak, typ, ms, runde, platzierung, score")
       .eq("athlet_id", selectedAthleteId);
     alleLeistungenFuerPBs = allData || [];
   }
@@ -6526,7 +6526,7 @@ async function zeigeLeistungsTabelle() {
 
   // Baue Query mit allen Filtern - WICHTIG: score aus der Datenbank holen
   let query = supabaseClient.schema("la").from("leistung")
-    .select("datum, disziplin, leistung, ort, score")
+    .select("id, datum, disziplin, leistung, ort, score")
     .eq("athlet_id", athletId)
     .not("leistung", "is", null)
     .not("score", "is", null); // Nur Leistungen mit Score
@@ -6609,7 +6609,7 @@ function renderScoreTable() {
     const scoreFormatiert = Math.round(l.score); // Keine Kommastellen
     
     html += `
-      <tr>
+      <tr data-leistung-id="${l.id || ''}">
         <td>${formatierteDatum}</td>
         <td>${l.disziplin}</td>
         <td>${formatierteLeistung}</td>
@@ -6628,6 +6628,8 @@ function renderScoreTable() {
 
   document.getElementById("analyseAusgabe").innerHTML = html;
   enableTableResize();
+  // Pop-up-Handler nach Rendern setzen
+  setTimeout(addRowClickHandlers, 50);
   
   // Zeige Export-Button
   document.getElementById("analyseExportBtn").style.display = "inline-block";
@@ -7064,6 +7066,8 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
 
   html+="</table></div>";
   document.getElementById(ziel).innerHTML = html;
+  // Pop-up-Klick-Handler direkt nach dem Rendern setzen
+  setTimeout(addRowClickHandlers, 50);
 }
 
 /* ================= ZEIGE TABELLE ================= */
@@ -7138,6 +7142,7 @@ function zeigeTabelle(data, containerId, isPB = false, isAthleten = false) {
   html += '</tbody></table></div>';
   container.innerHTML = html;
   enableTableResize();
+  if (!isAthleten) setTimeout(addRowClickHandlers, 50);
 }
 
 // Hilfsfunktion für die Sortierung der Athletentabelle
@@ -7582,6 +7587,8 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
   }
   
   document.getElementById("exportBtn").style.display = "inline-block";
+  // Pop-up-Handler nach Rendern setzen
+  setTimeout(addRowClickHandlers, 50);
 }
 
 /* ================= SORTIERUNG FÜR PBS/SBS ================= */
@@ -10713,7 +10720,7 @@ function renderOrtTable() {
     }
     
     tableHTML += `
-      <tr>
+      <tr data-leistung-id="${leistung.id || '' }">
         <td>${datumFormatiert}</td>
         <td>${leistung.disziplin || '-'}</td>
         <td>${leistungFormatiert}</td>
@@ -10971,6 +10978,8 @@ function renderOrtTable() {
   }
   
   ortTable.innerHTML = tableHTML;
+  // Pop-up-Handler nach Rendern setzen
+  setTimeout(addRowClickHandlers, 50);
   
   // Warte bis DOM aktualisiert ist, dann gleiche Höhen an (nur auf Desktop)
   setTimeout(() => {
@@ -13585,25 +13594,6 @@ function addRowClickHandlers() {
       }
     });
   });
-}
-
-// Call addRowClickHandlers after data is loaded/filtered
-// Hook into existing functions that update the table
-const originalBaueTabelle = typeof baueTabelle !== 'undefined' ? baueTabelle : null;
-if (originalBaueTabelle) {
-  baueTabelle = function(...args) {
-    originalBaueTabelle.apply(this, args);
-    setTimeout(addRowClickHandlers, 100);
-  };
-}
-
-// Hook into zeigeDaten if it exists
-const originalZeigeDaten = typeof zeigeDaten !== 'undefined' ? zeigeDaten : null;
-if (originalZeigeDaten) {
-  zeigeDaten = function(...args) {
-    originalZeigeDaten.apply(this, args);
-    setTimeout(addRowClickHandlers, 100);
-  };
 }
 
 // Close detail popup with Escape key
