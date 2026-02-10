@@ -2165,7 +2165,7 @@ Datum: 2026-02-09
       display: inline-block;
       width: 20px;
       height: 20px;
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23667eea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>');
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="%23d4af37" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>');
       background-size: contain;
       background-repeat: no-repeat;
       vertical-align: middle;
@@ -6811,10 +6811,6 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
       let wert = z[sp];
       if(sp==="leistung" && wert!==null){
         wert = formatiereLeistung(wert, vollstaendigeDaten[index].disziplin);
-        // Füge goldenen Pokal für PBs hinzu
-        if(istPB) {
-          wert = `<span style="color: #d4af37; font-weight: bold;">🏆 ${wert}</span>`;
-        }
       }
       else if(sp==="platzierung" && wert!==null){
         wert = Number(wert).toFixed(0);
@@ -12713,24 +12709,32 @@ function enableTableResize() {
   const tables = document.querySelectorAll('table');
   
   tables.forEach(table => {
+    // Prüfe ob bereits initialisiert
+    if (table.dataset.resizeEnabled === 'true') return;
+    table.dataset.resizeEnabled = 'true';
+    
     const headers = table.querySelectorAll('th');
     
     headers.forEach((th, index) => {
-      // Erstelle Resize-Handle am rechten Rand
-      const resizeHandle = document.createElement('div');
-      resizeHandle.style.cssText = `
-        position: absolute;
-        right: 0;
-        top: 0;
-        width: 5px;
-        height: 100%;
-        cursor: col-resize;
-        user-select: none;
-        z-index: 1;
-      `;
-      
       // Nur wenn es nicht die letzte Spalte ist
       if (index < headers.length - 1) {
+        // Prüfe ob bereits ein Handle existiert
+        if (th.querySelector('.resize-handle')) return;
+        
+        // Erstelle Resize-Handle am rechten Rand
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'resize-handle';
+        resizeHandle.style.cssText = `
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 8px;
+          height: 100%;
+          cursor: col-resize;
+          user-select: none;
+          z-index: 1;
+        `;
+        
         th.style.position = 'relative';
         th.appendChild(resizeHandle);
         
@@ -12749,7 +12753,6 @@ function enableTableResize() {
           
           // Verhindere Textauswahl während des Resizens
           document.body.style.userSelect = 'none';
-          th.style.cursor = 'col-resize';
           document.body.style.cursor = 'col-resize';
         });
       }
@@ -12774,9 +12777,6 @@ function resizeColumn(e) {
 }
 
 function stopResize() {
-  if (resizingColumn) {
-    resizingColumn.style.cursor = '';
-  }
   resizingColumn = null;
   nextColumn = null;
   document.removeEventListener('mousemove', resizeColumn);
@@ -12789,16 +12789,27 @@ function stopResize() {
 
 <script>
 // Re-enable table resize nach jedem Table-Update
-const originalSetTimeout = window.setTimeout;
-window.setTimeout = function(fn, delay) {
-  return originalSetTimeout(function() {
-    fn();
-    // Nach jedem Timeout, der vermutlich eine Tabelle aktualisiert hat
-    if (delay > 0) {
-      originalSetTimeout(enableTableResize, 100);
-    }
-  }, delay);
-};
+// Verwende MutationObserver für bessere Performance
+const tableObserver = new MutationObserver(function(mutations) {
+  // Nur wenn tatsächlich Tabellen hinzugefügt wurden
+  let hasNewTables = false;
+  mutations.forEach(mutation => {
+    mutation.addedNodes.forEach(node => {
+      if (node.nodeName === 'TABLE' || (node.querySelectorAll && node.querySelectorAll('table').length > 0)) {
+        hasNewTables = true;
+      }
+    });
+  });
+  if (hasNewTables) {
+    setTimeout(enableTableResize, 50);
+  }
+});
+
+// Beobachte das Hauptdokument
+const mainApp = document.getElementById('mainApp');
+if (mainApp) {
+  tableObserver.observe(mainApp, { childList: true, subtree: true });
+}
 </script>
 
 </div> <!-- Close main-app -->
