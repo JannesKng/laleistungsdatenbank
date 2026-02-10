@@ -457,8 +457,6 @@ Datum: 2026-02-10
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
@@ -8552,7 +8550,7 @@ async function zeigeDiagramm() {
 
     // Query für erste Disziplin  
     let query1 = supabaseClient.schema("la").from("leistung")
-        .select("datum, leistung, score")
+        .select("id, datum, leistung, score, ort, disziplin")
         .eq("athlet_id", athletId)
         .eq("disziplin", disziplin)
         .order("datum", { ascending: true });
@@ -8600,7 +8598,8 @@ async function zeigeDiagramm() {
             chartData1 = dataWithScores.map(d => ({ 
                 x: d.datum, 
                 y: d.score,
-                original: d.leistung
+                original: d.leistung,
+                id: d.id, ort: d.ort, disziplin: d.disziplin
             }));
             
             // Finde Min/Max für Mapping
@@ -8612,7 +8611,7 @@ async function zeigeDiagramm() {
             maxLeistung1 = Math.max(...leistungen);
         }
     } else {
-        chartData1 = data1.map(d => ({ x: d.datum, y: d.leistung }));
+        chartData1 = data1.map(d => ({ x: d.datum, y: d.leistung, id: d.id, ort: d.ort, disziplin: d.disziplin }));
     }
     
     // Speichere Original-Leistungen für Tooltip (wenn Vergleichsscores verwendet werden)
@@ -8630,7 +8629,9 @@ async function zeigeDiagramm() {
         fill: false,
         tension: 0.3,
         spanGaps: true,
-        pointRadius: 3,
+        pointRadius: 5,
+        pointHoverRadius: 8,
+        pointHitRadius: 12,
         pointBackgroundColor: '#ffffff',
         pointBorderWidth: 2,
         yAxisID: 'y1'
@@ -8643,7 +8644,7 @@ async function zeigeDiagramm() {
     
     if (vergleichsModus && vergleichsDisziplin) {
         let query2 = supabaseClient.schema("la").from("leistung")
-            .select("datum, leistung, score")
+            .select("id, datum, leistung, score, ort, disziplin")
             .eq("athlet_id", athletId)
             .eq("disziplin", vergleichsDisziplin)
             .order("datum", { ascending: true });
@@ -8677,13 +8678,14 @@ async function zeigeDiagramm() {
                 
                 if (dataWithScores.length === 0) {
                     console.warn('Keine gültigen Vergleichsscores für', vergleichsDisziplin);
-                    chartData2 = data2.map(d => ({ x: d.datum, y: d.leistung }));
+                    chartData2 = data2.map(d => ({ x: d.datum, y: d.leistung, id: d.id, ort: d.ort, disziplin: d.disziplin }));
                 } else {
                     // Verwende Vergleichsscores für Y-Position
                     chartData2 = dataWithScores.map(d => ({ 
                         x: d.datum, 
                         y: d.score,
-                        original: d.leistung
+                        original: d.leistung,
+                        id: d.id, ort: d.ort, disziplin: d.disziplin
                     }));
                     
                     // Finde Min/Max für Mapping
@@ -9046,10 +9048,34 @@ async function zeigeDiagramm() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
+            onClick: function(event, elements) {
+                if (!elements || elements.length === 0) return;
+                const el = elements[0];
+                const dataset = window.myChart.data.datasets[el.datasetIndex];
+                const point = dataset.data[el.index];
+                if (!point || !point.id) return;
+                // Leistung aus alleLeistungenFuerPBs holen (hat alle Felder)
+                const leistungData = alleLeistungenFuerPBs.find(l => l.id == point.id);
+                if (leistungData) {
+                    openDetailPopup(leistungData);
+                } else {
+                    // Fallback: direkt aus Punkt-Daten aufbauen
+                    openDetailPopup({
+                        id: point.id,
+                        datum: point.x,
+                        disziplin: point.disziplin || dataset.disziplin || dataset.label,
+                        leistung: point.original !== undefined ? point.original : point.y,
+                        ort: point.ort || null
+                    });
+                }
+            },
+            onHover: function(event, elements) {
+                event.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default';
+            },
             interaction: {
                 mode: 'nearest',
-                intersect: false,
-                axis: 'x'
+                intersect: true,
+                axis: 'xy'
             },
             scales: {
                 x: {
@@ -13337,17 +13363,20 @@ window.setTimeout = function(fn, delay) {
       <!-- Info Grid -->
       <div id="detailInfoGrid" class="detail-info-grid"></div>
 
-      <!-- Karte -->
-      <div class="detail-section">
-        <h3>📍 Wettkampfort</h3>
-        <div id="detailMap" class="detail-map-container"></div>
-      </div>
+      <!-- Diagramm links, Karte rechts -->
+      <div class="detail-main-row">
+        <!-- Leistungsentwicklung -->
+        <div class="detail-section">
+          <div class="detail-section-title">📊 Leistungsentwicklung</div>
+          <div class="detail-chart-container">
+            <canvas id="detailChart"></canvas>
+          </div>
+        </div>
 
-      <!-- Leistungsentwicklung -->
-      <div class="detail-section">
-        <h3>📊 Leistungsentwicklung</h3>
-        <div class="detail-chart-container">
-          <canvas id="detailChart"></canvas>
+        <!-- Karte -->
+        <div class="detail-section">
+          <div class="detail-section-title">📍 Wettkampfort</div>
+          <div id="detailMap" class="detail-map-container"></div>
         </div>
       </div>
     </div>
@@ -13422,7 +13451,8 @@ function closeDetailPopup(event) {
   
   // Cleanup map and chart
   if (detailMap) {
-    detailMap.remove();
+    const mapContainer = document.getElementById('detailMap');
+    if (mapContainer) mapContainer.innerHTML = '';
     detailMap = null;
   }
   if (detailChart) {
@@ -13432,40 +13462,133 @@ function closeDetailPopup(event) {
 }
 
 async function initDetailMap(ort) {
+  const container = document.getElementById('detailMap');
+  
   if (!ort) {
-    document.getElementById('detailMap').innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Kein Ort angegeben</p>';
+    container.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">Kein Ort angegeben</p>';
     return;
   }
   
+  // Geocode mit Nominatim
+  let markerCoords = null;
   try {
-    // Geocode the location
-    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}`);
-    const data = await response.json();
-    
-    if (data.length === 0) {
-      document.getElementById('detailMap').innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Ort konnte nicht gefunden werden</p>';
-      return;
+    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}&limit=1`);
+    const data = await resp.json();
+    if (data && data.length > 0) {
+      markerCoords = { lon: parseFloat(data[0].lon), lat: parseFloat(data[0].lat) };
     }
-    
-    const lat = parseFloat(data[0].lat);
-    const lon = parseFloat(data[0].lon);
-    
-    // Initialize map
-    detailMap = L.map('detailMap').setView([lat, lon], 13);
-    
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors'
-    }).addTo(detailMap);
-    
-    // Add marker
-    L.marker([lat, lon]).addTo(detailMap)
-      .bindPopup(`<b>${ort}</b>`)
-      .openPopup();
-      
-  } catch (error) {
-    console.error('Error initializing detail map:', error);
-    document.getElementById('detailMap').innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Fehler beim Laden der Karte</p>';
+  } catch(e) {
+    console.warn('Geocoding failed:', e);
   }
+
+  // SVG-Karte aufbauen (gleiche Projektion wie Dashboard)
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const vbX = -100, vbWidth = 600, vbHeight = 650, padding = 30;
+  const lonMin = 5.8, lonMax = 15.0, latMin = 47.3, latMax = 55.0;
+  
+  function mercY(lat) {
+    const r = lat * Math.PI / 180;
+    return Math.log(Math.tan(Math.PI / 4 + r / 2));
+  }
+  const mYMin = mercY(latMin), mYMax = mercY(latMax);
+  
+  function toSVG(lon, lat) {
+    const relX = (lon - lonMin) / (lonMax - lonMin);
+    const relY = (mercY(lat) - mYMin) / (mYMax - mYMin);
+    return {
+      x: vbX + padding + relX * (vbWidth - 2 * padding),
+      y: vbHeight - padding - relY * (vbHeight - 2 * padding)
+    };
+  }
+  
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', `${vbX} 0 ${vbWidth} ${vbHeight}`);
+  svg.setAttribute('style', 'width:100%;height:100%;display:block;');
+  
+  // Meeres-Hintergrund
+  const bg = document.createElementNS(svgNS, 'rect');
+  bg.setAttribute('x', vbX); bg.setAttribute('y', '0');
+  bg.setAttribute('width', vbWidth); bg.setAttribute('height', vbHeight);
+  bg.setAttribute('fill', '#d0e8f5');
+  svg.appendChild(bg);
+  
+  // Bundesland-Grenzen
+  const borderGroup = document.createElementNS(svgNS, 'g');
+  for (const [, stateInfo] of Object.entries(borderData)) {
+    stateInfo.parts.forEach(partCoords => {
+      const path = document.createElementNS(svgNS, 'path');
+      let d = '';
+      partCoords.forEach((coord, i) => {
+        const p = toSVG(coord.lon, coord.lat);
+        d += (i === 0 ? 'M ' : ' L ') + `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+      });
+      d += ' Z';
+      path.setAttribute('d', d);
+      path.setAttribute('fill', '#e8f5e9');
+      path.setAttribute('stroke', '#90a4ae');
+      path.setAttribute('stroke-width', '1.2');
+      path.setAttribute('stroke-linejoin', 'round');
+      borderGroup.appendChild(path);
+    });
+  }
+  svg.appendChild(borderGroup);
+  
+  // Marker
+  if (markerCoords) {
+    const p = toSVG(markerCoords.lon, markerCoords.lat);
+    
+    // Pulsierender Halo
+    const halo = document.createElementNS(svgNS, 'circle');
+    halo.setAttribute('cx', p.x); halo.setAttribute('cy', p.y);
+    halo.setAttribute('r', '20'); halo.setAttribute('fill', 'rgba(102,126,234,0.18)');
+    halo.setAttribute('stroke', 'rgba(102,126,234,0.35)'); halo.setAttribute('stroke-width', '2');
+    svg.appendChild(halo);
+    
+    // Marker-Kreis
+    const circle = document.createElementNS(svgNS, 'circle');
+    circle.setAttribute('cx', p.x); circle.setAttribute('cy', p.y);
+    circle.setAttribute('r', '11'); circle.setAttribute('fill', '#667eea');
+    circle.setAttribute('stroke', 'white'); circle.setAttribute('stroke-width', '2.5');
+    svg.appendChild(circle);
+    
+    // Ortsname-Label
+    const label = document.createElementNS(svgNS, 'text');
+    label.setAttribute('x', p.x); label.setAttribute('y', p.y - 18);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('font-size', '20'); label.setAttribute('font-weight', 'bold');
+    label.setAttribute('font-family', 'sans-serif');
+    label.setAttribute('fill', '#333'); label.setAttribute('stroke', 'white');
+    label.setAttribute('stroke-width', '3'); label.setAttribute('paint-order', 'stroke');
+    label.textContent = ort;
+    svg.appendChild(label);
+    
+    // Hinweis wenn ausserhalb Deutschland
+    const inDE = markerCoords.lon >= lonMin - 3 && markerCoords.lon <= lonMax + 3 &&
+                 markerCoords.lat >= latMin - 3 && markerCoords.lat <= latMax + 3;
+    if (!inDE) {
+      const note = document.createElementNS(svgNS, 'text');
+      note.setAttribute('x', String(vbX + vbWidth / 2));
+      note.setAttribute('y', String(vbHeight - 12));
+      note.setAttribute('text-anchor', 'middle');
+      note.setAttribute('font-size', '15'); note.setAttribute('fill', '#777');
+      note.setAttribute('font-family', 'sans-serif');
+      note.textContent = 'Ort liegt ausserhalb der Kartenansicht';
+      svg.appendChild(note);
+    }
+  } else {
+    const note = document.createElementNS(svgNS, 'text');
+    note.setAttribute('x', String(vbX + vbWidth / 2));
+    note.setAttribute('y', String(vbHeight / 2));
+    note.setAttribute('text-anchor', 'middle');
+    note.setAttribute('font-size', '22'); note.setAttribute('fill', '#888');
+    note.setAttribute('font-family', 'sans-serif');
+    note.textContent = 'Ort nicht gefunden';
+    svg.appendChild(note);
+  }
+  
+  container.innerHTML = '';
+  container.appendChild(svg);
+  detailMap = svg;
 }
 
 async function initDetailChart(disziplin, highlightId) {
