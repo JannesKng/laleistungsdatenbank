@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <!--
 Leistungsdatenbank
-Version 3.10.4
-Datum: 2026-02-09
+Version 3.11.0
+Datum: 2026-02-10
 
+
+
+Änderungen in v3.11.0:
+- NEU: Detail-Pop-up für Leistungen beim Klick auf Tabellenzeilen
+  * Zeigt alle Informationen zum ausgewählten Datensatz
+  * Interaktive Karte mit dem spezifischen Wettkampfort
+  * Leistungsentwicklungsdiagramm mit Hervorhebung der ausgewählten Leistung
+  * Funktioniert in allen Tabellen (Leistungstabelle, Ortetabelle, Score Tabelle, PBs, SBs)
+  * Schließbar durch X-Button oder Klick außerhalb des Modals
 
 Änderungen in v3.10.4:
 - VERBESSERUNG: SB-Diagramm Durchschnittslinien besser sichtbar
@@ -3859,6 +3868,197 @@ Datum: 2026-02-09
       background: rgba(255,255,255,0.3);
     }
 
+
+    /* Detail Popup Modal Styles */
+    .detail-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 10001;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .detail-popup-content {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .detail-popup-header {
+      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+      color: white;
+      padding: 25px 30px;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .detail-popup-header h2 {
+      margin: 0;
+      color: white;
+      font-size: 1.8em;
+    }
+
+    .detail-popup-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2em;
+      cursor: pointer;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .detail-popup-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .detail-popup-body {
+      padding: 30px;
+    }
+
+    .detail-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .detail-info-item {
+      padding: 15px;
+      background: var(--input-bg);
+      border-radius: 8px;
+      border-left: 4px solid var(--btn-primary-bg);
+      transition: all 0.3s;
+    }
+
+    .detail-info-item:hover {
+      box-shadow: 0 2px 8px var(--shadow-color);
+      transform: translateX(2px);
+    }
+
+    .detail-info-label {
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-info-value {
+      font-size: 1.3em;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .detail-section {
+      margin-bottom: 30px;
+    }
+
+    .detail-section h3 {
+      color: var(--text-primary);
+      margin-bottom: 15px;
+      font-size: 1.3em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-section h3::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+      border-radius: 2px;
+    }
+
+    .detail-map-container {
+      height: 350px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--shadow-color);
+    }
+
+    .detail-chart-container {
+      position: relative;
+      height: 400px;
+      padding: 20px;
+      background: var(--input-bg);
+      border-radius: 10px;
+    }
+
+    /* Dark Mode Anpassungen für Detail Popup */
+    body.dark-mode .detail-popup-content {
+      background: #2d2d2d;
+    }
+
+    body.dark-mode .detail-popup-body {
+      background: #2d2d2d;
+    }
+
+    body.dark-mode .detail-info-item {
+      background: #383838;
+      border-left-color: #667eea;
+    }
+
+    body.dark-mode .detail-info-label {
+      color: #888;
+    }
+
+    body.dark-mode .detail-info-value {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .detail-section h3 {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .detail-chart-container {
+      background: #383838;
+    }
+
+    @media (max-width: 768px) {
+      .detail-popup-content {
+        max-height: 95vh;
+      }
+
+      .detail-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-popup-header h2 {
+        font-size: 1.4em;
+      }
+
+      .detail-chart-container {
+        height: 300px;
+      }
+
+      .detail-map-container {
+        height: 250px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -6829,8 +7029,10 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
     // Erstelle Schlüssel für aktuelle Zeile (ohne Datum, da mehrere Einträge die gleiche PB haben können)
     const currentKey = `${vollstaendigeDaten[index].athlet_id}_${vollstaendigeDaten[index].disziplin}_${vollstaendigeDaten[index].leistung}`;
     const istPB = pbSet.has(currentKey);
+    const leistungId = vollstaendigeDaten[index].id || index;
     
-    html += `<tr${istPB ? ' class="pb-row"' : ''}>`;
+    html += `<tr${istPB ? ' class="pb-row"' : ''} data-leistung-id="${leistungId}">`;
+
     Object.keys(z).forEach(sp=>{
       let wert = z[sp];
       if(sp==="leistung" && wert!==null){
@@ -6907,8 +7109,9 @@ function zeigeTabelle(data, containerId, isPB = false, isAthleten = false) {
   data.forEach(row => {
     let classes = "";
     if (!isAthleten && isPB && row.istPB) classes = "pb-row";
+    const leistungId = row.id || '';
     
-    html += `<tr class="${classes}">`;
+    html += `<tr class="${classes}" data-leistung-id="${leistungId}">`;
     cols.forEach(c => {
       let val = row[c];
       let style = '';
@@ -7346,7 +7549,9 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
       letzesJahr = aktuellesJahr;
     }
     
-    html += `<tr ${rowClass}>`;
+    const leistungId = daten[index].id || index;
+    html += `<tr ${rowClass} data-leistung-id="${leistungId}">`;
+
     tatsaechlicheSpalten.forEach(sp=>{
       let wert = z[sp];
       // Nutze die Originaldaten (daten[index]) für die Disziplin-Info beim Formatieren
@@ -10535,7 +10740,198 @@ function renderOrtTable() {
           transform: translateY(0);
         }
       }
-    </style>
+  
+    /* Detail Popup Modal Styles */
+    .detail-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 10001;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .detail-popup-content {
+      background: var(--card-bg);
+      border-radius: var(--border-radius);
+      max-width: 1200px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      position: relative;
+    }
+
+    .detail-popup-header {
+      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+      color: white;
+      padding: 25px 30px;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .detail-popup-header h2 {
+      margin: 0;
+      color: white;
+      font-size: 1.8em;
+    }
+
+    .detail-popup-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 2em;
+      cursor: pointer;
+      padding: 0;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.3s;
+    }
+
+    .detail-popup-close:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .detail-popup-body {
+      padding: 30px;
+    }
+
+    .detail-info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .detail-info-item {
+      padding: 15px;
+      background: var(--input-bg);
+      border-radius: 8px;
+      border-left: 4px solid var(--btn-primary-bg);
+      transition: all 0.3s;
+    }
+
+    .detail-info-item:hover {
+      box-shadow: 0 2px 8px var(--shadow-color);
+      transform: translateX(2px);
+    }
+
+    .detail-info-label {
+      font-size: 0.85em;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .detail-info-value {
+      font-size: 1.3em;
+      color: var(--text-primary);
+      font-weight: 700;
+    }
+
+    .detail-section {
+      margin-bottom: 30px;
+    }
+
+    .detail-section h3 {
+      color: var(--text-primary);
+      margin-bottom: 15px;
+      font-size: 1.3em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .detail-section h3::before {
+      content: '';
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+      border-radius: 2px;
+    }
+
+    .detail-map-container {
+      height: 350px;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px var(--shadow-color);
+    }
+
+    .detail-chart-container {
+      position: relative;
+      height: 400px;
+      padding: 20px;
+      background: var(--input-bg);
+      border-radius: 10px;
+    }
+
+    /* Dark Mode Anpassungen für Detail Popup */
+    body.dark-mode .detail-popup-content {
+      background: #2d2d2d;
+    }
+
+    body.dark-mode .detail-popup-body {
+      background: #2d2d2d;
+    }
+
+    body.dark-mode .detail-info-item {
+      background: #383838;
+      border-left-color: #667eea;
+    }
+
+    body.dark-mode .detail-info-label {
+      color: #888;
+    }
+
+    body.dark-mode .detail-info-value {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .detail-section h3 {
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .detail-chart-container {
+      background: #383838;
+    }
+
+    @media (max-width: 768px) {
+      .detail-popup-content {
+        max-height: 95vh;
+      }
+
+      .detail-info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-popup-header h2 {
+        font-size: 1.4em;
+      }
+
+      .detail-chart-container {
+        height: 300px;
+      }
+
+      .detail-map-container {
+        height: 250px;
+      }
+    }
+
+  </style>
   `;
   
   
@@ -12917,6 +13313,309 @@ window.setTimeout = function(fn, delay) {
     </div>
   </div>
 </div>
+
+
+<!-- Detail Popup Modal -->
+<div id="detailPopup" class="detail-popup" onclick="closeDetailPopup(event)">
+  <div class="detail-popup-content" onclick="event.stopPropagation()">
+    <div class="detail-popup-header">
+      <h2 id="detailPopupTitle">Leistungsdetails</h2>
+      <button class="detail-popup-close" onclick="closeDetailPopup()">×</button>
+    </div>
+    <div class="detail-popup-body">
+      <!-- Info Grid -->
+      <div id="detailInfoGrid" class="detail-info-grid"></div>
+
+      <!-- Karte -->
+      <div class="detail-section">
+        <h3>📍 Wettkampfort</h3>
+        <div id="detailMap" class="detail-map-container"></div>
+      </div>
+
+      <!-- Leistungsentwicklung -->
+      <div class="detail-section">
+        <h3>📊 Leistungsentwicklung</h3>
+        <div class="detail-chart-container">
+          <canvas id="detailChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+// Detail Popup Functions
+let detailMap = null;
+let detailChart = null;
+
+function openDetailPopup(leistungData) {
+  console.log('Opening detail popup for:', leistungData);
+  
+  // Verhindere, dass das Popup öffnet wenn wir gerade Spalten resized haben
+  if (isResizing) {
+    console.log('Resizing detected, not opening popup');
+    return;
+  }
+  
+  const popup = document.getElementById('detailPopup');
+  const title = document.getElementById('detailPopupTitle');
+  const infoGrid = document.getElementById('detailInfoGrid');
+  
+  // Set title
+  title.textContent = `${leistungData.disziplin} - ${formatiereDatum(leistungData.datum)}`;
+  
+  // Build info grid
+  infoGrid.innerHTML = '';
+  
+  const infoItems = [
+    { label: 'Datum', value: formatiereDatum(leistungData.datum) },
+    { label: 'Disziplin', value: leistungData.disziplin },
+    { label: 'Leistung', value: formatiereLeistung(leistungData.leistung, leistungData.disziplin) },
+    { label: 'Ort', value: leistungData.ort || '-' },
+    { label: 'Wettkampf', value: leistungData.wk_bz || '-' },
+    { label: 'Platzierung', value: leistungData.platzierung || '-' },
+    { label: 'Altersklasse', value: leistungData.ak || '-' }
+  ];
+  
+  infoItems.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'detail-info-item';
+    div.innerHTML = `
+      <div class="detail-info-label">${item.label}</div>
+      <div class="detail-info-value">${item.value}</div>
+    `;
+    infoGrid.appendChild(div);
+  });
+  
+  // Show popup
+  popup.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+  
+  // Initialize map after a short delay to ensure the container is visible
+  setTimeout(() => {
+    initDetailMap(leistungData.ort);
+    initDetailChart(leistungData.disziplin, leistungData.id);
+  }, 100);
+}
+
+function closeDetailPopup(event) {
+  // Wenn event existiert und das Ziel nicht der Hintergrund ist, nicht schließen
+  if (event && event.target.id !== 'detailPopup') {
+    return;
+  }
+  
+  const popup = document.getElementById('detailPopup');
+  popup.style.display = 'none';
+  document.body.style.overflow = '';
+  
+  // Cleanup map and chart
+  if (detailMap) {
+    detailMap.remove();
+    detailMap = null;
+  }
+  if (detailChart) {
+    detailChart.destroy();
+    detailChart = null;
+  }
+}
+
+async function initDetailMap(ort) {
+  if (!ort) {
+    document.getElementById('detailMap').innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Kein Ort angegeben</p>';
+    return;
+  }
+  
+  try {
+    // Geocode the location
+    const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}`);
+    const data = await response.json();
+    
+    if (data.length === 0) {
+      document.getElementById('detailMap').innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Ort konnte nicht gefunden werden</p>';
+      return;
+    }
+    
+    const lat = parseFloat(data[0].lat);
+    const lon = parseFloat(data[0].lon);
+    
+    // Initialize map
+    detailMap = L.map('detailMap').setView([lat, lon], 13);
+    
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(detailMap);
+    
+    // Add marker
+    L.marker([lat, lon]).addTo(detailMap)
+      .bindPopup(`<b>${ort}</b>`)
+      .openPopup();
+      
+  } catch (error) {
+    console.error('Error initializing detail map:', error);
+    document.getElementById('detailMap').innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Fehler beim Laden der Karte</p>';
+  }
+}
+
+async function initDetailChart(disziplin, highlightId) {
+  // Get all performances for this discipline using the global variable
+  const disziplinLeistungen = alleLeistungenFuerPBs
+    .filter(l => l.disziplin === disziplin)
+    .sort((a, b) => new Date(a.datum) - new Date(b.datum));
+  
+  if (disziplinLeistungen.length === 0) {
+    document.getElementById('detailChart').parentElement.innerHTML = '<p style="text-align: center; padding: 50px; color: #888;">Keine Leistungen vorhanden</p>';
+    return;
+  }
+  
+  const ctx = document.getElementById('detailChart').getContext('2d');
+  
+  // Prepare data
+  const labels = disziplinLeistungen.map(l => formatiereDatum(l.datum));
+  const dataPoints = disziplinLeistungen.map(l => parseFloat(l.leistung));
+  
+  // Find the highlighted point index
+  const highlightIndex = disziplinLeistungen.findIndex(l => l.id === highlightId);
+  
+  // Create point background colors (highlight the selected one)
+  const pointBackgroundColors = disziplinLeistungen.map((l, index) => 
+    index === highlightIndex ? '#ff6b6b' : '#667eea'
+  );
+  const pointBorderColors = disziplinLeistungen.map((l, index) => 
+    index === highlightIndex ? '#ff0000' : '#667eea'
+  );
+  const pointRadii = disziplinLeistungen.map((l, index) => 
+    index === highlightIndex ? 8 : 4
+  );
+  
+  // Determine if this is a time discipline (lower is better)
+  const isTimeDiscipline = disziplin.toLowerCase().includes('m') || 
+                           disziplin.toLowerCase().includes('hürden') || 
+                           disziplin.toLowerCase().includes('hindernis');
+  
+  detailChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: disziplin,
+        data: dataPoints,
+        borderColor: '#667eea',
+        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+        pointBackgroundColor: pointBackgroundColors,
+        pointBorderColor: pointBorderColors,
+        pointRadius: pointRadii,
+        pointHoverRadius: 10,
+        tension: 0.3,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top'
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              const leistung = context.parsed.y;
+              const formattedLeistung = formatiereLeistung(leistung, disziplin);
+              return `${disziplin}: ${formattedLeistung}`;
+            }
+          }
+        }
+      },
+      scales: {
+        y: {
+          reverse: isTimeDiscipline,
+          title: {
+            display: true,
+            text: 'Leistung'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Datum'
+          }
+        }
+      }
+    }
+  });
+}
+
+// Add row click handlers to tables
+function addRowClickHandlers() {
+  // Get all table rows in tbody
+  const rows = document.querySelectorAll('tbody tr');
+  
+  rows.forEach(row => {
+    // Skip if this is a separator row
+    if (row.classList.contains('year-separator')) {
+      return;
+    }
+    
+    row.style.cursor = 'pointer';
+    
+    // Remove old event listener if it exists (prevent duplicates)
+    const newRow = row.cloneNode(true);
+    row.parentNode.replaceChild(newRow, row);
+    
+    newRow.addEventListener('click', function(e) {
+      // Don't open if we're currently resizing
+      if (isResizing) {
+        return;
+      }
+      
+      // Don't open if clicking on a button
+      if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+        return;
+      }
+      
+      // Get leistung data from row
+      const leistungId = this.dataset.leistungId;
+      if (leistungId) {
+        const leistungData = alleLeistungenFuerPBs.find(l => l.id == leistungId);
+        if (leistungData) {
+          openDetailPopup(leistungData);
+        }
+      }
+    });
+  });
+}
+
+// Call addRowClickHandlers after data is loaded/filtered
+// Hook into existing functions that update the table
+const originalBaueTabelle = typeof baueTabelle !== 'undefined' ? baueTabelle : null;
+if (originalBaueTabelle) {
+  baueTabelle = function(...args) {
+    originalBaueTabelle.apply(this, args);
+    setTimeout(addRowClickHandlers, 100);
+  };
+}
+
+// Hook into zeigeDaten if it exists
+const originalZeigeDaten = typeof zeigeDaten !== 'undefined' ? zeigeDaten : null;
+if (originalZeigeDaten) {
+  zeigeDaten = function(...args) {
+    originalZeigeDaten.apply(this, args);
+    setTimeout(addRowClickHandlers, 100);
+  };
+}
+
+// Close detail popup with Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const popup = document.getElementById('detailPopup');
+    if (popup && popup.style.display === 'flex') {
+      closeDetailPopup();
+    }
+  }
+});
+</script>
 
 </body>
 </html>
