@@ -496,17 +496,23 @@ Datum: 2026-02-09
 
     /* Dark Mode zusätzliche Anpassungen */
     body.dark-mode .tab-btn {
-      color: #b0b0b0;
+      background: #2a2a2a;
+      color: #888;
+      border-right: 1px solid #404040;
     }
     
     body.dark-mode .tab-btn:hover {
-      background: #383838;
+      background: #333;
       color: #667eea;
     }
     
     body.dark-mode .tab-btn.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
+      background: #1a1a1a;
+      color: #667eea;
+    
+    body.dark-mode .tab-navigation {
+      border-bottom: 2px solid #404040;
+    }
       border-bottom: 3px solid #667eea;
     }
     
@@ -820,7 +826,9 @@ Datum: 2026-02-09
 
     /* Dark Mode zusätzliche Anpassungen */
     body.dark-mode .tab-btn {
-      color: #b0b0b0;
+      background: #2a2a2a;
+      color: #888;
+      border-right: 1px solid #404040;
     }
     
     body.dark-mode .tab-btn:hover {
@@ -829,7 +837,7 @@ Datum: 2026-02-09
     }
     
     body.dark-mode .tab-btn.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      background: #1a1a1a;
       color: white;
       border-bottom: 3px solid #667eea;
     }
@@ -1068,7 +1076,7 @@ Datum: 2026-02-09
       max-width: 1400px;
       margin: 0 auto;
       background: var(--container-bg);
-      border-radius: 16px;
+      border-radius: 12px;
       box-shadow: 0 20px 60px var(--shadow-color);
       overflow: hidden;
       transition: background 0.3s ease;
@@ -1084,7 +1092,7 @@ Datum: 2026-02-09
 
     .dark-mode-toggle {
       position: absolute;
-      top: 30px;
+      top: 15px;
       right: 40px;
       background: rgba(255,255,255,0.2);
       border: none;
@@ -1138,7 +1146,7 @@ Datum: 2026-02-09
     /* Kompakte Athletensuche in der Ecke (nur für Admins) */
     .compact-athlete-search {
       position: absolute;
-      top: 30px;
+      top: 15px;
       right: 110px;
       z-index: 100;
       background: rgba(255, 255, 255, 0.25);
@@ -1370,7 +1378,7 @@ Datum: 2026-02-09
     /* Kompakte Athletensuche in der Ecke (nur für Admins) */
     .compact-athlete-search {
       position: absolute;
-      top: 30px;
+      top: 15px;
       right: 110px;
       z-index: 100;
       background: rgba(255, 255, 255, 0.25);
@@ -2140,50 +2148,49 @@ Datum: 2026-02-09
       margin-bottom: 25px;
       margin-top: 0px;
       padding-bottom: 0;
-      border-bottom: 3px solid #e0e0e0;
+      border-bottom: 2px solid #e0e0e0;
       flex-wrap: wrap;
+      background: transparent;
     }
 
     .tab-btn {
-      background: transparent;
-      color: #495057;
+      background: #f5f5f5;
+      color: #6c757d;
       border: none;
-      padding: 10px 24px;
+      padding: 12px 28px;
       border-radius: 0px;
-      font-size: 0.95em;
+      font-size: 0.9em;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.2s ease;
       box-shadow: none;
-      border-bottom: 4px solid transparent;
+      border-bottom: 3px solid transparent;
       position: relative;
+      border-right: 1px solid #e0e0e0;
+    }
+
+    .tab-btn:last-child {
+      border-right: none;
     }
 
     .tab-btn:hover {
-      background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
-      color: #667eea;
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.12);
+      background: #e8e8e8;
+      color: #495057;
+      transform: none;
+      box-shadow: none;
     }
 
     .tab-btn.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border-bottom: 4px solid #667eea;
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-      transform: translateY(-2px);
+      background: white;
+      color: #667eea;
+      border-bottom: 3px solid #667eea;
+      box-shadow: none;
+      transform: none;
+      font-weight: 700;
     }
 
     .tab-btn.active::after {
-      content: '';
-      position: absolute;
-      bottom: -4px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 60%;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, #fff, transparent);
-      border-radius: 2px;
+      display: none;
     }
 
     .tab-content {
@@ -3808,7 +3815,7 @@ Datum: 2026-02-09
 
 <div class="container">
   <div class="header">
-    <button class="icon-button" onclick="handleLogout()" title="Abmelden" style="position: absolute; top: 30px; left: 40px; margin-left: 0;">
+    <button class="icon-button" onclick="handleLogout()" title="Abmelden" style="position: absolute; top: 15px; left: 40px; margin-left: 0;">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
         <polyline points="16 17 21 12 16 7"></polyline>
