@@ -1075,9 +1075,9 @@ Datum: 2026-02-09
     }
 
     .header {
-      background: linear-gradient(135deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
+      background: linear-gradient(135deg, #3b5998 0%, #4267B2 100%);
       color: white;
-      padding: 30px 40px;
+      padding: 15px 40px;
       text-align: center;
       position: relative;
     }
@@ -1346,15 +1346,15 @@ Datum: 2026-02-09
     }
 
     .content {
-      padding: 40px;
+      padding: 0px 40px 40px 40px;
     }
 
     .section {
-      margin-bottom: 20px;
-      background: var(--section-bg);
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 2px 8px var(--shadow-color);
+      margin-bottom: 0px;
+      background: transparent;
+      border-radius: 0px;
+      padding: 0px;
+      box-shadow: none;
       transition: background 0.3s ease;
     }
 
@@ -2136,9 +2136,9 @@ Datum: 2026-02-09
     /* Tab Navigation */
     .tab-navigation {
       display: flex;
-      gap: 15px;
+      gap: 0px;
       margin-bottom: 25px;
-      margin-top: 10px;
+      margin-top: 0px;
       padding-bottom: 0;
       border-bottom: 3px solid #e0e0e0;
       flex-wrap: wrap;
@@ -2148,9 +2148,9 @@ Datum: 2026-02-09
       background: transparent;
       color: #495057;
       border: none;
-      padding: 16px 40px;
-      border-radius: 12px 12px 0 0;
-      font-size: 1.15em;
+      padding: 10px 24px;
+      border-radius: 0px;
+      font-size: 0.95em;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s;
@@ -3724,14 +3724,14 @@ Datum: 2026-02-09
      EMAIL LOGIN SCREEN
      ============================================ -->
 <div id="loginScreen" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 10px;">
-  <div style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%;">
+  <div style="background: white; padding: 20px; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%;">
     
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 0px;">
       <img src="transparent-logo.svg" alt="TrackUp Logo" style="width: 140px; height: auto; margin: 0 auto; display: block;">
     </div>
     
-    <p><h1 style="color: #2a5298; margin-bottom: 10px; text-align: center; font-size: 2em;">Login</h1></p>
+    <p><h1 style="color: #2a5298; margin-bottom: 20px; text-align: center; font-size: 2em;">Login</h1></p>
     
     <div id="authMessage" style="display: none; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 0.9em;"></div>
     
@@ -4108,7 +4108,7 @@ Datum: 2026-02-09
               <input type="checkbox" class="spalte" value="ak"> AK
             </label>
             <label class="checkbox-label">
-              <input type="checkbox" class="spalte" value="typ"> Halle/Freiluft
+              <input type="checkbox" class="spalte" value="typ"> Freiluft/Halle
             </label>
             <label class="checkbox-label">
               <input type="checkbox" class="spalte" value="ms"> Meisterschaft
@@ -4369,7 +4369,7 @@ Datum: 2026-02-09
           <input type="text" id="statistikFilterAK" placeholder="Suche Altersklasse..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
         <div>
-          <label style="font-size: 0.9em; font-weight: 500;">Typ:</label>
+          <label style="font-size: 0.9em; font-weight: 500;">Freiluft/Halle</label>
           <select id="statistikFilterTyp" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
             <option value="">– Alle –</option>
             <option value="h">Halle</option>
@@ -4437,7 +4437,7 @@ Datum: 2026-02-09
           <input type="text" id="bestleistungenFilterAK" placeholder="Suche Altersklasse..." style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
         </div>
         <div>
-          <label style="font-size: 0.9em; font-weight: 500;">Typ:</label>
+          <label style="font-size: 0.9em; font-weight: 500;">Freiluft/Halle</label>
           <select id="bestleistungenFilterTyp" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
             <option value="">– Alle –</option>
             <option value="h">Halle</option>
@@ -5340,7 +5340,7 @@ const SPALTEN_ANZEIGE = {
   ort: "Ort",
   wk_bz: "Wettkampfbezeichnung",
   ak: "Altersklasse",
-  typ: "Halle/Freiluft",
+  typ: "Freiluft/Halle",
   ms: "Meisterschaft",
   runde: "Runde",
   score: "Score",
