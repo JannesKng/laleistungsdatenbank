@@ -48,6 +48,16 @@ function openDetailPopup(leistungData) {
     return;
   }
   
+  // WICHTIG: Hole die aktuellsten Daten aus alleLeistungenFuerPBs
+  // Falls das Array aktualisiert wurde (z.B. nach Notizen-Speichern), verwenden wir die frischen Daten
+  if (leistungData.id && typeof alleLeistungenFuerPBs !== 'undefined') {
+    const aktuelleLeistung = alleLeistungenFuerPBs.find(l => l.id === leistungData.id);
+    if (aktuelleLeistung) {
+      leistungData = aktuelleLeistung;
+      console.log('Aktualisierte Leistungsdaten verwendet:', leistungData);
+    }
+  }
+  
   // Wenn bereits ein Popup offen ist (z.B. Klick auf Punkt im Detail-Diagramm):
   // altes Chart und Karte sauber zerstoeren, dann Popup neu befuellen
   if (detailChart) {
@@ -134,6 +144,25 @@ function openDetailPopup(leistungData) {
   `;
   infoGrid.appendChild(ortDiv);
   
+  // NEU: Notizen-Feld (Zeile 3, volle Breite)
+  const notizenDiv = document.createElement('div');
+  notizenDiv.className = 'detail-info-item';
+  notizenDiv.style.gridColumn = 'span 4';
+  notizenDiv.style.gridRow = '3';
+  notizenDiv.innerHTML = `
+    <div class="detail-info-label">📝 Notizen</div>
+    <textarea 
+      id="detailNotizen" 
+      class="detail-notizen-input"
+      placeholder="Notizen zu dieser Leistung hinzufügen (z.B. Windbedingungen, Gefühl, Taktik...)"
+      rows="3"
+    >${leistungData.notizen || ''}</textarea>
+    <button onclick="saveNotizen(${leistungData.id}, this)" class="save-notizen-btn">
+      💾 Notizen speichern
+    </button>
+  `;
+  infoGrid.appendChild(notizenDiv);
+  
   // Show popup
   popup.style.display = 'flex';
   document.body.style.overflow = 'hidden';
@@ -179,6 +208,60 @@ function closeDetailPopup(event) {
     popupContent.style.height = '';
   }
 }
+
+/* ================= NOTIZEN SPEICHERN FUNKTION ================= */
+async function saveNotizen(leistungId, btnElement) {
+  const notizenText = document.getElementById('detailNotizen').value;
+  
+  try {
+    // Nur die Notizen aktualisieren
+    const { error: updateError } = await supabaseClient
+      .schema('la')
+      .from('leistung')
+      .update({ notizen: notizenText })
+      .eq('id', leistungId);
+    
+    if (updateError) throw updateError;
+    
+    // Aktualisierte Leistung komplett aus DB laden
+    const { data: updatedLeistung, error: fetchError } = await supabaseClient
+      .schema('la')
+      .from('leistung')
+      .select('*')
+      .eq('id', leistungId)
+      .single();
+    
+    if (fetchError) {
+      console.error('Fehler beim Laden der aktualisierten Leistung:', fetchError);
+    }
+    
+    // Update local data - verwende die richtige Variable
+    if (typeof alleLeistungenFuerPBs !== 'undefined' && updatedLeistung) {
+      const index = alleLeistungenFuerPBs.findIndex(l => l.id === leistungId);
+      if (index !== -1) {
+        // Aktualisiere den kompletten Eintrag mit den frischen Daten aus der DB
+        alleLeistungenFuerPBs[index] = { ...alleLeistungenFuerPBs[index], ...updatedLeistung };
+        console.log('Leistung aktualisiert:', alleLeistungenFuerPBs[index]);
+      }
+    }
+    
+    // Visual feedback - verwende Button-Element oder event.target als Fallback
+    const btn = btnElement || event.target;
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '✓ Gespeichert!';
+    btn.style.background = '#22c55e';
+    
+    setTimeout(() => {
+      btn.innerHTML = originalText;
+      btn.style.background = '';
+    }, 2000);
+    
+  } catch (error) {
+    console.error('Fehler beim Speichern der Notizen:', error);
+    alert('Notizen konnten nicht gespeichert werden.');
+  }
+}
+
 
 // Drag and Resize functionality for detail popup
 function initPopupDragAndResize() {
@@ -4440,6 +4523,46 @@ document.addEventListener('keydown', function(e) {
     font-weight: 600;
   }
 
+  /* Notizen-Feld Styles */
+  .detail-notizen-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95em;
+    resize: vertical;
+    margin-top: 8px;
+    transition: border-color 0.2s;
+  }
+  
+  .detail-notizen-input:focus {
+    outline: none;
+    border-color: #667eea;
+  }
+  
+  .save-notizen-btn {
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9em;
+    transition: all 0.2s;
+  }
+  
+  .save-notizen-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  }
+  
+  .save-notizen-btn:active {
+    transform: scale(0.98);
+  }
+
     .detail-section {
       margin-bottom: 30px;
     }
@@ -7823,10 +7946,11 @@ async function ladeLeistungen() {
   }
 
   // Lade ALLE Leistungen für PB-Berechnung (ohne Filter, nur mit Athlet-ID)
-  if(selectedAthleteId && (alleLeistungenFuerPBs.length === 0 || alleLeistungenFuerPBs[0]?.athlet_id !== selectedAthleteId)) {
+  // IMMER neu laden, damit Änderungen (wie Notizen) sichtbar werden
+  if(selectedAthleteId) {
     const { data: allData } = await supabaseClient
       .schema("la").from("leistung")
-      .select("id, athlet_id, disziplin, leistung, datum, ort, wk_bz, ak, typ, ms, runde, platzierung, score")
+      .select("id, athlet_id, disziplin, leistung, datum, ort, wk_bz, ak, typ, ms, runde, platzierung, score, notizen, geschlecht")
       .eq("athlet_id", selectedAthleteId);
     alleLeistungenFuerPBs = allData || [];
   }
@@ -15215,6 +15339,9 @@ function createPrognoseTable(disziplin, data) {
 
 
 /* ================= TABLE SEARCH FUNCTIONALITY ================= */
+// Variable um ursprüngliche Spaltenauswahl zu speichern
+let originalColumnSelection = null;
+
 function filterTable() {
   const searchInput = document.getElementById('tableSearchInput');
   const clearBtn = document.getElementById('clearSearchBtn');
@@ -15224,37 +15351,157 @@ function filterTable() {
   // Zeige/Verstecke Clear-Button
   clearBtn.style.display = searchTerm ? 'block' : 'none';
   
-  // Finde alle Tabellenzeilen
-  const table = document.querySelector('#leistungenAusgabe table');
-  if (!table) {
-    resultCount.style.display = 'none';
-    return;
-  }
-  
-  const rows = table.querySelectorAll('tbody tr');
-  let visibleCount = 0;
-  let totalCount = rows.length;
-  
-  rows.forEach(row => {
-    if (!searchTerm) {
-      // Keine Suche - alle Zeilen anzeigen, Highlights entfernen
-      row.style.display = '';
-      removeHighlights(row);
-      return;
+  // Wenn Suche aktiv ist, aktiviere automatisch alle Spalten
+  if (searchTerm) {
+    const alleSpaltenCheckbox = document.getElementById('alleSpalten');
+    const spaltenCheckboxen = document.querySelectorAll('#leistungenTab .spalte');
+    
+    // Speichere ursprüngliche Spaltenauswahl beim ersten Mal
+    if (!originalColumnSelection) {
+      originalColumnSelection = Array.from(spaltenCheckboxen).map(cb => ({
+        value: cb.value,
+        checked: cb.checked
+      }));
     }
     
-    // Durchsuche alle Zellen der Zeile
-    const cells = row.querySelectorAll('td');
-    let found = false;
+    let needsReload = false;
     
-    cells.forEach(cell => {
-      const cellText = cell.textContent.toLowerCase();
-      if (cellText.includes(searchTerm)) {
-        found = true;
+    // Prüfe ob Spalten aktiviert werden müssen
+    spaltenCheckboxen.forEach(checkbox => {
+      if (!checkbox.checked) {
+        checkbox.checked = true;
+        needsReload = true;
       }
     });
     
-    if (found) {
+    // Aktiviere auch die "Alle Spalten" Checkbox
+    if (alleSpaltenCheckbox && !alleSpaltenCheckbox.checked) {
+      alleSpaltenCheckbox.checked = true;
+      needsReload = true;
+    }
+    
+    // Wenn Spalten geändert wurden, lade Tabelle neu
+    if (needsReload) {
+      ladeLeistungen().then(() => {
+        // Warte kurz, bis die Tabelle neu gerendert wurde
+        setTimeout(() => {
+          performSearch(searchTerm);
+        }, 100);
+      });
+    } else {
+      // Keine Änderung nötig, direkt suchen
+      performSearch(searchTerm);
+    }
+  } else {
+    // Keine Suche - stelle ursprüngliche Spaltenauswahl wieder her
+    if (originalColumnSelection) {
+      const spaltenCheckboxen = document.querySelectorAll('#leistungenTab .spalte');
+      let needsReload = false;
+      
+      spaltenCheckboxen.forEach((checkbox, index) => {
+        if (originalColumnSelection[index] && checkbox.checked !== originalColumnSelection[index].checked) {
+          checkbox.checked = originalColumnSelection[index].checked;
+          needsReload = true;
+        }
+      });
+      
+      originalColumnSelection = null; // Reset
+      
+      if (needsReload) {
+        ladeLeistungen().then(() => {
+          setTimeout(() => {
+            performSearch('');
+          }, 100);
+        });
+      } else {
+        performSearch('');
+      }
+    } else {
+      performSearch('');
+    }
+  }
+}
+
+function performSearch(searchTerm) {
+  const resultCount = document.getElementById('searchResultCount');
+  
+  // Finde alle Tabellenzeilen
+  const table = document.querySelector('#leistungenAusgabe table');
+  if (!table) {
+    if (resultCount) resultCount.style.display = 'none';
+    return;
+  }
+  
+  // Die Tabelle hat kein thead/tbody - erste Zeile ist Header, Rest sind Datenzeilen
+  const allRows = Array.from(table.querySelectorAll('tr'));
+  if (allRows.length === 0) {
+    if (resultCount) resultCount.style.display = 'none';
+    return;
+  }
+  
+  const headerRow = allRows[0]; // Erste Zeile = Header
+  const dataRows = allRows.slice(1); // Rest = Daten
+  const headerCells = headerRow.querySelectorAll('th');
+  
+  let visibleCount = 0;
+  let totalCount = dataRows.length;
+  
+  if (!searchTerm) {
+    // Keine Suche - alle Zeilen und Spalten anzeigen, Highlights entfernen
+    headerRow.style.display = '';
+    dataRows.forEach(row => {
+      row.style.display = '';
+      removeHighlights(row);
+      const cells = row.querySelectorAll('td');
+      cells.forEach(cell => cell.style.display = '');
+    });
+    headerCells.forEach(header => header.style.display = '');
+    if (resultCount) resultCount.style.display = 'none';
+    return;
+  }
+  
+  // Track welche Spalten Treffer haben
+  const columnHasMatch = new Array(headerCells.length).fill(false);
+  
+  // Ermittle welche Spalten ursprünglich ausgewählt waren
+  const originallySelectedColumns = new Array(headerCells.length).fill(false);
+  if (originalColumnSelection) {
+    // Mappe Header-Text zu ursprünglicher Auswahl
+    headerCells.forEach((header, index) => {
+      const headerText = header.textContent.trim().replace(/[▲▼]/g, '').trim(); // Entferne Sortier-Pfeile
+      // Prüfe ob diese Spalte ursprünglich ausgewählt war
+      const matchingSelection = originalColumnSelection.find(col => {
+        const displayName = SPALTEN_ANZEIGE[col.value] || col.value;
+        return displayName === headerText || 
+               col.value === headerText.toLowerCase() ||
+               displayName.toLowerCase() === headerText.toLowerCase();
+      });
+      if (matchingSelection && matchingSelection.checked) {
+        originallySelectedColumns[index] = true;
+      }
+    });
+  } else {
+    // Wenn keine gespeicherte Auswahl, zeige alle
+    originallySelectedColumns.fill(true);
+  }
+  
+  // Durchsuche alle Datenzeilen
+  dataRows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    let rowHasMatch = false;
+    
+    cells.forEach((cell, cellIndex) => {
+      // Ignoriere Button-Zellen (Aktionen-Spalte)
+      if (cell.querySelector('button')) return;
+      
+      const cellText = cell.textContent.toLowerCase();
+      if (cellText.includes(searchTerm)) {
+        rowHasMatch = true;
+        columnHasMatch[cellIndex] = true;
+      }
+    });
+    
+    if (rowHasMatch) {
       row.style.display = '';
       visibleCount++;
       highlightSearchTerm(row, searchTerm);
@@ -15264,13 +15511,35 @@ function filterTable() {
     }
   });
   
+  // Header-Zeile immer anzeigen
+  headerRow.style.display = '';
+  
+  // Zeige Spalten die entweder ausgewählt waren ODER Treffer haben
+  headerCells.forEach((header, index) => {
+    if (originallySelectedColumns[index] || columnHasMatch[index]) {
+      header.style.display = '';
+    } else {
+      header.style.display = 'none';
+    }
+  });
+  
+  // Zeige/Verstecke entsprechende Zellen in allen Datenzeilen
+  dataRows.forEach(row => {
+    const cells = row.querySelectorAll('td');
+    cells.forEach((cell, index) => {
+      if (originallySelectedColumns[index] || columnHasMatch[index]) {
+        cell.style.display = '';
+      } else {
+        cell.style.display = 'none';
+      }
+    });
+  });
+  
   // Zeige Ergebnis-Zähler
-  if (searchTerm) {
+  if (resultCount) {
     resultCount.textContent = `${visibleCount} von ${totalCount} Einträgen gefunden`;
     resultCount.style.display = 'block';
     resultCount.style.color = visibleCount === 0 ? '#dc3545' : 'var(--text-muted)';
-  } else {
-    resultCount.style.display = 'none';
   }
 }
 
@@ -15354,7 +15623,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
 <div id="leistungModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
   <div style="background: white; padding: 25px; border-radius: var(--border-radius); max-width: 750px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2 id="modalTitle" style="color: white; margin: 0;">Leistung hinzufügen</h2>
+      <h2 id="modalTitle" style="color: #1f2937; margin: 0;">Leistung hinzufügen</h2>
       <button onclick="closeLeistungModal()" aria-label="Modal schließen" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
     </div>
     <form id="leistungForm" onsubmit="saveLeistung(event)">
@@ -15433,7 +15702,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
 <div id="importModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
   <div style="background: white; padding: 30px; border-radius: var(--border-radius); max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2 style="color: white; margin: 0;">Leistungen importieren</h2>
+      <h2 style="color: #1f2937; margin: 0;">Leistungen importieren</h2>
       <button onclick="closeImportModal()" aria-label="Import-Dialog schließen" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
     </div>
     <p>CSV-Datei mit folgenden Spalten hochladen:</p>
@@ -15477,7 +15746,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
         <div class="detail-map-wrapper">
           <h3>📍 Wettkampfort</h3>
           <div id="detailMap" class="detail-map-container"></div>
-        </div>
+        </div>A
       </div>
     </div>
   </div>
