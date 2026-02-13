@@ -16,11 +16,12 @@
   
   <!-- PWA Support -->
   <meta name="theme-color" content="#764ba2">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="TrackUp">
   
-  <title>TrackUp - Professionelle Leichtathletik-Leistungsdatenbank</title>
+  <title>TrackUp - Deine Leichtathletik-Datenbank</title>
   
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='faviconGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23FFD700;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='64' y='90' font-family='Arial, sans-serif' font-size='72' font-weight='bold' fill='url(%23faviconGrad)' text-anchor='middle'%3ETU%3C/text%3E%3C/svg%3E">
@@ -209,6 +210,83 @@ function closeDetailPopup(event) {
   }
 }
 
+/* ================= LETZTE WETTKÄMPFE POPUP ================= */
+let letzteWettkaempfeData = [];
+
+function showLetzteWettkaempfe() {
+  const popup = document.getElementById('letzteWettkaempfePopup');
+  const content = document.getElementById('letzteWettkaempfeContent');
+  
+  if (!letzteWettkaempfeData || letzteWettkaempfeData.length === 0) {
+    content.innerHTML = '<div style="text-align: center; padding: 40px; color: #666;">Keine Wettkämpfe gefunden</div>';
+    popup.style.display = 'flex';
+    return;
+  }
+  
+  // Gruppiere nach Wettkampf (Datum + wk_bz)
+  const wettkaempfeMap = new Map();
+  
+  letzteWettkaempfeData.forEach(leistung => {
+    const key = `${leistung.datum}_${leistung.wk_bz || 'unbekannt'}`;
+    if (!wettkaempfeMap.has(key)) {
+      wettkaempfeMap.set(key, {
+        datum: leistung.datum,
+        wk_bz: leistung.wk_bz,
+        ort: leistung.ort,
+        leistungen: []
+      });
+    }
+    wettkaempfeMap.get(key).leistungen.push(leistung);
+  });
+  
+  // Sortiere nach Datum (neueste zuerst) und nimm nur die letzten 3
+  const letzteWettkaempfe = Array.from(wettkaempfeMap.values())
+    .sort((a, b) => new Date(b.datum) - new Date(a.datum))
+    .slice(0, 3);
+  
+  // Erstelle HTML
+  content.innerHTML = letzteWettkaempfe.map((wk, index) => {
+    return `
+      <div style="background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%); border-radius: 10px; padding: 20px; border-left: 4px solid #1e3a8a;">
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+          <div style="flex: 1;">
+            <div style="font-weight: 700; color: #1e3c72; font-size: 1.1em;">${wk.wk_bz || 'Wettkampf'}</div>
+            <div style="color: #666; font-size: 0.9em; margin-top: 2px;">
+              📅 ${new Date(wk.datum).toLocaleDateString('de-DE')}
+              ${wk.ort ? ` | 📍 ${wk.ort}` : ''}
+            </div>
+          </div>
+        </div>
+        <div style="display: grid; gap: 8px; margin-top: 15px;">
+          ${wk.leistungen.map(l => {
+            const leistungDataJson = JSON.stringify(l).replace(/'/g, "&apos;");
+            return `
+            <div onclick='openDetailPopup(${leistungDataJson})' style="background: #f2f6fa;  padding: 12px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); cursor: pointer; transition: all 0.2s ease; " onmouseover="this.style.transform='translateX(4px)'; this.style.boxShadow='0 2px 8px rgba(30,58,138,0.15)';" onmouseout="this.style.transform='translateX(0)'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.1)';">
+              <div>
+                <span style="font-weight: 600; color: #1e3c72;">${l.disziplin}</span>
+                ${l.platzierung ? `<span style="margin-left: 8px; background: #1e3a8a; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.75em; font-weight: 600;">#${l.platzierung}</span>` : ''}
+              </div>
+              <div style="font-weight: 700; color: #1e3a8a; font-size: 1.1em;">${formatiereLeistung(l.leistung, l.disziplin)}</div>
+            </div>
+          `}).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  popup.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeLetzteWettkaempfe(event) {
+  if (event && event.target.id !== 'letzteWettkaempfePopup') {
+    return;
+  }
+  const popup = document.getElementById('letzteWettkaempfePopup');
+  popup.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
 /* ================= NOTIZEN SPEICHERN FUNKTION ================= */
 async function saveNotizen(leistungId, btnElement) {
   const notizenText = document.getElementById('detailNotizen').value;
@@ -362,7 +440,7 @@ async function initDetailMap(ort) {
   const bg = document.createElementNS(svgNS, 'rect');
   bg.setAttribute('x', vbX); bg.setAttribute('y', '0');
   bg.setAttribute('width', vbWidth); bg.setAttribute('height', vbHeight);
-  bg.setAttribute('fill', '#d0e8f5');
+  bg.setAttribute('fill', '#ffffff');
   svg.appendChild(bg);
   
   // Bundesland-Grenzen
@@ -610,9 +688,9 @@ document.addEventListener('keydown', function(e) {
       --secondary-light: #9165b8;
       
       /* Background Colors */
-      --bg-gradient-start: #e8eeff;
-      --bg-gradient-end: #f3e5f5;
-      --container-bg: white;
+      --bg-gradient-start: #f2f6fa;
+      --bg-gradient-end: #f2f6fa;
+      --container-bg: #ffffff;
       
       /* Text Colors */
       --text-primary: #1a1a1a;
@@ -620,15 +698,15 @@ document.addEventListener('keydown', function(e) {
       --text-muted: #6c757d;
       
       /* Header */
-      --header-bg-start: #e6f0ff;
-      --header-bg-end: #e6f0ff;
+      --header-bg-start: #FFE44D;
+      --header-bg-end: #4A6FA5;
       
       /* UI Elements */
       --section-bg: #f8f9fa;
-      --card-bg: white;
+      --card-bg: #f2f6fa;
       --border-color: #e0e0e0;
       --border-radius: 8px;
-      --input-bg: white;
+      --input-bg: #ffffff;
       --table-header-bg: #f8f9fa;
       --table-hover-bg: #f5f7fa;
       --shadow-color: rgba(0,0,0,0.08);
@@ -709,10 +787,16 @@ document.addEventListener('keydown', function(e) {
     
     body.dark-mode .tab-navigation {
       border-bottom: 2px solid #404040;
+      background: rgba(45, 45, 45, 0.9);
     }
     
     body.dark-mode .header {
       color: white;
+    }
+    
+    body.dark-mode .header > div:has(img) {
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
     }
     
     body.dark-mode .dark-mode-toggle {
@@ -732,11 +816,30 @@ document.addEventListener('keydown', function(e) {
     
     body.dark-mode .compact-athlete-search {
       background: rgba(255, 255, 255, 0.15);
-      border-color: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    
+    body.dark-mode .compact-athlete-search:hover,
+    body.dark-mode .compact-athlete-search.expanded {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
     }
     
     body.dark-mode .compact-athlete-search .search-icon {
       color: white;
+    }
+    
+    body.dark-mode .compact-athlete-search input {
+      background: rgba(255, 255, 255, 0.95) !important;
+      color: #1e3c72 !important;
+    }
+
+    body.dark-mode .compact-athlete-search input::placeholder {
+      color: rgba(30, 60, 114, 0.6) !important;
+    }
+    
+    body.dark-mode .compact-athlete-search input:focus {
+      background: white !important;
     }
     
     body.dark-mode .autocomplete-suggestions {
@@ -769,14 +872,31 @@ document.addEventListener('keydown', function(e) {
       background: #b71c1c;
     }
     
-    body.dark-mode .dashboard-welcome,
+    
     body.dark-mode .dashboard-stats,
     body.dark-mode .dashboard-top-performances {
       background: #2d2d2d;
     }
     
     body.dark-mode .dashboard-athlete-info {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d1b3d 100%);
+      background: linear-gradient(135deg, #2a4a8a 0%, #2a50bf 100%);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    }
+    
+    body.dark-mode .athlete-stat-item {
+      background: rgba(45, 45, 45, 0.95);
+    }
+    
+    body.dark-mode .athlete-stat-item:hover {
+      background: #2d2d2d;
+    }
+    
+    body.dark-mode .stat-label {
+      color: #b0b0b0;
+    }
+    
+    body.dark-mode .stat-value {
+      color: #8b9ef5;
     }
     
     body.dark-mode .dashboard-performance-container,
@@ -952,7 +1072,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     body.dark-mode .stat-card-dashboard {
-      background: linear-gradient(135deg, #1e3a5f 0%, #2d1b3d 100%);
+      background: #1e3a5f;
       border-color: #404040;
     }
     
@@ -968,11 +1088,11 @@ document.addEventListener('keydown', function(e) {
       color: #e0e0e0;
     }
     
-    body.dark-mode .dashboard-welcome h3 {
+    /* removed */ {
       color: #1e3a8a;
     }
     
-    body.dark-mode .dashboard-welcome p {
+    /* removed */ {
       color: #b0b0b0;
     }
     
@@ -1106,7 +1226,7 @@ document.addEventListener('keydown', function(e) {
       background: #b71c1c;
     }
     
-    body.dark-mode .dashboard-welcome,
+    
     body.dark-mode .dashboard-stats,
     body.dark-mode .dashboard-top-performances {
       background: #2d2d2d;
@@ -1300,7 +1420,7 @@ document.addEventListener('keydown', function(e) {
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-      background: #f5f7fa;
+      background: #ffffff;
       min-height: 100vh;
       padding: 0;
       margin: 0;
@@ -1352,29 +1472,45 @@ document.addEventListener('keydown', function(e) {
     }
 
     .header {
-      background: linear-gradient(90deg, var(--header-bg-start) 0%, var(--header-bg-end) 100%);
-      color: #2a5298;
-      padding: 0px;
+      background: linear-gradient(90deg, #FFD700 0%, rgba(255, 255, 255, 0.95) 25%);
+      color: #1e3c72;
+      padding: 8px 0;
       text-align: center;
       position: sticky;
       top: 0;
-      z-index: 1000;
-      box-shadow: 0 4px 20px rgba(30, 58, 138, 0.15);
+      z-index: 1002;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .header > div:has(img) {
+      background: transparent;
+      backdrop-filter: none;
+      border-radius: 0;
+      padding: 0;
+      box-shadow: none;
+    }
+    
+    .header img {
+      filter: none;
     }
 
     .dark-mode-toggle {
       position: absolute;
-      top: 10px;
+      top: 12px;
       right: 20px;
-      background: rgba(30, 58, 138, 0.25);
-      border: none;
-      color: white;
+      background: rgba(30, 58, 138, 0.1);
+      border: 1px solid rgba(30, 58, 138, 0.2);
+      color: #1e3c72;
       padding: 8px 14px;
       height: 36px;
       border-radius: 18px;
       cursor: pointer;
       font-size: 1.1em;
-      transition: all 0.3s;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1382,8 +1518,17 @@ document.addEventListener('keydown', function(e) {
     }
 
     .dark-mode-toggle:hover {
-      background: rgba(30, 58, 138, 0.35);
+      background: rgba(30, 58, 138, 0.15);
+      border-color: rgba(30, 58, 138, 0.3);
       transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .icon-button:hover {
+      background: rgba(30, 58, 138, 0.15) !important;
+      border-color: rgba(30, 58, 138, 0.3) !important;
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     .header h1 {
@@ -1418,99 +1563,103 @@ document.addEventListener('keydown', function(e) {
     /* Kompakte Athletensuche in der Ecke (nur für Admins) */
     .compact-athlete-search {
       position: absolute;
-      top: 10px;
-      right: 75px;
-      z-index: 100;
-      background: rgba(30, 58, 138, 0.25);
-      backdrop-filter: blur(10px);
-      border: none;
-      border-radius: 18px;
-      padding: 0;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      top: 12px;
+      right: 95px;
+      z-index: 1003;
+      background: transparent;
+      border: 2px solid #1e3c72;
+      border-radius: 20px;
+      box-shadow: none;
       display: none;
       align-items: center;
+      justify-content: center;
       gap: 0;
-      width: 36px;
-      height: 36px;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: visible;
       cursor: pointer;
+      color: #1e3c72;
     }
 
-    .compact-athlete-search:hover,
-    .compact-athlete-search:focus-within {
-      width: 220px;
-      border-radius: 18px;
-      gap: 6px;
-      padding: 0 10px;
-      background: rgba(30, 58, 138, 0.35);
-      border: none;
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
+    .compact-athlete-search:hover {
+      background: rgba(30, 58, 138, 0.05);
+      border-color: #1e3c72;
+      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
+    }
+
+    .compact-athlete-search.expanded {
+      width: 280px;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #1e3c72;
+      border-color: #1e3c72;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       cursor: default;
-      overflow: visible;
+      border-radius: 20px;
     }
 
     .compact-athlete-search.has-selection {
-      width: 220px;
-      border-radius: 18px;
-      gap: 6px;
-      padding: 0 10px;
-      background: rgba(30, 58, 138, 0.35);
-      border: none;
-      overflow: visible;
+      width: 280px;
+      justify-content: flex-start;
+      gap: 10px;
+      padding: 8px 12px;
+      background: #1e3c72;
+      border-color: #1e3c72;
+      border-radius: 20px;
     }
 
     .compact-athlete-search .search-icon {
-      font-size: 1.1em;
       color: #1e3c72;
-      opacity: 0.95;
       transition: all 0.3s;
       flex-shrink: 0;
-      filter: none;
-      width: 36px;
-      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 20px;
+      height: 20px;
     }
-
-    .compact-athlete-search:hover .search-icon,
-    .compact-athlete-search:focus-within .search-icon {
-      opacity: 1;
-      color: #1e3c72;
-      filter: none;
-      width: auto;
-      height: auto;
+    
+    .compact-athlete-search .search-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: #1e3c72;
+      stroke-width: 2;
+      display: block;
+      transition: stroke 0.3s;
     }
-
-    .compact-athlete-search.has-selection .search-icon {
-      color: #1e3c72;
-      opacity: 1;
-      filter: none;
-      width: auto;
-      height: auto;
+    
+    .compact-athlete-search.expanded .search-icon svg {
+      stroke: white;
+    }
+    
+    .compact-athlete-search.has-selection .search-icon svg {
+      stroke: white;
     }
 
     .compact-athlete-search input {
       border: none;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 0 8px;
-      height: 28px;
-      font-size: 0.85em;
-      flex: 1;
+      background: #f2f6fa;
+      padding: 8px 12px;
+      height: 32px;
+      font-size: 0.9em;
       min-width: 0;
       color: #1e3c72;
-      opacity: 0;
-      width: 0;
-      transition: opacity 0.3s ease 0.1s;
-      border-radius: 5px;
+      border-radius: 16px;
+      font-weight: 500;
+      display: none;
+      flex: 1;
+      outline: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
     }
 
-    .compact-athlete-search:hover input,
-    .compact-athlete-search:focus-within input {
-      opacity: 1;
-      width: auto;
-      background: rgba(255, 255, 255, 0.9);
+    .compact-athlete-search.expanded input {
+      display: block;
+      background: #f2f6fa;
+      color: #1e3c72;
     }
 
     .compact-athlete-search.has-selection input {
@@ -1518,13 +1667,17 @@ document.addEventListener('keydown', function(e) {
     }
 
     .compact-athlete-search input::placeholder {
+      color: rgba(30, 60, 114, 0.6);
+      font-size: 0.9em;
+    }
+
+    .compact-athlete-search.expanded input::placeholder {
       color: rgba(30, 60, 114, 0.7);
-      font-size: 0.95em;
     }
 
     .compact-athlete-search input:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.3);
+      background: #f2f6fa;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .compact-athlete-search .autocomplete-suggestions {
@@ -1532,18 +1685,18 @@ document.addEventListener('keydown', function(e) {
       top: calc(100% + 8px);
       right: 0;
       left: 0;
-      background: white;
+      background: #f2f6fa;
       border-radius: var(--border-radius);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
       max-height: 300px;
       overflow-y: auto;
-      z-index: 10000;
+      z-index: 1004 !important;
       border: 1px solid #e0e0e0;
       display: none;
     }
 
     body.dark-mode .compact-athlete-search .autocomplete-suggestions {
-      background: var(--card-bg);
+      background: #f2f6fa;
       border-color: var(--border-color);
     }
 
@@ -1578,21 +1731,22 @@ document.addEventListener('keydown', function(e) {
     }
 
     .compact-athlete-search .selected-info {
-      font-size: 0.8em;
+      font-size: 0.9em;
       color: #1e3c72;
       display: none;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       white-space: nowrap;
-      padding: 0 8px;
-      height: 28px;
+      padding: 8px 12px;
+      height: 32px;
       flex: 1;
       min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 5px;
+      background: #f2f6fa;
+      border-radius: 8px;
       font-weight: 500;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .compact-athlete-search.has-selection .selected-info {
@@ -1602,22 +1756,17 @@ document.addEventListener('keydown', function(e) {
     .compact-athlete-search .clear-btn {
       cursor: pointer;
       color: rgba(30, 60, 114, 0.6);
-      font-size: 1em;
-      padding: 0 5px;
+      font-size: 1.1em;
+      padding: 0 6px;
       border-radius: 50%;
       transition: all 0.2s;
       line-height: 1;
       flex-shrink: 0;
-      opacity: 0;
+      opacity: 1;
       height: 28px;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .compact-athlete-search.has-selection .clear-btn,
-    .compact-athlete-search:hover .clear-btn {
-      opacity: 1;
     }
 
     .compact-athlete-search .clear-btn:hover {
@@ -1647,249 +1796,14 @@ document.addEventListener('keydown', function(e) {
       padding-bottom: 10px;
     }
 
-    /* Kompakte Athletensuche in der Ecke (nur für Admins) */
-    .compact-athlete-search {
-      position: absolute;
-      top: 10px;
-      right: 75px;
-      z-index: 100;
-      background: rgba(30, 58, 138, 0.25);
-      backdrop-filter: blur(10px);
-      border: none;
-      border-radius: 18px;
-      padding: 0;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      display: none;
-      align-items: center;
-      gap: 0;
-      width: 36px;
-      height: 36px;
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: visible;
-      cursor: pointer;
-    }
-
-    .compact-athlete-search.active {
-      display: flex;
-    }
-
-    .compact-athlete-search:hover,
-    .compact-athlete-search:focus-within {
-      width: 220px;
-      border-radius: 18px;
-      gap: 6px;
-      padding: 0 10px;
-      background: rgba(30, 58, 138, 0.35);
-      border-color: rgba(30, 58, 138, 0.3);
-      box-shadow: 0 6px 25px rgba(0, 0, 0, 0.25);
-      cursor: default;
-      overflow: visible;
-    }
-
-    .compact-athlete-search.has-selection {
-      width: 220px;
-      border-radius: 18px;
-      gap: 6px;
-      padding: 0 10px;
-      background: rgba(30, 58, 138, 0.35);
-      border-color: rgba(30, 58, 138, 0.3);
-      overflow: visible;
-    }
-
-    .compact-athlete-search .search-icon {
-      font-size: 1.1em;
-      color: #1e3c72;
-      opacity: 0.95;
-      transition: all 0.3s;
-      flex-shrink: 0;
-      filter: none;
-      width: 36px;
-      height: 36px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .compact-athlete-search:hover .search-icon,
-    .compact-athlete-search:focus-within .search-icon {
-      opacity: 1;
-      color: #1e3a8a;
-      filter: none;
-      width: auto;
-      height: auto;
-    }
-
-    .compact-athlete-search.has-selection .search-icon {
-      color: #1e3a8a;
-      opacity: 1;
-      filter: none;
-      width: auto;
-      height: auto;
-    }
-
-    .compact-athlete-search input {
-      border: none;
-      background: rgba(255, 255, 255, 0.9);
-      padding: 0 8px;
-      height: 28px;
-      font-size: 0.85em;
-      flex: 1;
-      min-width: 0;
-      color: #1e3c72;
-      opacity: 0;
-      width: 0;
-      transition: opacity 0.3s ease 0.1s;
-      border-radius: 5px;
-    }
-
-    .compact-athlete-search:hover input,
-    .compact-athlete-search:focus-within input {
-      opacity: 1;
-      width: auto;
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .compact-athlete-search.has-selection input {
-      display: none;
-    }
-
-    .compact-athlete-search input::placeholder {
-      color: rgba(30, 60, 114, 0.7);
-      font-size: 0.95em;
-    }
-
-    .compact-athlete-search input:focus {
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.3);
-    }
-
-    .compact-athlete-search .autocomplete-suggestions {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      left: 0;
-      background: white;
-      border-radius: var(--border-radius);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      max-height: 300px;
-      overflow-y: auto;
-      z-index: 10000;
-      border: 1px solid #e0e0e0;
-      display: none;
-    }
-
-    body.dark-mode .compact-athlete-search .autocomplete-suggestions {
-      background: var(--card-bg);
-      border-color: var(--border-color);
-    }
-
-    .compact-athlete-search .autocomplete-suggestions.show {
-      display: block;
-    }
-
-    .compact-athlete-search .autocomplete-suggestions .suggestion-item {
-      padding: 10px 14px;
-      cursor: pointer;
-      transition: background 0.2s;
-      color: #333;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 0.9em;
-    }
-
-    body.dark-mode .compact-athlete-search .autocomplete-suggestions .suggestion-item {
-      color: var(--text-primary);
-      border-bottom-color: var(--border-color);
-    }
-
-    .compact-athlete-search .autocomplete-suggestions .suggestion-item:last-child {
-      border-bottom: none;
-    }
-
-    .compact-athlete-search .autocomplete-suggestions .suggestion-item:hover {
-      background: #f5f5f5;
-    }
-
-    body.dark-mode .compact-athlete-search .autocomplete-suggestions .suggestion-item:hover {
-      background: var(--table-hover-bg);
-    }
-
-    .compact-athlete-search .selected-info {
-      font-size: 0.8em;
-      color: #1e3c72;
-      display: none;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-      padding: 0 8px;
-      height: 28px;
-      flex: 1;
-      min-width: 0;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 5px;
-      font-weight: 500;
-    }
-
-    .compact-athlete-search.has-selection .selected-info {
-      display: flex;
-    }
-
-    .compact-athlete-search .clear-btn {
-      cursor: pointer;
-      color: rgba(30, 60, 114, 0.6);
-      font-size: 1em;
-      padding: 0 5px;
-      border-radius: 50%;
-      transition: all 0.2s;
-      line-height: 1;
-      flex-shrink: 0;
-      opacity: 0;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .compact-athlete-search.has-selection .clear-btn,
-    .compact-athlete-search:hover .clear-btn {
-      opacity: 1;
-    }
-
-    .compact-athlete-search .clear-btn:hover {
-      background: rgba(255, 107, 107, 0.15);
-      color: #ff6b6b;
-    }
-
     /* Dark Mode Anpassungen */
-    body.dark-mode .compact-athlete-search {
-      background: rgba(30, 30, 30, 0.6);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    body.dark-mode .compact-athlete-search:hover,
-    body.dark-mode .compact-athlete-search:focus-within,
-    body.dark-mode .compact-athlete-search.has-selection {
-      background: rgba(45, 45, 45, 0.95);
-      border-color: rgba(30, 58, 138, 0.4);
-    }
-
-    body.dark-mode .compact-athlete-search input {
-      background: rgba(60, 60, 60, 0.8);
-      color: #e0e0e0;
-    }
-
-    body.dark-mode .compact-athlete-search input::placeholder {
-      color: rgba(255, 255, 255, 0.4);
-    }
-
     body.dark-mode .compact-athlete-search .selected-info {
-      background: rgba(60, 60, 60, 0.8);
-      color: #e0e0e0;
+      background: #f2f6fa;
+      color: #1e3c72;
     }
 
     body.dark-mode .compact-athlete-search .clear-btn {
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(30, 60, 114, 0.6);
     }
 
     /* Tablet Anpassungen */
@@ -1915,7 +1829,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     .search-box {
-      background: var(--card-bg);
+      background: #f2f6fa;
       padding: 12px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 10px var(--shadow-color);
@@ -2206,11 +2120,12 @@ document.addEventListener('keydown', function(e) {
     }
 
     .columns-section {
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
       padding: 12px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       margin-bottom: 12px;
+      
     }
 
     .columns-section h3 {
@@ -2230,7 +2145,7 @@ document.addEventListener('keydown', function(e) {
       display: flex;
       align-items: center;
       padding: 8px 12px;
-      background: #f8f9fa;
+      background: #ffffff;
       border-radius: 8px;
       cursor: pointer;
       transition: all 0.3s;
@@ -2238,7 +2153,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     .checkbox-label:hover {
-      background: #e9ecef;
+      background: #f8f9fa;
     }
 
     .checkbox-label input[type="checkbox"] {
@@ -2261,11 +2176,12 @@ document.addEventListener('keydown', function(e) {
     }
 
     .filter-section {
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
       padding: 12px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
       margin-bottom: 15px;
+      
     }
     
     /* Sehr kleine Abstände zwischen Filtern im Leistungen-Bereich */
@@ -2293,7 +2209,11 @@ document.addEventListener('keydown', function(e) {
     /* Filter sections need internal padding */
     .filter-section, .chart-container, .stat-grid-dashboard, 
     .columns-section,
-    #leistungenAusgabe, #orteAusgabe, #scoreAusgabe {
+    #leistungenAusgabe, #orteAusgabe, #scoreAusgabe,
+    #dashboardGoalsSection, .dashboard-performance-container, 
+    .dashboard-map-container, .dashboard-top-performances,
+    .dashboard-top3-container, .dashboard-goals-container,
+    .dashboard-section-title {
       margin-left: 15px;
       margin-right: 15px;
     }
@@ -2303,6 +2223,8 @@ document.addEventListener('keydown', function(e) {
       width: 100%;
       margin-left: 0;
       margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
     }
     
     /* Reduziere padding innerhalb der Filter-Boxen im Leistungen-Bereich */
@@ -2332,7 +2254,7 @@ document.addEventListener('keydown', function(e) {
     
     /* Graue Boxen um Filter-Gruppen im Analyse-Bereich */
     #analyseTab .filter-group {
-      background: #f8f9fa;
+      background: #ffffff;
       padding: 12px;
       border-radius: 8px;
       min-width: 0;
@@ -2345,14 +2267,14 @@ document.addEventListener('keydown', function(e) {
       font-size: 1.1em;
       font-weight: 600;
       padding: 10px;
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
       border-radius: 6px;
       margin-bottom: 15px;
       transition: background 0.2s ease;
     }
     
     #analyseTab details > summary:hover {
-      background: #f8f9fa;
+      background: #ffffff;
     }
     
     /* Summary-Elemente im Leistungen-Tab */
@@ -2361,7 +2283,7 @@ document.addEventListener('keydown', function(e) {
       font-weight: 600;
       font-size: 1.05em;
       padding: 12px;
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
       border-radius: 8px;
       margin-bottom: 15px;
       user-select: none;
@@ -2369,16 +2291,16 @@ document.addEventListener('keydown', function(e) {
     }
     
     #leistungenTab details > summary:hover {
-      background: #f8f9fa;
+      background: #ffffff;
     }
     
     #leistungenTab details[open] > summary {
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
       margin-bottom: 15px;
     }
     
     #leistungenTab details[open] > summary:hover {
-      background: #f8f9fa;
+      background: #ffffff;
     }
     
     /* Responsive: Analyse-Filter auf mobil untereinander */
@@ -2412,7 +2334,7 @@ document.addEventListener('keydown', function(e) {
     .filter-group {
       margin-bottom: 12px;
       padding: 15px;
-      background: #f8f9fa;
+      background: #ffffff;
       border-radius: 8px;
       border-left: 4px solid #1e3a8a;
     }
@@ -2469,7 +2391,7 @@ document.addEventListener('keydown', function(e) {
       border-collapse: separate;
       border-spacing: 0;
       margin-top: 20px;
-      background: var(--card-bg);
+      background: #f2f6fa;
       border-radius: var(--border-radius);
       overflow: hidden;
       box-shadow: 0 1px 3px var(--shadow-color);
@@ -2588,7 +2510,7 @@ document.addEventListener('keydown', function(e) {
 
     tr.year-separator {
       height: 2px;
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
     }
 
     tr.year-separator td {
@@ -2623,7 +2545,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     .dialog-box {
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
       border-radius: var(--border-radius);
       padding: 30px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
@@ -2672,7 +2594,13 @@ document.addEventListener('keydown', function(e) {
       padding-bottom: 0;
       border-bottom: 2px solid #e0e0e0;
       flex-wrap: wrap;
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
+      margin-left: 0;
+      margin-right: 0;
+      padding-left: 0;
+      padding-right: 0;
+      position: relative;
+      z-index: 1001;
     }
     
     /* Kein Abstand unter den Haupttabs wenn Analyse-Tab aktiv ist */
@@ -2750,7 +2678,7 @@ document.addEventListener('keydown', function(e) {
       top: 100%;
       left: 0;
       right: 0;
-      background: white;
+      background: #f2f6fa;
       border: 2px solid #1e3a8a;
       border-top: none;
       border-radius: 0 0 10px 10px;
@@ -2865,6 +2793,232 @@ document.addEventListener('keydown', function(e) {
       color: #5a8aff;
     }
 
+    /* ========================================
+       UMFASSENDE DARK MODE ANPASSUNGEN
+       ======================================== */
+    
+    /* Logo im Dark Mode - Background entfernen */
+    body.dark-mode .header > div:has(img) {
+      background: transparent !important;
+    }
+    
+    body.dark-mode img[src*="logo"] {
+      background: transparent !important;
+      filter: brightness(1.2);
+    }
+    
+    /* Alle weißen/hellen Hintergründe dunkel machen */
+    body.dark-mode .white-box,
+    body.dark-mode .dashboard-stats > div,
+    body.dark-mode .stat-card,
+    body.dark-mode .performance-card,
+    body.dark-mode .card,
+    body.dark-mode .box,
+    body.dark-mode .panel-body,
+    body.dark-mode .content-box {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+    }
+    
+    /* Charts und Canvas */
+    body.dark-mode .chart-container,
+    body.dark-mode .chart-wrapper,
+    body.dark-mode canvas {
+      background: #2d2d2d !important;
+    }
+    
+    /* Tabellen vollständig dunkel */
+    body.dark-mode table {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode thead,
+    body.dark-mode th {
+      background: #2a2a2a !important;
+      color: #8b9ef5 !important;
+      border-color: #404040 !important;
+    }
+    
+    body.dark-mode tbody,
+    body.dark-mode td {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+      border-color: #404040 !important;
+    }
+    
+    body.dark-mode tr:hover,
+    body.dark-mode tr:hover td {
+      background: #383838 !important;
+    }
+    
+    /* Formulare und Inputs */
+    body.dark-mode input:not([type="checkbox"]):not([type="radio"]),
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background: #333 !important;
+      color: #e0e0e0 !important;
+      border-color: #555 !important;
+    }
+    
+    body.dark-mode input::placeholder,
+    body.dark-mode textarea::placeholder {
+      color: #888 !important;
+    }
+    
+    body.dark-mode input:focus,
+    body.dark-mode select:focus,
+    body.dark-mode textarea:focus {
+      background: #3a3a3a !important;
+      border-color: #8b9ef5 !important;
+      outline-color: #8b9ef5 !important;
+    }
+    
+    /* Modals und Popups */
+    body.dark-mode .modal,
+    body.dark-mode .popup,
+    body.dark-mode [id*="modal"],
+    body.dark-mode [id*="Modal"],
+    body.dark-mode [id*="popup"],
+    body.dark-mode [id*="Popup"] {
+      background: rgba(0, 0, 0, 0.85) !important;
+    }
+    
+    body.dark-mode .modal > div,
+    body.dark-mode .popup > div,
+    body.dark-mode .modal-content,
+    body.dark-mode .popup-content,
+    body.dark-mode .detail-popup-content {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+    }
+    
+    /* Buttons */
+    body.dark-mode button:not(.header-tab-btn):not(.icon-button):not(.analyse-subtab) {
+      color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .primary-btn,
+    body.dark-mode button[style*="linear-gradient(135deg, #1e3a8a"] {
+      background: linear-gradient(135deg, #2a4a8a 0%, #2a50bf 100%) !important;
+      color: white !important;
+    }
+    
+    /* Überschriften und Labels */
+    body.dark-mode h1,
+    body.dark-mode h2,
+    body.dark-mode h3,
+    body.dark-mode h4,
+    body.dark-mode h5,
+    body.dark-mode h6 {
+      color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode label,
+    body.dark-mode .label,
+    body.dark-mode .stat-label,
+    body.dark-mode .detail-info-label {
+      color: #b0b0b0 !important;
+    }
+    
+    body.dark-mode .stat-value,
+    body.dark-mode .detail-info-value,
+    body.dark-mode .value {
+      color: #e0e0e0 !important;
+    }
+    
+    /* Dropdown-Menüs und Autocomplete */
+    body.dark-mode .dropdown,
+    body.dark-mode .autocomplete-suggestions,
+    body.dark-mode [class*="suggestions"],
+    body.dark-mode [class*="dropdown"] {
+      background: #2d2d2d !important;
+      border-color: #555 !important;
+    }
+    
+    body.dark-mode .dropdown-item,
+    body.dark-mode .autocomplete-item,
+    body.dark-mode [class*="item"]:not(.header-tab-btn) {
+      color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .dropdown-item:hover,
+    body.dark-mode .autocomplete-item:hover {
+      background: #383838 !important;
+    }
+    
+    /* Links */
+    body.dark-mode a {
+      color: #8b9ef5 !important;
+    }
+    
+    body.dark-mode a:hover {
+      color: #a8b7f7 !important;
+    }
+    
+    /* Trennlinien */
+    body.dark-mode hr,
+    body.dark-mode .separator,
+    body.dark-mode [class*="divider"] {
+      border-color: #404040 !important;
+      background: #404040 !important;
+    }
+    
+    /* Info-Boxen */
+    body.dark-mode .info-box,
+    body.dark-mode .alert,
+    body.dark-mode .notification,
+    body.dark-mode [class*="info"],
+    body.dark-mode [class*="alert"] {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+      border-color: #555 !important;
+    }
+    
+    /* Scrollbars */
+    body.dark-mode ::-webkit-scrollbar {
+      background: #2a2a2a !important;
+    }
+    
+    body.dark-mode ::-webkit-scrollbar-thumb {
+      background: #555 !important;
+    }
+    
+    body.dark-mode ::-webkit-scrollbar-thumb:hover {
+      background: #666 !important;
+    }
+    
+    body.dark-mode * {
+      scrollbar-color: #555 #2a2a2a;
+    }
+    
+    /* Spezielle Elemente */
+    body.dark-mode .section,
+    body.dark-mode .dashboard-section,
+    body.dark-mode [class*="section"] {
+      background: #1a1a1a !important;
+    }
+    
+    body.dark-mode .badge,
+    body.dark-mode .tag,
+    body.dark-mode [class*="badge"],
+    body.dark-mode [class*="tag"] {
+      background: #383838 !important;
+      color: #e0e0e0 !important;
+    }
+    
+    /* Sicherstellen dass Text lesbar ist */
+    body.dark-mode p,
+    body.dark-mode span:not([class*="icon"]),
+    body.dark-mode div:not([class*="icon"]):not([style*="background"]) {
+      color: #e0e0e0;
+    }
+    
+    /* Header Elemente im Dark Mode */
+    body.dark-mode .header {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) !important;
+    }
+
     .tab-content {
       display: none;
     }
@@ -2875,7 +3029,7 @@ document.addEventListener('keydown', function(e) {
 
     /* Chart Container */
     .chart-container {
-      background: rgba(255, 255, 255, 0.9);
+      background: #f2f6fa;
       padding: 25px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 10px rgba(0,0,0,0.08);
@@ -2896,13 +3050,13 @@ document.addEventListener('keydown', function(e) {
     /* Autocomplete Suggestions */
     .autocomplete-suggestions {
       position: absolute;
-      background: var(--card-bg);
+      background: #f2f6fa;
       border: 2px solid var(--border-color);
       border-top: none;
       border-radius: 0 0 8px 8px;
       max-height: 300px;
       overflow-y: auto;
-      z-index: 1000;
+      z-index: 10500;
       width: calc(100% - 4px);
       box-shadow: 0 4px 12px var(--shadow-color);
       display: none;
@@ -2973,6 +3127,12 @@ document.addEventListener('keydown', function(e) {
       .content {
         padding: 15px;
       }
+      
+      .tab-navigation {
+        margin-left: -15px;
+        margin-right: -15px;
+        width: calc(100% + 30px);
+      }
 
       .section {
         padding: 15px;
@@ -2986,7 +3146,8 @@ document.addEventListener('keydown', function(e) {
       }
 
       .header {
-        padding: 20px 15px 25px;
+        padding: 8px 15px;
+        height: 60px;
       }
 
       .header h1 {
@@ -3174,7 +3335,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     .stat-card-dashboard {
-      background: linear-gradient(135deg, var(--stat-card-bg-start) 0%, var(--stat-card-bg-end) 100%);
+      background: #e6f0ff;
       border-left: 4px solid var(--accent-color);
       border-radius: var(--border-radius);
       padding: 25px;
@@ -3218,7 +3379,8 @@ document.addEventListener('keydown', function(e) {
     }
 
     .pb-card-dashboard {
-      background: var(--card-bg);
+      background: #ffffff;
+      
       border: 2px solid var(--border-color);
       border-radius: var(--border-radius);
       padding: 15px;
@@ -3249,7 +3411,7 @@ document.addEventListener('keydown', function(e) {
       position: absolute;
       top: 20px;
       right: 15px;
-      background: linear-gradient(135deg, #1e3a8a, #1e40af);
+      background: #1e3a8a;
       color: white;
       width: 35px;
       height: 35px;
@@ -3286,8 +3448,8 @@ document.addEventListener('keydown', function(e) {
       font-size: 1.5em;
       font-weight: 600;
       color: #1e3c72;
-      margin: 10px 0 15px;
-      padding-left: 15px;
+      margin: 10px 0 15px 16px;
+      padding-left: 12px;
       border-left: 4px solid #1e3a8a;
     }
     
@@ -3306,28 +3468,10 @@ document.addEventListener('keydown', function(e) {
       font-size: 1.1em;
     }
 
-    .dashboard-welcome {
-      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-      color: white;
-      padding: 30px;
-      border-radius: var(--border-radius);
-      margin-bottom: 25px;
-      text-align: center;
-    }
-
-    .dashboard-welcome h3 {
-      font-size: 2em;
-      margin-bottom: 10px;
-    }
-
-    .dashboard-welcome p {
-      font-size: 1.1em;
-      opacity: 0.9;
-    }
-
     /* Ziel-Tracker Styles */
     .goal-card {
-      background: var(--card-bg);
+      background: #f2f6fa;
+      
       border: 2px solid var(--border-color);
       border-radius: var(--border-radius);
       padding: 20px;
@@ -3455,7 +3599,7 @@ document.addEventListener('keydown', function(e) {
     }
 
     .goal-form {
-      background: var(--card-bg);
+      background: #f2f6fa;
       padding: 20px;
       border-radius: var(--border-radius);
       margin-bottom: 20px;
@@ -3477,7 +3621,8 @@ document.addEventListener('keydown', function(e) {
     }
     
     .dashboard-goal-card {
-      background: var(--card-bg);
+      background: #f2f6fa;
+      
       border: 2px solid var(--border-color);
       border-radius: var(--border-radius);
       padding: 15px;
@@ -3673,16 +3818,181 @@ document.addEventListener('keydown', function(e) {
     
     /* Dashboard Container Styles */
     .dashboard-athlete-info {
-      margin: 20px 0;
-      padding: 20px;
-      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-      border-radius: var(--border-radius);
-      border-left: 4px solid #1e3a8a;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin: 20px 15px;
+      padding: 0;
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      border-radius: 12px;
+      box-shadow: 0 6px 16px rgba(30, 58, 138, 0.2);
+      border: none;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .dashboard-athlete-info::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    
+    .athlete-profile-header {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px 25px;
+      position: relative;
+      z-index: 1;
+      border-bottom: none;
+    }
+    
+    .athlete-avatar {
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+    
+    .athlete-avatar svg {
+      color: white;
+      width: 36px;
+      height: 36px;
+    }
+    
+    .athlete-name-section {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .athlete-name-section h2 {
+      color: white;
+      font-size: 1.5em;
+      font-weight: 700;
+      margin: 0;
+      letter-spacing: -0.02em;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .athlete-subtitle {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.8em;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-top: 2px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 8px;
+    }
+    
+    .athlete-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      background: transparent;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .athlete-stats-secondary {
+      grid-template-columns: repeat(4, 1fr);
+      margin-top: 0;
+    }
+    
+    .athlete-stat-item {
+      background: #f2f6fa;
+      
+      padding: 18px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.3s ease;
+      border-right: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .athlete-stat-item:last-child {
+      border-right: none;
+    }
+    
+    .athlete-stat-item:hover {
+      background: #f2f6fa;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-icon {
+      font-size: 1.6em;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    }
+    
+    .stat-content {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .stat-label {
+      font-size: 0.7em;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    
+    .stat-value {
+      font-size: 1.1em;
+      color: #1e3a8a;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    
+    @media (max-width: 768px) {
+      .athlete-stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .athlete-stats-secondary {
+        grid-template-columns: 1fr;
+      }
+      
+      .athlete-profile-header {
+        padding: 25px 20px 20px 20px;
+      }
+      
+      .athlete-avatar {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .athlete-avatar svg {
+        width: 36px;
+        height: 36px;
+      }
+      
+      .athlete-name-section h2 {
+        font-size: 1.5em;
+      }
+    }
+    
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .athlete-stats-secondary {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
     
     .dashboard-performance-container {
-      background: var(--card-bg);
+      background: #f2f6fa;
+      
       padding: 20px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -3691,21 +4001,24 @@ document.addEventListener('keydown', function(e) {
     }
     
     .dashboard-map-container {
-      background: var(--card-bg);
+      background: #f2f6fa;
+      
       padding: 20px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     
     .dashboard-top3-container {
-      background: var(--card-bg);
+      background: #f2f6fa;
+      
       padding: 20px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
     
     .dashboard-goals-container {
-      background: var(--card-bg);
+      background: #f2f6fa;
+      
       padding: 20px;
       border-radius: var(--border-radius);
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -3740,7 +4053,7 @@ document.addEventListener('keydown', function(e) {
       position: absolute;
       bottom: 15px;
       right: 15px;
-      background: var(--card-bg);
+      background: #f2f6fa;
       padding: 10px;
       border-radius: 6px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -3751,7 +4064,7 @@ document.addEventListener('keydown', function(e) {
       position: absolute;
       bottom: 15px;
       left: 15px;
-      background: var(--card-bg);
+      background: #f2f6fa;
       color: #2a5298;
       border: 1.5px solid #2a5298;
       padding: 8px 12px;
@@ -3775,7 +4088,7 @@ document.addEventListener('keydown', function(e) {
       position: absolute;
       top: 20px;
       right: 15px;
-      background: var(--card-bg);
+      background: #f2f6fa;
       color: #2a5298;
       border: 1.5px solid #2a5298;
       padding: 10px;
@@ -3814,7 +4127,7 @@ document.addEventListener('keydown', function(e) {
     .map-tooltip {
       display: none;
       position: absolute;
-      background: var(--card-bg);
+      background: #f2f6fa;
       color: var(--text-primary);
       padding: 8px 12px;
       border-radius: 6px;
@@ -4425,7 +4738,7 @@ document.addEventListener('keydown', function(e) {
     }
 
       .detail-popup-content {
-    background: var(--card-bg);
+    background: #f2f6fa;
     border-radius: var(--border-radius);
     max-width: 1600px;
     width: 95%;
@@ -5152,8 +5465,8 @@ document.addEventListener('keydown', function(e) {
     .analyse-subtabs {
       display: flex;
       gap: 8px;
-      margin: 0 15px 20px 15px;
-      padding: 0;
+      margin: 0 calc(-15px - 1px) 20px calc(-15px - 1px);
+      padding: 0 0;
       background: transparent;
     }
     
@@ -5284,9 +5597,11 @@ html, body {
 }
 
 .tab-navigation, .analyse-subtabs {
-  margin-left: 0 !important;
-  margin-right: 0 !important;
+  margin-left: calc(-15px - 1px) !important;
+  margin-right: calc(-15px - 1px) !important;
   width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
 }
 
 /* Add internal spacing to content elements */
@@ -5307,18 +5622,339 @@ details,
       padding: 20px 0 !important;
     }
     
-    /* Content has minimal padding left/right */
+    /* Content has minimal padding left/right and spacing from header */
     .content {
       padding-left: 15px !important;
       padding-right: 15px !important;
-      padding-top: 0 !important;
+      padding-top: 20px !important;
       padding-bottom: 40px !important;
+    }
+    
+    /* Tab navigation extends to full width despite content padding */
+    .tab-navigation {
+      margin-left: -15px !important;
+      margin-right: -15px !important;
+      width: calc(100% + 30px) !important;
     }
     
     /* Ensure main containers don't add extra space */
     html, body, #mainApp, .main-app, .container {
       margin: 0 !important;
       padding: 0 !important;
+    }
+
+    /* Header Tab Button - komplett ohne Box/Border */
+    .header-tab-btn {
+      text-decoration: none;
+      position: relative;
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+      outline: none !important;
+    }
+    
+    .header-tab-btn:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: #1e3c72;
+      text-decoration-thickness: 2px;
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    
+    .header-tab-btn.active {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: #1e3c72;
+      text-decoration-thickness: 2px;
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    
+    /* Analyse Dropdown - bleibt sichtbar, erweiterte Hover-Area */
+    .analyse-tab-wrapper:hover .header-analyse-dropdown,
+    .header-analyse-dropdown:hover {
+      display: block !important;
+    }
+    
+    /* Größere Hover-Area um Lücken zu überbrücken */
+    .analyse-tab-wrapper::before {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      height: 10px;
+      z-index: 999;
+    }
+    
+    /* Analyse Subtabs - mit Hover-Hintergrund */
+    .analyse-subtab {
+      text-decoration: none;
+      background: none !important;
+      border: none !important;
+      box-shadow: none !important;
+    }
+    
+    .analyse-subtab:hover {
+      text-decoration: underline;
+      text-underline-offset: 4px;
+      text-decoration-color: #1e3c72;
+      text-decoration-thickness: 2px;
+      color: #1e3c72 !important;
+      background: #f0f4ff !important;
+      border: none !important;
+    }
+
+    /* ========================================
+       UMFASSENDE DARK MODE ANPASSUNGEN
+       ======================================== */
+    
+    /* Header Buttons im Dark Mode */
+    body.dark-mode .icon-button {
+      border-color: #8b9ef5 !important;
+      color: #8b9ef5 !important;
+    }
+    
+    body.dark-mode .icon-button:hover {
+      background: rgba(139, 158, 245, 0.1) !important;
+    }
+    
+    body.dark-mode .compact-athlete-search {
+      border-color: #8b9ef5 !important;
+    }
+    
+    body.dark-mode .compact-athlete-search .search-icon svg {
+      stroke: #8b9ef5 !important;
+    }
+    
+    body.dark-mode .compact-athlete-search.expanded {
+      background: #2a4a8a !important;
+      border-color: #8b9ef5 !important;
+    }
+    
+    body.dark-mode .compact-athlete-search.expanded .search-icon svg {
+      stroke: white !important;
+    }
+    
+    /* Header Tabs im Dark Mode */
+    body.dark-mode .header-tab-btn {
+      color: #b0b0b0 !important;
+    }
+    
+    body.dark-mode .header-tab-btn.active {
+      color: #8b9ef5 !important;
+      text-decoration-color: #8b9ef5 !important;
+    }
+    
+    body.dark-mode .header-tab-btn:hover {
+      text-decoration-color: #8b9ef5 !important;
+    }
+    
+    /* Analyse Dropdown im Dark Mode */
+    body.dark-mode .header-analyse-dropdown {
+      background: #2a2a2a !important;
+      border-color: #8b9ef5 !important;
+    }
+    
+    body.dark-mode .analyse-subtab {
+      color: #b0b0b0 !important;
+    }
+    
+    body.dark-mode .analyse-subtab:hover {
+      background: #383838 !important;
+      color: #8b9ef5 !important;
+      text-decoration-color: #8b9ef5 !important;
+    }
+    
+    /* Alle weißen Hintergründe im Dark Mode entfernen */
+    body.dark-mode .white-box,
+    body.dark-mode .dashboard-stats > div,
+    body.dark-mode .stat-card,
+    body.dark-mode .performance-card,
+    body.dark-mode .card {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+    }
+    
+    /* Formulare und Inputs im Dark Mode */
+    body.dark-mode input,
+    body.dark-mode select,
+    body.dark-mode textarea {
+      background: #333 !important;
+      color: #e0e0e0 !important;
+      border-color: #555 !important;
+    }
+    
+    body.dark-mode input::placeholder,
+    body.dark-mode textarea::placeholder {
+      color: #888 !important;
+    }
+    
+    body.dark-mode input:focus,
+    body.dark-mode select:focus,
+    body.dark-mode textarea:focus {
+      background: #3a3a3a !important;
+      border-color: #8b9ef5 !important;
+    }
+    
+    /* Tabellen im Dark Mode */
+    body.dark-mode table {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode th {
+      background: #2a2a2a !important;
+      color: #8b9ef5 !important;
+      border-color: #404040 !important;
+    }
+    
+    body.dark-mode td {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+      border-color: #404040 !important;
+    }
+    
+    body.dark-mode tr:hover td {
+      background: #383838 !important;
+    }
+    
+    /* Modals im Dark Mode */
+    body.dark-mode .modal,
+    body.dark-mode .popup {
+      background: rgba(0, 0, 0, 0.8) !important;
+    }
+    
+    body.dark-mode .modal > div,
+    body.dark-mode .popup > div,
+    body.dark-mode .detail-popup-content {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+    }
+    
+    /* Buttons im Dark Mode */
+    body.dark-mode button {
+      color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .primary-btn,
+    body.dark-mode button[style*="linear-gradient"] {
+      background: linear-gradient(135deg, #2a4a8a 0%, #2a50bf 100%) !important;
+      color: white !important;
+    }
+    
+    /* Charts und Grafiken im Dark Mode */
+    body.dark-mode .chart-container,
+    body.dark-mode canvas {
+      background: #2d2d2d !important;
+    }
+    
+    /* Checkboxen und Radio Buttons im Dark Mode */
+    body.dark-mode input[type="checkbox"],
+    body.dark-mode input[type="radio"] {
+      border-color: #8b9ef5 !important;
+    }
+    
+    /* Scrollbars im Dark Mode */
+    body.dark-mode ::-webkit-scrollbar {
+      background: #2a2a2a;
+    }
+    
+    body.dark-mode ::-webkit-scrollbar-thumb {
+      background: #555;
+    }
+    
+    body.dark-mode ::-webkit-scrollbar-thumb:hover {
+      background: #666;
+    }
+    
+    /* Labels und Beschriftungen im Dark Mode */
+    body.dark-mode label,
+    body.dark-mode .label,
+    body.dark-mode .stat-label,
+    body.dark-mode .detail-info-label {
+      color: #b0b0b0 !important;
+    }
+    
+    /* Werte und wichtige Texte im Dark Mode */
+    body.dark-mode .stat-value,
+    body.dark-mode .detail-info-value,
+    body.dark-mode h1, 
+    body.dark-mode h2, 
+    body.dark-mode h3,
+    body.dark-mode h4,
+    body.dark-mode h5 {
+      color: #e0e0e0 !important;
+    }
+    
+    /* Trennlinien im Dark Mode */
+    body.dark-mode hr,
+    body.dark-mode .separator {
+      border-color: #404040 !important;
+      background: #404040 !important;
+    }
+    
+    /* Dropdown-Menüs im Dark Mode */
+    body.dark-mode .dropdown,
+    body.dark-mode .autocomplete-suggestions {
+      background: #2d2d2d !important;
+      border-color: #555 !important;
+    }
+    
+    body.dark-mode .dropdown-item,
+    body.dark-mode .autocomplete-item {
+      color: #e0e0e0 !important;
+    }
+    
+    body.dark-mode .dropdown-item:hover,
+    body.dark-mode .autocomplete-item:hover {
+      background: #383838 !important;
+    }
+    
+    /* Info-Boxen und Alerts im Dark Mode */
+    body.dark-mode .info-box,
+    body.dark-mode .alert,
+    body.dark-mode .notification {
+      background: #2d2d2d !important;
+      color: #e0e0e0 !important;
+      border-color: #555 !important;
+    }
+    
+    /* Links im Dark Mode */
+    body.dark-mode a {
+      color: #8b9ef5 !important;
+    }
+    
+    body.dark-mode a:hover {
+      color: #a8b7f7 !important;
+    }
+    
+    /* Filter und Suchfelder im Dark Mode */
+    body.dark-mode .filter-container,
+    body.dark-mode .search-container {
+      background: #2d2d2d !important;
+    }
+    
+    /* Badges und Tags im Dark Mode */
+    body.dark-mode .badge,
+    body.dark-mode .tag {
+      background: #383838 !important;
+      color: #e0e0e0 !important;
+    }
+    
+    /* Karten und Panels im Dark Mode */
+    body.dark-mode .panel,
+    body.dark-mode .card-header {
+      background: #2a2a2a !important;
+      border-color: #404040 !important;
+    }
+    
+    /* Spezielle Anpassung für helle Texte auf hellem Hintergrund */
+    body.dark-mode * {
+      scrollbar-color: #555 #2a2a2a;
     }
   </style>
 
@@ -5449,7 +6085,7 @@ details,
   });
 </script>
 <noscript>
-  <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999999;">
+  <div style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #f2f6fa; display: flex; align-items: center; justify-content: center; z-index: 9999999;">
     <div style="text-align: center; padding: 2rem;">
       <h1 style="color: #764ba2; margin-bottom: 1rem;">JavaScript erforderlich</h1>
       <p style="color: #666;">TrackUp benötigt JavaScript. Bitte aktivieren Sie JavaScript in Ihrem Browser, um fortzufahren.</p>
@@ -5462,7 +6098,7 @@ details,
      EMAIL LOGIN SCREEN
      ============================================ -->
 <div id="loginScreen" style="display: flex; justify-content: center; align-items: center; min-height: 100vh; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); padding: 10px;">
-  <div style="background: rgba(255, 255, 255, 0.9); padding: 20px; border-radius: var(--border-radius); box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%;">
+  <div style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-width: 450px; width: 100%;">
     
     <!-- Logo -->
     <div style="text-align: center; margin-bottom: 0px;">
@@ -5544,41 +6180,69 @@ details,
 <div id="mainApp" class="main-app" style="display: none;">
 
 <div class="container">
-  <div class="header">
-    <button class="icon-button" onclick="handleLogout()" title="Abmelden" style="position: absolute; top: 10px; left: 20px; margin-left: 0; background: rgba(30, 58, 138, 0.25); border: 1px solid rgba(30, 58, 138, 0.4); color: white; padding: 8px 14px; height: 36px; border-radius: 18px; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center;">
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-        <polyline points="16 17 21 12 16 7"></polyline>
-        <line x1="21" y1="12" x2="9" y2="12"></line>
-      </svg>
-    </button>
-    <button class="dark-mode-toggle" onclick="toggleDarkMode()" title="Dark Mode umschalten">
-      <span id="darkModeIcon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-        </svg>
-      </span>
-    </button>
+  <div class="header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 30px; gap: 30px; box-shadow: none;">
     
-    <!-- Logo -->
-    <div style="display: flex; justify-content: center; align-items: center; padding: 0;">
-      <img src="transparent-logo-trackup.svg" alt="TrackUp Logo" style="width: 180px; height: auto;">
+    <!-- Logo links mit gleichem Abstand wie rechts -->
+    <div style="display: flex; align-items: center; flex-shrink: 0; margin-left: 15px;">
+      <img src="transparent-logo-trackup.svg" alt="TrackUp Logo" style="width: 80px; height: auto;">
     </div>
     
-    <!-- Kompakte Athletensuche (nur für Admins) - im Header integriert -->
-    <div id="compactAthleteSearch" class="compact-athlete-search" style="display: none;">
-      <span class="search-icon">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="11" cy="11" r="8"></circle>
-          <path d="m21 21-4.35-4.35"></path>
-        </svg>
-      </span>
-      <input type="text" id="compactAthletSuche" placeholder="Athlet suchen..." autocomplete="off">
-      <div id="compactAthletVorschlaege" class="autocomplete-suggestions"></div>
-      <div id="compactSelectedInfo" class="selected-info" style="display: none;">
-        <span id="compactAthletName"></span>
-        <span class="clear-btn" onclick="clearCompactAthlete()">✕</span>
+    <!-- Tabs in der Mitte -->
+    <div style="display: flex; gap: 10px; flex-grow: 1; justify-content: center;">
+      <button class="header-tab-btn active" onclick="switchTab('dashboard')" style="padding: 10px 20px; background: none; border: none; color: #1e3c72; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Dashboard</button>
+      <button class="header-tab-btn" onclick="switchTab('leistungen')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Leistungen</button>
+      <div style="position: relative;" class="analyse-tab-wrapper">
+        <button class="header-tab-btn header-tab-analyse" onclick="switchTab('analyse')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Analyse</button>
+        <!-- Analyse Dropdown - mit Box für bessere Sichtbarkeit -->
+        <div class="header-analyse-dropdown" style="display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #f2f6fa; border: 2px solid #1e3c72; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 8px 0; margin-top: 5px; z-index: 1000; min-width: 200px;">
+          <div class="analyse-subtab" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('entwicklungen');" style="padding: 8px 20px; cursor: pointer; transition: all 0.2s; color: #666; font-size: 0.95em; text-align: center;">
+            📈 Entwicklungen
+          </div>
+          <div class="analyse-subtab" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('statistiken');" style="padding: 8px 20px; cursor: pointer; transition: all 0.2s; color: #666; font-size: 0.95em; text-align: center;">
+            📊 Statistiken
+          </div>
+        </div>
       </div>
+      <button class="header-tab-btn" onclick="switchTab('ziele')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Ziele</button>
+    </div>
+    
+    <!-- Rechte Seite: Athletensuche, Dark Mode, Logout -->
+    <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-right: 15px;">
+      <!-- Athletensuche - fixed width container to prevent layout shift -->
+      <div style="position: relative; width: 40px; height: 40px;">
+        <div id="compactAthleteSearch" class="compact-athlete-search" style="display: none; position: absolute; right: 0; top: 0;">
+          <span class="search-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </span>
+          <input type="text" id="compactAthletSuche" placeholder="Athlet suchen..." autocomplete="off">
+          <div id="compactAthletVorschlaege" class="autocomplete-suggestions"></div>
+          <div id="compactSelectedInfo" class="selected-info" style="display: none;">
+            <span id="compactAthletName"></span>
+            <span class="clear-btn" onclick="clearCompactAthlete()">✕</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Dark Mode Button - mit navy blauer Umrandung, runder -->
+      <button class="icon-button" onclick="toggleDarkMode()" title="Dark Mode umschalten" style="width: 40px; height: 40px; padding: 0; background: none; border: 2px solid #1e3c72; border-radius: 20px; color: #1e3c72; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+        <span id="darkModeIcon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </span>
+      </button>
+      
+      <!-- Logout Button - mit navy blauer Umrandung, runder -->
+      <button class="icon-button" onclick="handleLogout()" title="Abmelden" style="width: 40px; height: 40px; padding: 0; background: none; border: 2px solid #1e3c72; border-radius: 20px; color: #1e3c72; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
     </div>
     
   </div>
@@ -5588,110 +6252,87 @@ details,
     <!-- ================= LEISTUNGEN ================= -->
     <div class="section">
       
-      <!-- Tab Navigation -->
-      <div class="tab-navigation">
-        <button class="tab-btn active" onclick="switchTab('dashboard')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
-            <rect x="3" y="3" width="7" height="7"></rect>
-            <rect x="14" y="3" width="7" height="7"></rect>
-            <rect x="14" y="14" width="7" height="7"></rect>
-            <rect x="3" y="14" width="7" height="7"></rect>
-          </svg>
-          Dashboard
-        </button>
-        <button class="tab-btn" onclick="switchTab('leistungen')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
-          </svg>
-          Leistungen
-        </button>
-        <button class="tab-btn tab-btn-with-dropdown" onclick="switchTab('analyse')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
-            <line x1="12" y1="20" x2="12" y2="10"></line>
-            <line x1="18" y1="20" x2="18" y2="4"></line>
-            <line x1="6" y1="20" x2="6" y2="16"></line>
-          </svg>
-          Analyse
-          <svg class="dropdown-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-left: 6px; vertical-align: middle;">
-            <polyline points="6 9 12 15 18 9"></polyline>
-          </svg>
-          
-          <!-- Dropdown Menu -->
-          <div class="analyse-dropdown-menu">
-            <div class="dropdown-item" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('entwicklungen');">
-              <span class="dropdown-icon">📈</span>
-              <div class="dropdown-text">
-                <div class="dropdown-title">Entwicklungen</div>
-                <div class="dropdown-desc">Leistungsentwicklung, SB & Prognosen</div>
-              </div>
-            </div>
-            <div class="dropdown-item" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('statistiken');">
-              <span class="dropdown-icon">📊</span>
-              <div class="dropdown-text">
-                <div class="dropdown-title">Statistiken</div>
-                <div class="dropdown-desc">Detaillierte Analysen & Bestleistungen</div>
-              </div>
-            </div>
-          </div>
-        </button>
-        <button class="tab-btn" onclick="switchTab('ziele')">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: middle;">
-            <circle cx="12" cy="12" r="10"></circle>
-            <circle cx="12" cy="12" r="6"></circle>
-            <circle cx="12" cy="12" r="2"></circle>
-          </svg>
-          Ziele
-        </button>
-      </div>
-
       <!-- ============================================ -->
       <!-- DASHBOARD TAB -->
       <!-- ============================================ -->
       <div id="dashboardTab" class="tab-content active">
         
-        <!-- Welcome Message -->
+        <!-- Welcome Message 
         <div class="dashboard-welcome" id="dashboardWelcome" style="display:none;">
           <h3>Willkommen auf dem Profil von <span id="dashboardAthletName"></span>!</h3>
-        </div>
+        </div>-->
         
-        <!-- Athleten Informationen -->
+        <!-- Athleten Profil Card -->
         <div id="athletenInfos" class="dashboard-athlete-info" style="display: none;">
-            <div style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                <span><strong>Name:</strong> <span id="athletVollerName"></span></span>
-                <span style="color: #ccc;">|</span>
-                <span><strong>Jahrgang:</strong> <span id="athletJahrgang"></span></span>
-                <span style="color: #ccc;">|</span>
-                <span><strong>Erste Leistung:</strong> <span id="athletErsteLeistung"></span></span>
-                <span style="color: #ccc;">|</span>
-                <span><strong>Letzte Leistung:</strong> <span id="athletLetzteLeistung"></span></span>
+            <div class="athlete-profile-header">
+                <div class="athlete-avatar">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+                <div class="athlete-name-section">
+                    <div class="athlete-subtitle">Athletenprofil</div>
+                    <h2 id="athletVollerName"></h2>
+                </div>
             </div>
-        </div>
-
-        <!-- Stats Overview -->
-        <div class="dashboard-grid">
-          <div class="stat-card-dashboard" onclick="switchTab('leistungen')">
-            <div class="label">Gesamte Leistungen</div>
-            <div class="value" id="statTotalLeistungen">-</div>
-          </div>
-
-          <div class="stat-card-dashboard" onclick="switchTab('leistungen')">
-            <div class="label">Wettkämpfe</div>
-            <div class="value" id="statTotalWettkaempfe">-</div>
-          </div>
-
-          <div class="stat-card-dashboard" onclick="switchTab('leistungen')">
-            <div class="label">Disziplinen</div>
-            <div class="value" id="statTotalDisziplinen">-</div>
-          </div>
-
-          <div class="stat-card-dashboard" onclick="switchTab('leistungen')">
-            <div class="label">Aktiv seit</div>
-            <div class="value" id="statCurrentYear">2025</div>
-          </div>
+            <!-- Zweite Reihe: Statistiken -->
+            <div class="athlete-stats-grid athlete-stats-secondary">
+                <div class="athlete-stat-item" onclick="switchTab('leistungen')" style="cursor: pointer;">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Leistungen</div>
+                        <div class="stat-value" id="statTotalLeistungen">-</div>
+                    </div>
+                </div>
+                <div class="athlete-stat-item" onclick="switchTab('leistungen')" style="cursor: pointer;">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Wettkämpfe</div>
+                        <div class="stat-value" id="statTotalWettkaempfe">-</div>
+                    </div>
+                </div>
+                <div class="athlete-stat-item" onclick="switchTab('leistungen')" style="cursor: pointer;">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Disziplinen</div>
+                        <div class="stat-value" id="statTotalDisziplinen">-</div>
+                    </div>
+                </div>
+                <div class="athlete-stat-item" onclick="switchTab('leistungen')" style="cursor: pointer;">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-label">Aktiv seit</div>
+                        <div class="stat-value" id="statCurrentYear">2025</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Button für letzte 3 Wettkämpfe -->
+            <div style="padding: 0; position: relative; z-index: 1; background: #f2f6fa;">
+                <button onclick="showLetzteWettkaempfe()" style="
+                    width: 100%;
+                    padding: 18px 20px;
+                    background: transparent;
+                    border: none;
+                    border-top: 1px solid rgba(255, 255, 255, 0.2);
+                    cursor: pointer;
+                    font-size: 0.95em;
+                    font-weight: 600;
+                    color: #1e3c72;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 12px;
+                    transition: all 0.3s ease;
+                " onmouseover="this.style.background='white'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0, 0, 0, 0.1) inset';" onmouseout="this.style.background='transparent'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                    <span style="font-size: 1.4em;">🏃</span>
+                    <span>Letzte 3 Wettkämpfe</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-left: auto;">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Ziele Bereich -->
@@ -5754,7 +6395,7 @@ details,
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
                 <circle cx="12" cy="8" r="7"></circle>
                 <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
-              </svg>
+              </svg> 
               Top Bestleistungen
             </h3>
             <div class="dashboard-performance-container" style="height: 640px;">
@@ -5772,14 +6413,14 @@ details,
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
-              </svg>
+              </svg> 
               Wettkampforte
             </h3>
             <div class="dashboard-map-container" style="height: 640px;">
-              <div id="mapContainer" style="position: relative; height: 600px; background: #d0e8f5; border-radius: 8px; overflow: hidden; cursor: grab;" onmousedown="startMapDrag(event)" onwheel="zoomMap(event)">
+              <div id="mapContainer" style="position: relative; height: 600px; background: #ffffff; border-radius: 8px; overflow: hidden; cursor: grab; box-shadow: 0 2px 8px rgba(0,0,0,0.08); border: 1px solid #e0e0e0;" onmousedown="startMapDrag(event)" onwheel="zoomMap(event)">
                 <svg id="germanyMap" viewBox="-100 0 600 650" style="width: 100%; height: 100%; transform-origin: 0 0;">
                   <!-- Hintergrund -->
-                  <rect x="-100" y="0" width="600" height="650" fill="#d0e8f5" opacity="1"/>
+                  <rect x="-100" y="0" width="600" height="650" fill="#ffffff" opacity="1"/>
                   
                   <!-- Deutschlandkarte - korrekte Grenze -->
                   <g id="germanyBorder"></g>
@@ -5847,7 +6488,7 @@ details,
                 <circle cx="12" cy="12" r="10"></circle>
                 <circle cx="12" cy="12" r="6"></circle>
                 <circle cx="12" cy="12" r="2"></circle>
-              </svg>
+              </svg> 
               Top 3 Disziplinen
             </h3>
             <div class="dashboard-top3-container">
@@ -5981,7 +6622,6 @@ details,
               </svg>
             </button>
           </div>
-          <div id="searchResultCount" style="margin-top: 8px; color: var(--text-muted); font-size: 0.85em; display: none;"></div>
         </div>
 
 <div class="columns-section">
@@ -6032,15 +6672,13 @@ details,
         </div>
 
         <div class="filter-section">
-          <details open>
+          <details>
             <summary style="cursor: pointer; font-weight: 600; font-size: 1.05em; padding: 12px; border-radius: 8px; margin-bottom: 15px; user-select: none;">
               🔧 Filter
             </summary>
             <div id="filterContainer"></div>
             <div class="button-group">
-              <button onclick="ladeLeistungen()">Anzeigen</button>
               <button class="reset-btn" onclick="alleFilterZuruecksetzen()">🔄 Alle Filter zurücksetzen</button>
-              <button class="export-btn" onclick="exportiereCSV()" id="exportBtn" style="display:none;">💾 Als CSV exportieren</button>
             </div>
           </details>
         </div>
@@ -6099,7 +6737,7 @@ details,
         <input type="checkbox" id="vergleichsModus" onchange="toggleVergleichsModus()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #1e3a8a;">
         <span style="font-weight: 500;">Zwei Disziplinen vergleichen</span>
       </label>
-      <div id="vergleichsDisziplinContainer" style="display: none; margin-top: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+      <div id="vergleichsDisziplinContainer" style="display: none; margin-top: 10px; padding: 12px; background: #ffffff; border-radius: 6px;">
         <label style="font-weight: 500; display: block; margin-bottom: 5px;">Zweite Disziplin:</label>
         <select id="vergleichsDisziplin" style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 8px;">
           <option value="">– Disziplin wählen –</option>
@@ -6114,7 +6752,7 @@ details,
       <button id="diagrammSchließenBtn" onclick="schließeDiagramm()" style="display: none;">Einklappen</button>
       <button id="diagrammAusklappenBtn" onclick="klappeAusDiagramm()" style="display: none;">Ausklappen</button>
           </div>
-          <div id="diagrammContainer" style="display:none; margin-top: 20px; background: rgba(255, 255, 255, 0.9); padding: 10px; border-radius: 8px;">
+          <div id="diagrammContainer" style="display:none; margin-top: 20px; background: #f2f6fa;  padding: 10px; border-radius: 8px;">
       <h4 style="margin: 0 0 10px 0; color: #2a5298;">Leistungsdiagramm</h4>
       <div style="height: 400px;">
         <canvas id="leistungsChart"></canvas>
@@ -6165,7 +6803,7 @@ details,
           <input type="checkbox" id="sbVergleichsModus" onchange="toggleSBVergleichsModus()" style="width: 18px; height: 18px; cursor: pointer; accent-color: #1e3a8a;">
           <span style="font-weight: 500;">Zwei Disziplinen vergleichen</span>
         </label>
-        <div id="sbVergleichsDisziplinContainer" style="display: none; margin-top: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+        <div id="sbVergleichsDisziplinContainer" style="display: none; margin-top: 10px; padding: 12px; background: #ffffff; border-radius: 6px;">
           <label style="font-weight: 500; display: block; margin-bottom: 5px;">Zweite Disziplin:</label>
           <select id="sbVergleichsDisziplin" style="width: 100%; padding: 8px; border: 2px solid #e0e0e0; border-radius: 8px;">
             <option value="">– Disziplin wählen –</option>
@@ -6181,7 +6819,7 @@ details,
       </div>
       
       <!-- Checkboxen für SBs und Durchschnitte -->
-      <div id="sbDiagrammOptionsContainer" style="display:none; margin-top: 20px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+      <div id="sbDiagrammOptionsContainer" style="display:none; margin-top: 20px; padding: 12px; background: #ffffff; border-radius: 6px;">
         <div style="display: flex; gap: 20px; align-items: center;">
           <strong style="color: #2a5298;">Anzeigen:</strong>
           <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
@@ -6194,7 +6832,7 @@ details,
           </label>
         </div>
       </div>
-      <div id="sbDiagrammContainer" style="display:none; margin-top: 20px; background: rgba(255, 255, 255, 0.9); padding: 10px; border-radius: 8px;">
+      <div id="sbDiagrammContainer" style="display:none; margin-top: 20px; background: #f2f6fa;  padding: 10px; border-radius: 8px;">
         <h4 style="margin: 0 0 10px 0; color: #2a5298;">SB & Saisondurchschnitte</h4>
         <div style="height: 400px;">
           <canvas id="sbChart"></canvas>
@@ -6239,7 +6877,7 @@ details,
         <button id="prognoseDiagrammSchließenBtn" onclick="schließePrognoseDiagramm()" style="display: none;">Einklappen</button>
         <button id="prognoseDiagrammAusklappenBtn" onclick="klappeAusPrognoseDiagramm()" style="display: none;">Ausklappen</button>
       </div>
-      <div id="prognoseDiagrammContainer" style="display:none; margin-top: 20px; background: rgba(255, 255, 255, 0.9); padding: 10px; border-radius: 8px;">
+      <div id="prognoseDiagrammContainer" style="display:none; margin-top: 20px; background: #f2f6fa;  padding: 10px; border-radius: 8px;">
         <h4 style="margin: 0 0 10px 0; color: #2a5298;">Leistungsprognose</h4>
         <div id="prognoseInfo" style="background: #f0f8ff; padding: 10px; border-radius: 6px; margin-bottom: 15px; font-size: 0.95em; line-height: 1.6;"></div>
         <div style="height: 400px;">
@@ -6257,12 +6895,12 @@ details,
 <div class="filter-section">
           <!-- Filter einklappbar -->
           <details>
-      <summary style="font-weight: 600; color: #2a5298; cursor: pointer; padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px;">
+      <summary style="font-weight: 600; color: #2a5298; cursor: pointer; padding: 12px; background: #ffffff; border-radius: 8px; margin-bottom: 15px;">
         🔍 Filter
       </summary>
     
           <div style="margin-bottom: 15px;">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #ffffff; border-radius: 6px;">
         <div>
           <label style="font-size: 0.9em; font-weight: 500;">Disziplin:</label>
           <select id="statistikFilterDisziplin" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
@@ -6351,12 +6989,12 @@ details,
           
           <!-- Filter einklappbar -->
           <details>
-      <summary style="font-weight: 600; color: #2a5298; cursor: pointer; padding: 12px; background: #f8f9fa; border-radius: 8px; margin-bottom: 15px;">
+      <summary style="font-weight: 600; color: #2a5298; cursor: pointer; padding: 12px; background: #ffffff; border-radius: 8px; margin-bottom: 15px;">
         🔍 Filter
       </summary>
     
           <div style="margin-bottom: 15px;">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #f8f9fa; border-radius: 6px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #ffffff; border-radius: 6px;">
         <div>
           <label style="font-size: 0.9em; font-weight: 500;">Disziplin:</label>
           <select id="bestleistungenFilterDisziplin" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
@@ -7716,6 +8354,15 @@ function baueFilter() {
   if(filterHTML.length > 0) {
     container.innerHTML = '<div class="filter-container">' + filterHTML.join('') + '</div>';
   }
+
+  // Auto-Update bei Filter-Änderungen
+  let _fd = null;
+  document.querySelectorAll('#filterContainer [data-filter],[data-filter-from],[data-filter-to]').forEach(el => {
+    el.addEventListener('input', () => { clearTimeout(_fd); _fd = setTimeout(() => ladeLeistungen(), 400); });
+  });
+  document.querySelectorAll('#filterContainer [data-filter-dropdown],[data-filter-jahr]').forEach(el => {
+    el.addEventListener('change', () => ladeLeistungen());
+  });
 }
 
 /* ================= DISZIPLIN MULTI-SELECT HANDLING ================= */
@@ -7765,6 +8412,7 @@ function handleDisziplinChange() {
       row.remove();
     }
   });
+  ladeLeistungen();
 }
 
 function entferneDisziplinFilter(button) {
@@ -7774,6 +8422,7 @@ function entferneDisziplinFilter(button) {
   // Nicht entfernen wenn es die einzige Zeile ist
   if(container.querySelectorAll('.disziplin-filter-row').length > 1) {
     row.remove();
+    ladeLeistungen();
   }
 }
 
@@ -7805,24 +8454,23 @@ function alleFilterZuruecksetzen() {
   // Sortierung zurücksetzen
   sortSpalte = null;
   sortAsc = true;
-  
-  // Tabelle leeren
-  document.getElementById("leistungenAusgabe").innerHTML = "";
-  document.getElementById("exportBtn").style.display = "none";
   aktuelleLeistungsdaten = null;
-  
+
   alert("✅ Alle Filter wurden zurückgesetzt!");
+  ladeLeistungen();
 }
 
 /* ================= LEISTUNGEN ================= */
-async function ladeLeistungen() {
+async function ladeLeistungen(optionen) {
   const leistungenTab = document.getElementById("leistungenTab");
   if(!leistungenTab) {
     console.error("leistungenTab nicht gefunden!");
     return;
   }
-  
-  const cols = Array.from(leistungenTab.querySelectorAll(".spalte:checked")).map(c => c.value);
+  const alleSpalten = Array.from(leistungenTab.querySelectorAll(".spalte")).map(c => c.value);
+  const cols = (optionen && optionen.forceCols)
+    ? alleSpalten
+    : Array.from(leistungenTab.querySelectorAll(".spalte:checked")).map(c => c.value);
   
   // Füge athlet_id und disziplin hinzu falls nicht vorhanden (für PB-Erkennung)
   const colsForQuery = [...cols];
@@ -7930,18 +8578,15 @@ async function ladeLeistungen() {
     if (error.code === 'PGRST116' || error.message.includes('0 rows')) {
       console.log('Keine Leistungen vorhanden für diesen Athleten');
       document.getElementById("leistungenAusgabe").innerHTML = `<div class="no-data">Noch keine Leistungen erfasst</div>`;
-      document.getElementById("exportBtn").style.display = "none";
       return;
     }
     document.getElementById("leistungenAusgabe").innerHTML = `<div class="no-data">❌ ${error.message}</div>`;
-    document.getElementById("exportBtn").style.display = "none";
     return;
   }
   
   if (!data || data.length === 0) {
     console.log('Keine Leistungen gefunden');
     document.getElementById("leistungenAusgabe").innerHTML = `<div class="no-data">Noch keine Leistungen erfasst</div>`;
-    document.getElementById("exportBtn").style.display = "none";
     return;
   }
 
@@ -7992,7 +8637,6 @@ async function ladeLeistungen() {
   // Übergebe gefilterte Daten + ALLE Leistungen für echte PB-Erkennung
   zeigeTabelleMitPBs(angezeigteDaten, sortierteDaten, "leistungenAusgabe", true);
   
-  document.getElementById("exportBtn").style.display = data && data.length > 0 ? "inline-block" : "none";
 }
 
 /* ================= DURCHSCHNITT BERECHNEN ================= */
@@ -8078,7 +8722,7 @@ function renderScoreTable() {
 
   // Erstelle Tabelle im Stil der Leistungen-Tabelle
   let html = `
-    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <div></div>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -8275,7 +8919,7 @@ async function berechneDurchschnitt(typ) {
 
   // Tabellen-HTML mit der gewünschten Reihenfolge und Schließen-Button
   let html = `
-    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
         <h3 style="color: #2a5298; margin: 0;">${typ === 'leistung' ? 'Ø Leistung' : 'Ø Platzierung'}</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -8366,9 +9010,9 @@ function formatiereLeistung(wert, disziplin) {
     return Number(wert).toFixed(0) + " Pkt.";
   }
   
-  // Sprung/Wurf (Meter) - 2 Nachkommastellen mit Komma
+  // Sprung/Wurf (Meter) - immer 2 Nachkommastellen
   // WICHTIG: Diese Prüfung MUSS vor der Lauf-Prüfung kommen
-  // Alle Sprungdisziplinen (inkl. Stabhochsprung) und Wurfdisziplinen werden hier mit "m" und 2 Nachkommastellen formatiert
+  // Alle Sprungdisziplinen (inkl. Stabhochsprung) und Wurfdisziplinen werden hier mit "m" formatiert
   if(normalizedD.includes("sprung") || normalizedD.includes("wurf") || normalizedD.includes("stoß") || normalizedD.includes("ball") || normalizedD.includes("gewicht")) {
     return Number(wert).toFixed(2).replace('.', ',') + " m";
   }
@@ -8391,6 +9035,7 @@ function formatiereLeistung(wert, disziplin) {
       const hundertstel = Math.round((sekunden - sek) * 100);
       return `${minuten}:${sek.toString().padStart(2, '0')},${hundertstel.toString().padStart(2, '0')} min`;
     } else {
+      // Immer 2 Nachkommastellen
       return sekunden.toFixed(2).replace('.', ',') + " s";
     }
   }
@@ -8473,8 +9118,9 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
 
   let infoHtml = "";
   if(ziel === "leistungenAusgabe"){
-    infoHtml = `<div class="results-info">
+    infoHtml = `<div class="results-info" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                   <div class="results-count">📋 ${angezeigteDaten.length} ${angezeigteDaten.length === 1 ? 'Leistung' : 'Leistungen'} gefunden</div>
+                  <button class="export-btn" onclick="exportiereCSV()" id="exportBtn">💾 Als CSV exportieren</button>
                 </div>`;
   }
 
@@ -9122,7 +9768,6 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
     document.getElementById("leistungenAusgabe").innerHTML = html;
   }
   
-  document.getElementById("exportBtn").style.display = "inline-block";
   // Pop-up-Handler nach Rendern setzen
   setTimeout(addRowClickHandlers, 50);
 }
@@ -9457,12 +10102,32 @@ async function initializeApp() {
   baueFilter();
   console.log('✅ Filter gebaut');
   
-  // Event Listener für Spalten-Checkboxen
+  // Event Listener für Spalten-Checkboxen → Auto-Update
   const spaltenCheckboxen = document.querySelectorAll("#leistungenTab .spalte");
   console.log('✅ Spalten-Checkboxen gefunden:', spaltenCheckboxen.length);
   spaltenCheckboxen.forEach(cb => {
-    cb.addEventListener("change", baueFilter);
+    cb.addEventListener("change", () => {
+      const si = document.getElementById('tableSearchInput');
+      const st = si ? si.value.toLowerCase().trim() : '';
+      if (st && sucheTabelleBereit) {
+        // Manuelle Änderung während Suche: aus searchActivatedColumns entfernen
+        // damit die Suche diese Checkbox nicht mehr zurückschreibt
+        searchActivatedColumns.delete(cb.value);
+        baueFilter();
+        performSearch(st);
+      } else if (!st) {
+        baueFilter();
+        ladeLeistungen();
+      }
+    });
   });
+  const _alleCb = document.getElementById("alleSpalten");
+  if (_alleCb) {
+    _alleCb.addEventListener("change", () => {
+      const si = document.getElementById('tableSearchInput');
+      if (!si || !si.value.trim()) ladeLeistungen();
+    });
+  }
   
   // Befülle Analyse-Disziplin Dropdown
   const analyseDisziplinSelect = document.getElementById('analyseDisziplin');
@@ -9580,6 +10245,9 @@ async function ladeDashboardDaten() {
   // Statistiken berechnen
   document.getElementById('statTotalLeistungen').textContent = data.length;
   
+  // Speichere alle Leistungen für das Wettkämpfe-Popup
+  letzteWettkaempfeData = data.sort((a, b) => new Date(b.datum) - new Date(a.datum));
+  
   // Unique Disziplinen zählen
   const uniqueDisziplinen = [...new Set(data.map(d => d.disziplin))];
   document.getElementById('statTotalDisziplinen').textContent = uniqueDisziplinen.length;
@@ -9594,29 +10262,23 @@ async function ladeDashboardDaten() {
   // Zeige erste und letzte Leistung in Athleten-Infos
   const athletInfoDiv = document.getElementById('athletenInfos');
   if(athletInfoDiv && athletData) {
-    // Voller Name (name statt nachname in der DB!)
-    document.getElementById('athletVollerName').textContent = 
-      `${athletData.vorname} ${athletData.name}`;
-    
     // Jahrgang direkt aus dem jahrgang-Feld nehmen
     const jahrgang = athletData.jahrgang || athletData.geburtsdatum;
     console.log('Jahrgang/Geburtsdatum aus DB:', jahrgang);
     
+    let jahrgangText = '';
     if (jahrgang) {
       // Wenn es ein Datum ist, extrahiere das Jahr
       const jahrgangZahl = typeof jahrgang === 'number' ? jahrgang : new Date(jahrgang).getFullYear();
       console.log('Angezeigter Jahrgang:', jahrgangZahl);
-      document.getElementById('athletJahrgang').textContent = jahrgangZahl;
+      jahrgangText = ` (${jahrgangZahl})`;
     } else {
       console.warn('Kein Jahrgang vorhanden!');
-      document.getElementById('athletJahrgang').textContent = '-';
     }
     
-    // Erste und letzte Leistung
-    document.getElementById('athletErsteLeistung').textContent = 
-      earliestDate.toLocaleDateString('de-DE');
-    document.getElementById('athletLetzteLeistung').textContent = 
-      latestDate.toLocaleDateString('de-DE');
+    // Voller Name als H2 (oben), Athletenprofil mit Jahrgang als Subtitle (unten)
+    document.getElementById('athletVollerName').textContent = 
+      `${athletData.vorname} ${athletData.name}${jahrgangText}`;
     
     // WICHTIG: Zeige die Infos an!
     athletInfoDiv.style.display = 'block';
@@ -9733,8 +10395,8 @@ async function ladeDashboardDaten() {
     const medals = ['🥇', '🥈', '🥉'];
     // Platz 1 nimmt volle Breite, Platz 2 und 3 jeweils halbe Breite
     const style = index === 0 
-      ? "width: 100%; padding: 15px; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 8px; border-left: 4px solid #1e3a8a; margin-bottom: 15px;"
-      : "flex: 1; min-width: 0; padding: 15px; background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%); border-radius: 8px; border-left: 4px solid #1e3a8a;";
+      ? "width: 100%; padding: 15px; background: #ffffff; border-radius: 8px; border-left: 4px solid #1e3a8a; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);"
+      : "flex: 1; min-width: 0; padding: 15px; background: #ffffff; border-radius: 8px; border-left: 4px solid #1e3a8a; box-shadow: 0 2px 8px rgba(0,0,0,0.08);";
     
     return `
       ${index === 1 ? '<div style="display: flex; gap: 15px; width: 100%;">' : ''}
@@ -9778,13 +10440,21 @@ function switchTab(tabName) {
     tab.classList.remove('active');
   });
   
-  // Entferne active von allen Buttons
+  // Entferne active von allen alten Tab-Buttons (falls noch vorhanden)
   const allButtons = document.querySelectorAll('.tab-btn');
   allButtons.forEach(btn => {
     btn.classList.remove('active');
   });
   
-  // Entferne/setze analyse-active Klasse an tab-navigation
+  // Entferne active von allen neuen Header-Tab-Buttons
+  const headerTabButtons = document.querySelectorAll('.header-tab-btn');
+  headerTabButtons.forEach(btn => {
+    btn.classList.remove('active');
+    btn.style.color = '#666';
+    btn.style.fontWeight = '500';
+  });
+  
+  // Entferne/setze analyse-active Klasse an tab-navigation (falls noch vorhanden)
   const tabNavigation = document.querySelector('.tab-navigation');
   if (tabNavigation) {
     if (tabName === 'analyse') {
@@ -9816,16 +10486,18 @@ function switchTab(tabName) {
     bottomSection.style.display = (tabName === 'dashboard') ? 'grid' : 'none';
   }
   
-  // Zeige gewählten Tab
+  // Zeige gewählten Tab und aktiviere entsprechenden Header-Button
   if(tabName === 'dashboard') {
     const tab = document.getElementById('dashboardTab');
-    const btn = allButtons[0];
+    const headerBtn = headerTabButtons[0];
     if(tab) {
       tab.classList.add('active');
       console.log('Activated dashboardTab');
     }
-    if(btn) {
-      btn.classList.add('active');
+    if(headerBtn) {
+      headerBtn.classList.add('active');
+      headerBtn.style.color = '#1e3c72';
+      headerBtn.style.fontWeight = '600';
     }
     // Lade Dashboard-Daten wenn Athlet ausgewählt
     if(selectedAthleteId) {
@@ -9833,25 +10505,29 @@ function switchTab(tabName) {
     }
   } else if(tabName === 'ziele') {
     const tab = document.getElementById('zieleTab');
-    const btn = allButtons[3];
+    const headerBtn = headerTabButtons[3];
     if(tab) {
       tab.classList.add('active');
       console.log('Activated zieleTab');
     }
-    if(btn) {
-      btn.classList.add('active');
+    if(headerBtn) {
+      headerBtn.classList.add('active');
+      headerBtn.style.color = '#1e3c72';
+      headerBtn.style.fontWeight = '600';
     }
     // Aktualisiere Ziele-Tab
     updateGoalsTab();
   } else if(tabName === 'leistungen') {
     const tab = document.getElementById('leistungenTab');
-    const btn = allButtons[1];
+    const headerBtn = headerTabButtons[1];
     if(tab) {
       tab.classList.add('active');
       console.log('Activated leistungenTab');
     }
-    if(btn) {
-      btn.classList.add('active');
+    if(headerBtn) {
+      headerBtn.classList.add('active');
+      headerBtn.style.color = '#1e3c72';
+      headerBtn.style.fontWeight = '600';
     }
     // Scrolle automatisch nach oben
     setTimeout(() => {
@@ -9859,13 +10535,15 @@ function switchTab(tabName) {
     }, 100);
   } else if(tabName === 'analyse') {
     const tab = document.getElementById('analyseTab');
-    const btn = allButtons[2];
+    const headerBtn = headerTabButtons[2];
     if(tab) {
       tab.classList.add('active');
       console.log('Activated analyseTab');
     }
-    if(btn) {
-      btn.classList.add('active');
+    if(headerBtn) {
+      headerBtn.classList.add('active');
+      headerBtn.style.color = '#1e3c72';
+      headerBtn.style.fontWeight = '600';
     }
   }
   
@@ -9930,69 +10608,51 @@ function checkIstZeitDisziplin(disziplin) {
 }
 
 // Funktion zum Generieren schöner runder Leistungswerte für Y-Achsen
-function generiereSchoeneLeistungen(min, max, disziplin, anzahlTicks = 8) {
+function generiereSchoeneLeistungen(min, max, disziplin, anzahlTicks = 5) {
     if (!min || !max || min === max) {
         return [min || 0];
     }
     
-    const istZeit = checkIstZeitDisziplin(disziplin);
     const bereich = max - min;
     
-    // Bestimme passende Schrittgröße basierend auf dem Bereich
-    let schrittgroesse;
+    // Berechne den idealen Schritt für anzahlTicks
+    const idealerSchritt = bereich / (anzahlTicks - 1);
     
-    if (istZeit) {
-        // Zeitdisziplinen - feinere Abstufungen
-        if (bereich < 0.5) schrittgroesse = 0.05;
-        else if (bereich < 1) schrittgroesse = 0.1;
-        else if (bereich < 2) schrittgroesse = 0.2;
-        else if (bereich < 5) schrittgroesse = 0.5;
-        else if (bereich < 10) schrittgroesse = 1;
-        else if (bereich < 20) schrittgroesse = 2;
-        else if (bereich < 60) schrittgroesse = 5;
-        else if (bereich < 120) schrittgroesse = 10;
-        else if (bereich < 300) schrittgroesse = 30;
-        else schrittgroesse = 60;
-    } else {
-        // Felddisziplinen (Sprung, Wurf, Mehrkampf)
-        if (bereich < 0.5) schrittgroesse = 0.05;
-        else if (bereich < 1) schrittgroesse = 0.1;
-        else if (bereich < 2) schrittgroesse = 0.2;
-        else if (bereich < 5) schrittgroesse = 0.5;
-        else if (bereich < 10) schrittgroesse = 1;
-        else if (bereich < 20) schrittgroesse = 2;
-        else if (bereich < 50) schrittgroesse = 5;
-        else if (bereich < 100) schrittgroesse = 10;
-        else if (bereich < 500) schrittgroesse = 50;
-        else if (bereich < 1000) schrittgroesse = 100;
-        else schrittgroesse = 200;
+    // Finde einen "schönen" Schritt, der dem idealen Schritt nahe kommt
+    // Schöne Schritte: 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, etc.
+    const schoeneSchritte = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100, 200, 500, 1000];
+    
+    // Finde den schönen Schritt, der dem idealen am nächsten ist
+    let schritt = schoeneSchritte[0];
+    let minDiff = Math.abs(idealerSchritt - schritt);
+    
+    for (const s of schoeneSchritte) {
+        const diff = Math.abs(idealerSchritt - s);
+        if (diff < minDiff) {
+            minDiff = diff;
+            schritt = s;
+        }
     }
     
-    // Runde Min/Max auf schöne Werte
-    const rundeAb = (wert) => Math.floor(wert / schrittgroesse) * schrittgroesse;
-    const rundeAuf = (wert) => Math.ceil(wert / schrittgroesse) * schrittgroesse;
+    // Finde einen schönen Startwert (auf schritt gerundet)
+    const startWert = Math.floor(min / schritt) * schritt;
     
-    const startWert = rundeAb(min);
-    const endWert = rundeAuf(max);
-    
-    // Generiere Ticks
+    // Generiere Ticks mit dem schönen Schritt
     const ticks = [];
     let aktuellerWert = startWert;
     
-    while (aktuellerWert <= endWert && ticks.length < 15) { // Max 15 Ticks
-        ticks.push(Number(aktuellerWert.toFixed(3))); // Runde auf 3 Dezimalen um Floating-Point-Fehler zu vermeiden
-        aktuellerWert += schrittgroesse;
+    // Füge Werte hinzu, solange wir im Bereich sind oder noch nicht genug Ticks haben
+    while (ticks.length < anzahlTicks + 2 && aktuellerWert <= max + schritt) {
+        if (aktuellerWert >= min - schritt) {
+            ticks.push(Number(aktuellerWert.toFixed(2)));
+        }
+        aktuellerWert += schritt;
     }
     
-    // Stelle sicher, dass mindestens 3 Ticks vorhanden sind
-    if (ticks.length < 3) {
-        schrittgroesse = bereich / 4;
-        ticks.length = 0;
-        aktuellerWert = min;
-        while (aktuellerWert <= max && ticks.length < 5) {
-            ticks.push(Number(aktuellerWert.toFixed(3)));
-            aktuellerWert += schrittgroesse;
-        }
+    // Wenn wir zu viele haben, nimm die mittleren anzahlTicks
+    if (ticks.length > anzahlTicks) {
+        const start = Math.floor((ticks.length - anzahlTicks) / 2);
+        return ticks.slice(start, start + anzahlTicks);
     }
     
     return ticks;
@@ -10378,30 +11038,74 @@ async function zeigeDiagramm() {
                 min: displayMin,
                 max: displayMax,
                 afterBuildTicks: function(axis) {
-                    // Generiere schöne Leistungswerte für Disziplin 1
-                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung1, maxLeistung1, disziplin, 8);
+                    const numTicks = 5;
                     
-                    // Mappe jede Leistung zu ihrem Score-Wert
-                    axis.ticks = schoeneLeistungen.map(leistung => {
-                        // Berechne den Score für diese Leistung
-                        let score;
-                        if (istZeitDisziplin1) {
-                            // Bei Zeit: niedrigere Zeit = höherer Score
-                            // Normalisiere Leistung im Bereich [minLeistung1, maxLeistung1] zu [0, 1]
-                            const leistungNormalized = (maxLeistung1 - leistung) / (maxLeistung1 - minLeistung1);
-                            // Mappe auf Score-Bereich
-                            score = displayMin + (leistungNormalized * (displayMax - displayMin));
-                        } else {
-                            // Bei Feld: höhere Leistung = höherer Score
-                            const leistungNormalized = (leistung - minLeistung1) / (maxLeistung1 - minLeistung1);
-                            score = displayMin + (leistungNormalized * (displayMax - displayMin));
+                    // Erstelle vollständige Score-zu-Leistung Mapping aus echten Daten
+                    const scoreLeistungPaare = [];
+                    chartData1.forEach(point => {
+                        if (point.original !== undefined && point.y !== undefined) {
+                            scoreLeistungPaare.push({ score: point.y, leistung: point.original });
+                        }
+                    });
+                    
+                    // Sortiere nach Score
+                    scoreLeistungPaare.sort((a, b) => a.score - b.score);
+                    
+                    console.log('DEBUG y1:', {
+                        disziplin: disziplin,
+                        istZeit: istZeitDisziplin1,
+                        scoreRange: [displayMin, displayMax],
+                        samplePaare: scoreLeistungPaare.slice(0, 3)
+                    });
+                    
+                    if (scoreLeistungPaare.length === 0) {
+                        axis.ticks = [];
+                        return;
+                    }
+                    
+                    // Finde Min/Max der Leistungen
+                    const alleLeistungenInPaaren = scoreLeistungPaare.map(p => p.leistung);
+                    const minLeist = Math.min(...alleLeistungenInPaaren);
+                    const maxLeist = Math.max(...alleLeistungenInPaaren);
+                    
+                    // Generiere schöne, runde Leistungswerte
+                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeist, maxLeist, disziplin, numTicks);
+                    
+                    console.log('DEBUG y1 schoeneLeistungen:', schoeneLeistungen);
+                    
+                    // Mappe schöne Leistungen zurück zu Scores (inverse Interpolation)
+                    const nachLeistungSortiert = [...scoreLeistungPaare].sort((a, b) => a.leistung - b.leistung);
+                    
+                    axis.ticks = schoeneLeistungen.map(zielLeistung => {
+                        let lower = null, upper = null;
+                        
+                        for (let i = 0; i < nachLeistungSortiert.length; i++) {
+                            const pair = nachLeistungSortiert[i];
+                            if (pair.leistung <= zielLeistung) {
+                                lower = pair;
+                            }
+                            if (pair.leistung >= zielLeistung && upper === null) {
+                                upper = pair;
+                                break;
+                            }
                         }
                         
-                        return {
-                            value: score,
-                            label: leistung // Speichere Leistung für Anzeige
-                        };
-                    });
+                        let score;
+                        if (lower && upper && lower.leistung !== upper.leistung) {
+                            const ratio = (zielLeistung - lower.leistung) / (upper.leistung - lower.leistung);
+                            score = lower.score + ratio * (upper.score - lower.score);
+                        } else if (lower) {
+                            score = lower.score;
+                        } else if (upper) {
+                            score = upper.score;
+                        } else {
+                            score = displayMin;
+                        }
+                        
+                        return { value: score, label: zielLeistung };
+                    }).filter(t => t.value >= displayMin && t.value <= displayMax);
+                    
+                    console.log('DEBUG y1 finale ticks:', axis.ticks);
                 },
                 ticks: {
                     color: '#000',
@@ -10449,28 +11153,54 @@ async function zeigeDiagramm() {
                     min: displayMin,
                     max: displayMax,
                     afterBuildTicks: function(axis) {
-                        // Generiere schöne Leistungswerte für Disziplin 2
-                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 8);
+                        const numTicks = 5;
+                        const scoreLeistungPaare = [];
+                        const dataset2 = datasets.find(d => d.disziplin === vergleichsDisziplin);
+                        if (dataset2 && dataset2.data) {
+                            dataset2.data.forEach(point => {
+                                if (point.original !== undefined && point.y !== undefined) {
+                                    scoreLeistungPaare.push({ score: point.y, leistung: point.original });
+                                }
+                            });
+                        }
                         
-                        // Mappe jede Leistung zu ihrem Score-Wert
-                        axis.ticks = schoeneLeistungen.map(leistung => {
-                            // Berechne den Score für diese Leistung
-                            let score;
-                            if (istZeitDisziplin2) {
-                                // Bei Zeit: niedrigere Zeit = höherer Score
-                                const leistungNormalized = (maxLeistung2 - leistung) / (maxLeistung2 - minLeistung2);
-                                score = displayMin + (leistungNormalized * (displayMax - displayMin));
-                            } else {
-                                // Bei Feld: höhere Leistung = höherer Score
-                                const leistungNormalized = (leistung - minLeistung2) / (maxLeistung2 - minLeistung2);
-                                score = displayMin + (leistungNormalized * (displayMax - displayMin));
+                        scoreLeistungPaare.sort((a, b) => a.score - b.score);
+                        
+                        if (scoreLeistungPaare.length === 0) {
+                            axis.ticks = [];
+                            return;
+                        }
+                        
+                        // Finde Min/Max der Leistungen
+                        const alleLeistungenInPaaren = scoreLeistungPaare.map(p => p.leistung);
+                        const minLeist = Math.min(...alleLeistungenInPaaren);
+                        const maxLeist = Math.max(...alleLeistungenInPaaren);
+                        
+                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeist, maxLeist, vergleichsDisziplin, numTicks);
+                        
+                        const nachLeistungSortiert = [...scoreLeistungPaare].sort((a, b) => a.leistung - b.leistung);
+                        
+                        axis.ticks = schoeneLeistungen.map(zielLeistung => {
+                            let lower = null, upper = null;
+                            for (let i = 0; i < nachLeistungSortiert.length; i++) {
+                                const pair = nachLeistungSortiert[i];
+                                if (pair.leistung <= zielLeistung) lower = pair;
+                                if (pair.leistung >= zielLeistung && upper === null) {
+                                    upper = pair;
+                                    break;
+                                }
                             }
                             
-                            return {
-                                value: score,
-                                label: leistung // Speichere Leistung für Anzeige
-                            };
-                        });
+                            let score;
+                            if (lower && upper && lower.leistung !== upper.leistung) {
+                                const ratio = (zielLeistung - lower.leistung) / (upper.leistung - lower.leistung);
+                                score = lower.score + ratio * (upper.score - lower.score);
+                            } else if (lower) score = lower.score;
+                            else if (upper) score = upper.score;
+                            else score = displayMin;
+                            
+                            return { value: score, label: zielLeistung };
+                        }).filter(t => t.value >= displayMin && t.value <= displayMax);
                     },
                     ticks: {
                         color: '#000',
@@ -10520,7 +11250,7 @@ async function zeigeDiagramm() {
                     reverse: istZeitDisziplin2,
                     afterBuildTicks: function(axis) {
                         // Generiere schöne Leistungswerte für die zweite Disziplin
-                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 8);
+                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 5);
                         axis.ticks = schoeneLeistungen.map(leistung => ({
                             value: leistung
                         }));
@@ -10559,7 +11289,7 @@ async function zeigeDiagramm() {
                 reverse: istZeitDisziplin1,
                 afterBuildTicks: function(axis) {
                     // Generiere schöne Leistungswerte für die erste Disziplin
-                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung1, maxLeistung1, disziplin, 8);
+                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung1, maxLeistung1, disziplin, 5);
                     axis.ticks = schoeneLeistungen.map(leistung => ({
                         value: leistung
                     }));
@@ -10595,7 +11325,7 @@ async function zeigeDiagramm() {
                 reverse: istZeitDisziplin2,
                 afterBuildTicks: function(axis) {
                     // Generiere schöne Leistungswerte für die zweite Disziplin
-                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 8);
+                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 5);
                     axis.ticks = schoeneLeistungen.map(leistung => ({
                         value: leistung
                     }));
@@ -11223,7 +11953,7 @@ async function zeigeSBDiagramm() {
                 reverse: istZeitDisziplin1,
                 afterBuildTicks: function(axis) {
                     // Generiere schöne Leistungswerte für die erste Disziplin
-                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung1, maxLeistung1, disziplin, 8);
+                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung1, maxLeistung1, disziplin, 5);
                     axis.ticks = schoeneLeistungen.map(leistung => ({
                         value: leistung
                     }));
@@ -11255,7 +11985,7 @@ async function zeigeSBDiagramm() {
                 reverse: istZeitDisziplin2,
                 afterBuildTicks: function(axis) {
                     // Generiere schöne Leistungswerte für die zweite Disziplin
-                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 8);
+                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeistung2, maxLeistung2, vergleichsDisziplin, 5);
                     axis.ticks = schoeneLeistungen.map(leistung => ({
                         value: leistung
                     }));
@@ -11683,7 +12413,7 @@ async function zeigePrognoseDiagramm() {
                     min: minWert,
                     max: maxWert,
                     afterBuildTicks: function(axis) {
-                        const schoeneLeistungen = generiereSchoeneLeistungen(minWert, maxWert, disziplin, 8);
+                        const schoeneLeistungen = generiereSchoeneLeistungen(minWert, maxWert, disziplin, 5);
                         axis.ticks = schoeneLeistungen.map(leistung => ({
                             value: leistung
                         }));
@@ -12287,7 +13017,7 @@ function renderOrtTable() {
   let tableHTML = `
     <div style="animation: slideIn 0.3s ease-out;">
       <h3 class="dashboard-section-title">📍 ${currentOrtName}</h3>
-      <div id="ortTableWhiteBox" style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
+      <div id="ortTableWhiteBox" style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
           <div style="color: #757575; font-size: 0.95em;">${currentOrtLeistungen.length} ${currentOrtLeistungen.length === 1 ? 'Leistung' : 'Leistungen'}</div>
           <button onclick="hideOrtLeistungen()" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -12370,7 +13100,7 @@ function renderOrtTable() {
     }
 
     .detail-popup-content {
-      background: var(--card-bg);
+      background: #f2f6fa;
       border-radius: var(--border-radius);
       max-width: 1200px;
       width: 100%;
@@ -12727,7 +13457,7 @@ function renderOrtTable() {
       gap: 0;
       margin: 20px 0 0 0;
       border-bottom: 2px solid #e0e0e0;
-      background: white;
+      background: #f2f6fa;
     }
     
     .analyse-subtab-btn {
@@ -12749,7 +13479,7 @@ function renderOrtTable() {
     }
     
     .analyse-subtab-btn.active {
-      background: white;
+      background: #f2f6fa;
       color: #1e3a8a;
       border-bottom-color: #1e3a8a;
       font-weight: 600;
@@ -12766,7 +13496,7 @@ function renderOrtTable() {
     /* Chart Tables */
     .chart-data-table {
       margin-top: 20px;
-      background: white;
+      background: #f2f6fa;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -14249,7 +14979,10 @@ function clearCompactAthlete() {
   const searchInput = document.getElementById('compactAthletSuche');
   const selectedInfo = document.getElementById('compactSelectedInfo');
   
-  if (compactSearch) compactSearch.classList.remove('has-selection');
+  if (compactSearch) {
+    compactSearch.classList.remove('has-selection');
+    compactSearch.classList.remove('expanded');
+  }
   if (searchInput) searchInput.value = '';
   if (selectedInfo) selectedInfo.style.display = 'none';
   
@@ -14260,6 +14993,70 @@ function clearCompactAthlete() {
 
 // Event-Listener für benutzerdefinierte Datumsbereiche
 document.addEventListener('DOMContentLoaded', function() {
+  // Athletensuche - nur beim Klick auf Icon öffnen
+  const compactSearch = document.getElementById('compactAthleteSearch');
+  const searchIcon = compactSearch?.querySelector('.search-icon');
+  const searchInput = document.getElementById('compactAthletSuche');
+  
+  if (searchIcon && compactSearch && searchInput) {
+    let isHovering = false;
+    let focusTimeout = null;
+    
+    // Hover über Container = expandieren
+    compactSearch.addEventListener('mouseenter', function() {
+      if (!compactSearch.classList.contains('has-selection')) {
+        isHovering = true;
+        compactSearch.classList.add('expanded');
+        // Fokussiere Input mit kurzer Verzögerung
+        focusTimeout = setTimeout(() => {
+          if (isHovering) {
+            searchInput.focus();
+          }
+        }, 100);
+      }
+    });
+    
+    // Maus verlässt Container = einklappen (wenn leer)
+    compactSearch.addEventListener('mouseleave', function() {
+      isHovering = false;
+      clearTimeout(focusTimeout);
+      
+      // Nur einklappen wenn kein Text eingegeben und keine Auswahl
+      if (!searchInput.value && !compactSearch.classList.contains('has-selection')) {
+        compactSearch.classList.remove('expanded');
+        searchInput.blur();
+      }
+    });
+    
+    // Input bekommt Fokus = behalten, auch wenn Maus weg ist
+    searchInput.addEventListener('focus', function() {
+      compactSearch.classList.add('expanded');
+    });
+    
+    // Input verliert Fokus = einklappen wenn leer
+    searchInput.addEventListener('blur', function() {
+      setTimeout(() => {
+        if (!searchInput.value && !compactSearch.classList.contains('has-selection') && !isHovering) {
+          compactSearch.classList.remove('expanded');
+        }
+      }, 150);
+    });
+    
+    // Klick außerhalb = einklappen
+    document.addEventListener('click', function(e) {
+      if (!compactSearch.contains(e.target) && !compactSearch.classList.contains('has-selection')) {
+        compactSearch.classList.remove('expanded');
+        searchInput.value = '';
+        searchInput.blur();
+      }
+    });
+    
+    // Verhindere dass Klicks im Container nach außen propagieren
+    compactSearch.addEventListener('click', function(e) {
+      e.stopPropagation();
+    });
+  }
+  
   // Statistik Filter
   const statistikZeitraumSelect = document.getElementById('statistikFilterZeitraum');
   if (statistikZeitraumSelect) {
@@ -14352,7 +15149,7 @@ async function berechneErfolgsquote() {
   
   // Erstelle HTML-Ausgabe
   const html = `
-    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">Erfolgsquote</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -14457,7 +15254,7 @@ async function zeigeSaisonvergleich() {
   // Berechne Durchschnitte pro Jahr
   const jahresArray = Object.keys(jahresStats).sort();
   let html = `
-    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">📅 Saisonvergleich</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -14594,7 +15391,7 @@ async function zeigeWettkampffrequenz() {
   
   // Erstelle HTML
   let html = `
-    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">🗓️ Wettkampffrequenz</h3>
         <button onclick="document.getElementById('analyseAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -14737,7 +15534,7 @@ async function zeigePBTimeline() {
   
   // Erstelle HTML
   let html = `
-    <div style="background: white; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
+    <div style="background: #f2f6fa;  padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
         <h3 style="color: #2a5298; margin: 0;">🏅 Persönliche Rekorde Timeline</h3>
         <button onclick="document.getElementById('bestleistungenAusgabe').innerHTML = ''; enableTableResize();" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 0.85em; cursor: pointer;">✕ Schließen</button>
@@ -14761,7 +15558,7 @@ async function zeigePBTimeline() {
       <div style="position: relative; margin-bottom: ${isLast ? '0' : '20px'};">
         <div style="position: absolute; left: -30px; top: 5px; width: 20px; height: 20px; border-radius: 50%; background: ${bgColor}; border: 3px solid white; box-shadow: 0 2px 8px rgba(0,0,0,0.15);"></div>
         ${!isLast ? '<div style="position: absolute; left: -21px; top: 25px; width: 2px; height: calc(100% + 20px); background: #ddd;"></div>' : ''}
-        <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); ${isFirst ? 'border: 2px solid #FFD700;' : 'border: 1px solid #e0e0e0;'}">
+        <div style="background: #f2f6fa;  padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); ${isFirst ? 'border: 2px solid #FFD700;' : 'border: 1px solid #e0e0e0;'}">
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
             <div>
               <div style="font-size: 1.2em; font-weight: bold; color: #2a5298; margin-bottom: 4px;">
@@ -15176,7 +15973,7 @@ window.setTimeout = function(fn, delay) {
   return originalSetTimeout(function() {
     fn();
     // Nach jedem Timeout, der vermutlich eine Tabelle aktualisiert hat
-    if (delay > 0) {
+    if (delay > 0 && typeof enableTableResize !== 'undefined') {
       originalSetTimeout(enableTableResize, 100);
     }
   }, delay);
@@ -15339,168 +16136,151 @@ function createPrognoseTable(disziplin, data) {
 
 
 /* ================= TABLE SEARCH FUNCTIONALITY ================= */
-// Variable um ursprüngliche Spaltenauswahl zu speichern
-let originalColumnSelection = null;
+let originalColumnSelection = null; // Snapshot vor der Suche
+let searchActivatedColumns   = new Set(); // cb.value die durch Suche aktiviert wurden
+let manuallyChangedColumns   = new Set(); // cb.value die manuell während der Suche geändert wurden
+let sucheTabelleBereit       = false;
 
 function filterTable() {
   const searchInput = document.getElementById('tableSearchInput');
-  const clearBtn = document.getElementById('clearSearchBtn');
-  const resultCount = document.getElementById('searchResultCount');
-  const searchTerm = searchInput.value.toLowerCase().trim();
-  
-  // Zeige/Verstecke Clear-Button
+  const clearBtn    = document.getElementById('clearSearchBtn');
+  const searchTerm  = searchInput.value.toLowerCase().trim();
+
   clearBtn.style.display = searchTerm ? 'block' : 'none';
-  
-  // Wenn Suche aktiv ist, aktiviere automatisch alle Spalten
+
   if (searchTerm) {
-    const alleSpaltenCheckbox = document.getElementById('alleSpalten');
-    const spaltenCheckboxen = document.querySelectorAll('#leistungenTab .spalte');
-    
-    // Speichere ursprüngliche Spaltenauswahl beim ersten Mal
+    const spaltenCbs = document.querySelectorAll('#leistungenTab .spalte');
+
+    // Snapshot einmalig sichern – wird nie verändert
     if (!originalColumnSelection) {
-      originalColumnSelection = Array.from(spaltenCheckboxen).map(cb => ({
+      originalColumnSelection = Array.from(spaltenCbs).map(cb => ({
         value: cb.value,
         checked: cb.checked
       }));
     }
-    
-    let needsReload = false;
-    
-    // Prüfe ob Spalten aktiviert werden müssen
-    spaltenCheckboxen.forEach(checkbox => {
-      if (!checkbox.checked) {
-        checkbox.checked = true;
-        needsReload = true;
+
+    if (!sucheTabelleBereit) {
+      if (alleLeistungenFuerPBs && alleLeistungenFuerPBs.length > 0) {
+        sucheTabelleBereit = true;
+        _renderAlleSpalten(searchTerm);
+      } else {
+        ladeLeistungen({ forceCols: true }).then(() => {
+          sucheTabelleBereit = true;
+          setTimeout(() => performSearch(searchTerm), 30);
+        });
       }
-    });
-    
-    // Aktiviere auch die "Alle Spalten" Checkbox
-    if (alleSpaltenCheckbox && !alleSpaltenCheckbox.checked) {
-      alleSpaltenCheckbox.checked = true;
-      needsReload = true;
-    }
-    
-    // Wenn Spalten geändert wurden, lade Tabelle neu
-    if (needsReload) {
-      ladeLeistungen().then(() => {
-        // Warte kurz, bis die Tabelle neu gerendert wurde
-        setTimeout(() => {
-          performSearch(searchTerm);
-        }, 100);
-      });
     } else {
-      // Keine Änderung nötig, direkt suchen
       performSearch(searchTerm);
     }
+
   } else {
-    // Keine Suche - stelle ursprüngliche Spaltenauswahl wieder her
+    // Suche gelöscht → exakt auf Snapshot zurücksetzen
+    sucheTabelleBereit = false;
+    searchActivatedColumns = new Set();
+    manuallyChangedColumns = new Set();
+    
     if (originalColumnSelection) {
-      const spaltenCheckboxen = document.querySelectorAll('#leistungenTab .spalte');
-      let needsReload = false;
-      
-      spaltenCheckboxen.forEach((checkbox, index) => {
-        if (originalColumnSelection[index] && checkbox.checked !== originalColumnSelection[index].checked) {
-          checkbox.checked = originalColumnSelection[index].checked;
-          needsReload = true;
-        }
+      const spaltenCbs = document.querySelectorAll('#leistungenTab .spalte');
+      // Alle Checkboxen auf den gespeicherten Zustand setzen
+      spaltenCbs.forEach(cb => {
+        const orig = originalColumnSelection.find(o => o.value === cb.value);
+        if (orig) cb.checked = orig.checked;
       });
-      
-      originalColumnSelection = null; // Reset
-      
-      if (needsReload) {
-        ladeLeistungen().then(() => {
-          setTimeout(() => {
-            performSearch('');
-          }, 100);
-        });
-      } else {
-        performSearch('');
-      }
+      originalColumnSelection = null;
+      baueFilter();
+      ladeLeistungen(); // Tabelle neu laden mit den original-Spalten
     } else {
       performSearch('');
     }
   }
 }
 
+function _renderAlleSpalten(searchTerm) {
+  const leistungenTab = document.getElementById('leistungenTab');
+  const alleSpalten   = Array.from(leistungenTab.querySelectorAll('.spalte')).map(c => c.value);
+
+  const sortierteDaten = [...alleLeistungenFuerPBs].sort((a, b) => {
+    if (!a.datum && !b.datum) return 0;
+    if (!a.datum) return 1;
+    if (!b.datum) return -1;
+    return b.datum.localeCompare(a.datum);
+  });
+  const angezeigteDaten = sortierteDaten.map(row => {
+    const filtered = {};
+    alleSpalten.forEach(col => {
+      if (Object.prototype.hasOwnProperty.call(row, col)) filtered[col] = row[col];
+    });
+    return filtered;
+  });
+  zeigeTabelleMitPBs(angezeigteDaten, sortierteDaten, 'leistungenAusgabe', true);
+  setTimeout(() => performSearch(searchTerm), 30);
+}
+
 function performSearch(searchTerm) {
-  const resultCount = document.getElementById('searchResultCount');
-  
-  // Finde alle Tabellenzeilen
   const table = document.querySelector('#leistungenAusgabe table');
-  if (!table) {
-    if (resultCount) resultCount.style.display = 'none';
-    return;
-  }
+  const resultsInfo = document.querySelector('#leistungenAusgabe .results-info .results-count');
   
-  // Die Tabelle hat kein thead/tbody - erste Zeile ist Header, Rest sind Datenzeilen
+  if (!table) return;
+
   const allRows = Array.from(table.querySelectorAll('tr'));
-  if (allRows.length === 0) {
-    if (resultCount) resultCount.style.display = 'none';
-    return;
-  }
-  
-  const headerRow = allRows[0]; // Erste Zeile = Header
-  const dataRows = allRows.slice(1); // Rest = Daten
-  const headerCells = headerRow.querySelectorAll('th');
-  
-  let visibleCount = 0;
-  let totalCount = dataRows.length;
-  
+  if (allRows.length === 0) return;
+
+  const headerRow   = allRows[0];
+  const dataRows    = allRows.slice(1).filter(r => !r.classList.contains('year-separator'));
+  const headerCells = Array.from(headerRow.querySelectorAll('th'));
+  let visibleCount  = 0;
+
   if (!searchTerm) {
-    // Keine Suche - alle Zeilen und Spalten anzeigen, Highlights entfernen
     headerRow.style.display = '';
-    dataRows.forEach(row => {
+    headerCells.forEach(h => h.style.display = '');
+    allRows.slice(1).forEach(row => {
       row.style.display = '';
       removeHighlights(row);
-      const cells = row.querySelectorAll('td');
-      cells.forEach(cell => cell.style.display = '');
+      row.querySelectorAll('td').forEach(td => td.style.display = '');
     });
-    headerCells.forEach(header => header.style.display = '');
-    if (resultCount) resultCount.style.display = 'none';
+    // Setze die Info-Zeile zurück auf die Gesamtzahl
+    if (resultsInfo) {
+      resultsInfo.textContent = `📋 ${dataRows.length} ${dataRows.length === 1 ? 'Leistung' : 'Leistungen'} gefunden`;
+      resultsInfo.style.color = '';
+    }
     return;
   }
-  
-  // Track welche Spalten Treffer haben
-  const columnHasMatch = new Array(headerCells.length).fill(false);
-  
-  // Ermittle welche Spalten ursprünglich ausgewählt waren
-  const originallySelectedColumns = new Array(headerCells.length).fill(false);
-  if (originalColumnSelection) {
-    // Mappe Header-Text zu ursprünglicher Auswahl
-    headerCells.forEach((header, index) => {
-      const headerText = header.textContent.trim().replace(/[▲▼]/g, '').trim(); // Entferne Sortier-Pfeile
-      // Prüfe ob diese Spalte ursprünglich ausgewählt war
-      const matchingSelection = originalColumnSelection.find(col => {
-        const displayName = SPALTEN_ANZEIGE[col.value] || col.value;
-        return displayName === headerText || 
-               col.value === headerText.toLowerCase() ||
-               displayName.toLowerCase() === headerText.toLowerCase();
-      });
-      if (matchingSelection && matchingSelection.checked) {
-        originallySelectedColumns[index] = true;
-      }
+
+  // Hilfsfunktion: Checkbox für Header-Text finden
+  const spaltenCbs = document.querySelectorAll('#leistungenTab .spalte');
+  function cbFuerHeader(th) {
+    const t = th.textContent.trim().replace(/[▲▼]/g, '').trim().toLowerCase();
+    return Array.from(spaltenCbs).find(cb => {
+      const d = (SPALTEN_ANZEIGE[cb.value] || cb.value).toLowerCase();
+      return d === t || cb.value.toLowerCase() === t;
     });
-  } else {
-    // Wenn keine gespeicherte Auswahl, zeige alle
-    originallySelectedColumns.fill(true);
   }
-  
-  // Durchsuche alle Datenzeilen
+
+  // Spalten-Index-Map: th-Index → cb (Aktionsspalte hat keine cb → null)
+  const thCbMap = headerCells.map(th => cbFuerHeader(th));
+
+  // Zeilen durchsuchen – welche th-Indizes haben Treffer?
+  const columnHasMatch = new Array(headerCells.length).fill(false);
+
   dataRows.forEach(row => {
-    const cells = row.querySelectorAll('td');
+    const cells = Array.from(row.querySelectorAll('td'));
     let rowHasMatch = false;
-    
-    cells.forEach((cell, cellIndex) => {
-      // Ignoriere Button-Zellen (Aktionen-Spalte)
-      if (cell.querySelector('button')) return;
+
+    // td-Index entspricht th-Index (beide vollständig, da Tabelle mit allen Spalten gerendert)
+    cells.forEach((td, i) => {
+      if (i >= headerCells.length) return; // Aktionsspalte überspringen
+      const cb = thCbMap[i];
+      const th = headerCells[i];
+      // Aktionsspalte komplett ignorieren
+      const istAktionsSpalte = !cb || (th && th.textContent.trim().toLowerCase().includes('aktion'));
+      if (istAktionsSpalte) return; // Aktionsspalte überspringen
       
-      const cellText = cell.textContent.toLowerCase();
-      if (cellText.includes(searchTerm)) {
+      if (td.textContent.toLowerCase().includes(searchTerm)) {
         rowHasMatch = true;
-        columnHasMatch[cellIndex] = true;
+        columnHasMatch[i] = true;
       }
     });
-    
+
     if (rowHasMatch) {
       row.style.display = '';
       visibleCount++;
@@ -15510,36 +16290,71 @@ function performSearch(searchTerm) {
       removeHighlights(row);
     }
   });
-  
-  // Header-Zeile immer anzeigen
-  headerRow.style.display = '';
-  
-  // Zeige Spalten die entweder ausgewählt waren ODER Treffer haben
-  headerCells.forEach((header, index) => {
-    if (originallySelectedColumns[index] || columnHasMatch[index]) {
-      header.style.display = '';
+
+  // Year-separator Zeilen immer anzeigen
+  allRows.slice(1).filter(r => r.classList.contains('year-separator')).forEach(r => r.style.display = '');
+
+  // Checkboxen aktualisieren:
+  // • Manuell geänderte Spalten → nicht anfassen
+  // • Treffer + nicht aktiv → aktivieren, in searchActivatedColumns merken
+  // • In searchActivatedColumns + kein Treffer → deaktivieren, entfernen
+  // • Nicht in searchActivatedColumns → nicht anfassen (manuell oder original)
+  let filterNeuBauen = false;
+  headerCells.forEach((th, i) => {
+    const cb = thCbMap[i];
+    if (!cb) return;
+    
+    // Wenn die Spalte manuell geändert wurde, nicht anfassen
+    if (manuallyChangedColumns.has(cb.value)) {
+      return;
+    }
+    
+    if (columnHasMatch[i]) {
+      if (!cb.checked) {
+        cb.checked = true;
+        searchActivatedColumns.add(cb.value);
+        filterNeuBauen = true;
+      }
     } else {
-      header.style.display = 'none';
+      if (searchActivatedColumns.has(cb.value) && cb.checked) {
+        cb.checked = false;
+        searchActivatedColumns.delete(cb.value);
+        filterNeuBauen = true;
+      }
     }
   });
-  
-  // Zeige/Verstecke entsprechende Zellen in allen Datenzeilen
+  if (filterNeuBauen) baueFilter();
+
+  // Spalten ein-/ausblenden: nach aktuellem cb.checked
+  // Aktionsspalte (letztes th / letztes td) immer anzeigen
+  headerRow.style.display = '';
+  headerCells.forEach((th, i) => {
+    const cb = thCbMap[i];
+    // Aktionsspalte (kein cb) ODER wenn Header "Aktionen" enthält → immer sichtbar
+    const istAktionsSpalte = !cb || th.textContent.trim().toLowerCase().includes('aktion');
+    th.style.display = (istAktionsSpalte || cb.checked) ? '' : 'none';
+  });
   dataRows.forEach(row => {
-    const cells = row.querySelectorAll('td');
-    cells.forEach((cell, index) => {
-      if (originallySelectedColumns[index] || columnHasMatch[index]) {
-        cell.style.display = '';
-      } else {
-        cell.style.display = 'none';
-      }
+    const cells = Array.from(row.querySelectorAll('td'));
+    cells.forEach((td, i) => {
+      if (i >= headerCells.length) { td.style.display = ''; return; } // Aktionsspalte
+      const cb = thCbMap[i];
+      const th = headerCells[i];
+      // Aktionsspalte (kein cb) ODER wenn Header "Aktionen" enthält → immer sichtbar
+      const istAktionsSpalte = !cb || (th && th.textContent.trim().toLowerCase().includes('aktion'));
+      td.style.display = (istAktionsSpalte || cb.checked) ? '' : 'none';
     });
   });
-  
-  // Zeige Ergebnis-Zähler
-  if (resultCount) {
-    resultCount.textContent = `${visibleCount} von ${totalCount} Einträgen gefunden`;
-    resultCount.style.display = 'block';
-    resultCount.style.color = visibleCount === 0 ? '#dc3545' : 'var(--text-muted)';
+
+  // Aktualisiere die Info-Zeile über der Tabelle
+  if (resultsInfo) {
+    if (visibleCount === 0) {
+      resultsInfo.textContent = `🔍 Keine Treffer für "${searchTerm}"`;
+      resultsInfo.style.color = '#dc3545';
+    } else {
+      resultsInfo.textContent = `🔍 ${visibleCount} von ${dataRows.length} ${visibleCount === 1 ? 'Leistung' : 'Leistungen'} gefunden`;
+      resultsInfo.style.color = '';
+    }
   }
 }
 
@@ -15547,7 +16362,14 @@ function highlightSearchTerm(row, searchTerm) {
   removeHighlights(row);
   const cells = row.querySelectorAll('td');
   
-  cells.forEach(cell => {
+  cells.forEach((cell, cellIndex) => {
+    // Prüfe ob dies die Aktionsspalte ist (enthält Button mit "Bearbeiten")
+    const hatButton = cell.querySelector('button');
+    const istAktionsSpalte = hatButton && cell.textContent.toLowerCase().includes('bearbeiten');
+    
+    // Aktionsspalte überspringen
+    if (istAktionsSpalte) return;
+    
     const text = cell.textContent;
     const lowerText = text.toLowerCase();
     const index = lowerText.indexOf(searchTerm);
@@ -15584,17 +16406,41 @@ function clearTableSearch() {
   searchInput.focus();
 }
 
-// Event Listener für Enter-Taste
+// Live-Suche beim Tippen (Debounce) + Enter
 document.addEventListener('DOMContentLoaded', function() {
   const searchInput = document.getElementById('tableSearchInput');
   if (searchInput) {
+    let _sd = null;
+    searchInput.addEventListener('input', function() {
+      clearTimeout(_sd);
+      _sd = setTimeout(() => filterTable(), 300);
+    });
     searchInput.addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        filterTable();
-      }
+      if (e.key === 'Enter') { e.preventDefault(); clearTimeout(_sd); filterTable(); }
     });
   }
+  
+  // Event-Listener für manuelle Checkbox-Änderungen während der Suche
+  const spaltenCheckboxen = document.querySelectorAll('#leistungenTab .spalte');
+  spaltenCheckboxen.forEach(cb => {
+    cb.addEventListener('change', function() {
+      // Nur tracken wenn eine Suche aktiv ist
+      const searchInput = document.getElementById('tableSearchInput');
+      if (searchInput && searchInput.value.trim()) {
+        // Merke diese Spalte als manuell geändert
+        manuallyChangedColumns.add(cb.value);
+        
+        // Wenn die Spalte durch die Suche aktiviert wurde, entferne sie aus dem Set
+        if (searchActivatedColumns.has(cb.value)) {
+          searchActivatedColumns.delete(cb.value);
+        }
+        
+        // Aktualisiere die Ansicht
+        baueFilter();
+        performSearch(searchInput.value.toLowerCase().trim());
+      }
+    });
+  });
 });
 
 
@@ -15621,7 +16467,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
 </div> <!-- Close mainApp -->
 <!-- Modal: Leistung hinzufügen/bearbeiten -->
 <div id="leistungModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-  <div style="background: white; padding: 25px; border-radius: var(--border-radius); max-width: 750px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+  <div style="background: #f2f6fa;  padding: 25px; border-radius: var(--border-radius); max-width: 750px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2 id="modalTitle" style="color: navy; margin: 0;">Leistung hinzufügen</h2>
       <button onclick="closeLeistungModal()" aria-label="Modal schließen" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
@@ -15669,7 +16515,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
         </div>
         <div>
           <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Saison</label>
-          <select id="modalTyp" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em; background: white; color: #333; cursor: pointer;">
+          <select id="modalTyp" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em; background: #ffffff; color: #333; cursor: pointer;">
             <option value="">-</option>
             <option value="f">Freiluft</option>
             <option value="h">Halle</option>
@@ -15700,7 +16546,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
 
 <!-- Modal: CSV Import -->
 <div id="importModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-  <div style="background: white; padding: 30px; border-radius: var(--border-radius); max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+  <div style="background: #f2f6fa;  padding: 30px; border-radius: var(--border-radius); max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2 style="color: navy; margin: 0;">Leistungen importieren</h2>
       <button onclick="closeImportModal()" aria-label="Import-Dialog schließen" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
@@ -15746,12 +16592,24 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
         <div class="detail-map-wrapper">
           <h3>📍 Wettkampfort</h3>
           <div id="detailMap" class="detail-map-container"></div>
-        </div>A
+        </div>
       </div>
     </div>
   </div>
 </div>
 
+<!-- Popup für letzte 3 Wettkämpfe -->
+<div id="letzteWettkaempfePopup" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;" onclick="closeLetzteWettkaempfe(event)">
+  <div style="background: #f2f6fa;  padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);" onclick="event.stopPropagation()">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #1e3a8a; padding-bottom: 15px;">
+      <h2 style="color: #1e3c72; margin: 0; font-size: 1.5em;">🏃 Letzte 3 Wettkämpfe</h2>
+      <button onclick="closeLetzteWettkaempfe()" aria-label="Popup schließen" style="background: none; border: none; font-size: 2em; cursor: pointer; color: #1e3c72; padding: 0; width: 40px; height: 40px; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='none'">×</button>
+    </div>
+    <div id="letzteWettkaempfeContent" style="display: flex; flex-direction: column; gap: 15px;">
+      <!-- Wird dynamisch gefüllt -->
+    </div>
+  </div>
+</div>
 
 
 
