@@ -10635,24 +10635,46 @@ function generiereSchoeneLeistungen(min, max, disziplin, anzahlTicks = 5) {
     }
     
     // Finde einen schönen Startwert (auf schritt gerundet)
-    const startWert = Math.floor(min / schritt) * schritt;
+    // Runde nach unten zum nächsten schönen Wert, der kleiner oder gleich min ist
+    let startWert = Math.floor(min / schritt) * schritt;
     
-    // Generiere Ticks mit dem schönen Schritt
+    // Generiere Ticks mit dem schönen Schritt, genau anzahlTicks Werte
     const ticks = [];
     let aktuellerWert = startWert;
     
-    // Füge Werte hinzu, solange wir im Bereich sind oder noch nicht genug Ticks haben
-    while (ticks.length < anzahlTicks + 2 && aktuellerWert <= max + schritt) {
-        if (aktuellerWert >= min - schritt) {
-            ticks.push(Number(aktuellerWert.toFixed(2)));
-        }
+    // WICHTIG: Stelle sicher, dass wir den Bereich gut abdecken
+    // Justiere den Startwert, falls nötig, um min besser abzudecken
+    while (aktuellerWert + schritt < min) {
         aktuellerWert += schritt;
     }
     
-    // Wenn wir zu viele haben, nimm die mittleren anzahlTicks
-    if (ticks.length > anzahlTicks) {
-        const start = Math.floor((ticks.length - anzahlTicks) / 2);
-        return ticks.slice(start, start + anzahlTicks);
+    // Generiere genau anzahlTicks Werte mit gleichmäßigen Abständen
+    for (let i = 0; i < anzahlTicks; i++) {
+        const wert = aktuellerWert + (i * schritt);
+        // Runde auf 2 Dezimalstellen für saubere Anzeige
+        ticks.push(Number(wert.toFixed(2)));
+    }
+    
+    // Optional: Falls der letzte Tick deutlich über max liegt, 
+    // versuche einen kleineren Schritt
+    if (ticks[ticks.length - 1] - max > schritt * 0.5) {
+        // Finde einen kleineren Schritt
+        const kleinererIndex = schoeneSchritte.findIndex(s => s === schritt) - 1;
+        if (kleinererIndex >= 0) {
+            const neuerSchritt = schoeneSchritte[kleinererIndex];
+            const neuerStart = Math.floor(min / neuerSchritt) * neuerSchritt;
+            const neueTicks = [];
+            for (let i = 0; i < anzahlTicks; i++) {
+                const wert = neuerStart + (i * neuerSchritt);
+                neueTicks.push(Number(wert.toFixed(2)));
+            }
+            // Prüfe ob die neuen Ticks besser passen
+            const letztesTickAbstand = neueTicks[neueTicks.length - 1] - max;
+            const altesTickAbstand = ticks[ticks.length - 1] - max;
+            if (Math.abs(letztesTickAbstand) < Math.abs(altesTickAbstand)) {
+                return neueTicks;
+            }
+        }
     }
     
     return ticks;
@@ -11063,48 +11085,74 @@ async function zeigeDiagramm() {
                         return;
                     }
                     
-                    // Finde Min/Max der Leistungen
-                    const alleLeistungenInPaaren = scoreLeistungPaare.map(p => p.leistung);
-                    const minLeist = Math.min(...alleLeistungenInPaaren);
-                    const maxLeist = Math.max(...alleLeistungenInPaaren);
+                    // NEUE STRATEGIE: Erstelle gleichmäßig verteilte Score-Werte, 
+                    // berechne die Leistungen und runde sie intelligent
                     
-                    // Generiere schöne, runde Leistungswerte
-                    const schoeneLeistungen = generiereSchoeneLeistungen(minLeist, maxLeist, disziplin, numTicks);
+                    const scoreBereich = displayMax - displayMin;
+                    const scoreSchritt = scoreBereich / (numTicks - 1);
                     
-                    console.log('DEBUG y1 schoeneLeistungen:', schoeneLeistungen);
-                    
-                    // Mappe schöne Leistungen zurück zu Scores (inverse Interpolation)
                     const nachLeistungSortiert = [...scoreLeistungPaare].sort((a, b) => a.leistung - b.leistung);
                     
-                    axis.ticks = schoeneLeistungen.map(zielLeistung => {
-                        let lower = null, upper = null;
+                    // Bestimme Rundungsgenauigkeit basierend auf Leistungsbereich
+                    const alleLeistungen = scoreLeistungPaare.map(p => p.leistung);
+                    const minLeist = Math.min(...alleLeistungen);
+                    const maxLeist = Math.max(...alleLeistungen);
+                    const leistungsBereich = maxLeist - minLeist;
+                    
+                    // Bestimme schöne Rundungsschritte
+                    const idealerLeistungsSchritt = leistungsBereich / (numTicks - 1);
+                    const schoeneSchritte = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100];
+                    let rundungsSchritt = schoeneSchritte[0];
+                    let minDiff = Math.abs(idealerLeistungsSchritt - rundungsSchritt);
+                    for (const s of schoeneSchritte) {
+                        const diff = Math.abs(idealerLeistungsSchritt - s);
+                        if (diff < minDiff) {
+                            minDiff = diff;
+                            rundungsSchritt = s;
+                        }
+                    }
+                    
+                    console.log('DEBUG y1 Rundungsschritt:', rundungsSchritt, 'für Bereich:', leistungsBereich);
+                    
+                    const ticks = [];
+                    for (let i = 0; i < numTicks; i++) {
+                        const zielScore = displayMin + (i * scoreSchritt);
                         
-                        for (let i = 0; i < nachLeistungSortiert.length; i++) {
-                            const pair = nachLeistungSortiert[i];
-                            if (pair.leistung <= zielLeistung) {
+                        // Finde die Leistung für diesen Score (Interpolation)
+                        let lower = null, upper = null;
+                        for (let j = 0; j < scoreLeistungPaare.length; j++) {
+                            const pair = scoreLeistungPaare[j];
+                            if (pair.score <= zielScore) {
                                 lower = pair;
                             }
-                            if (pair.leistung >= zielLeistung && upper === null) {
+                            if (pair.score >= zielScore && upper === null) {
                                 upper = pair;
                                 break;
                             }
                         }
                         
-                        let score;
-                        if (lower && upper && lower.leistung !== upper.leistung) {
-                            const ratio = (zielLeistung - lower.leistung) / (upper.leistung - lower.leistung);
-                            score = lower.score + ratio * (upper.score - lower.score);
+                        let leistung;
+                        if (lower && upper && lower.score !== upper.score) {
+                            const ratio = (zielScore - lower.score) / (upper.score - lower.score);
+                            leistung = lower.leistung + ratio * (upper.leistung - lower.leistung);
                         } else if (lower) {
-                            score = lower.score;
+                            leistung = lower.leistung;
                         } else if (upper) {
-                            score = upper.score;
+                            leistung = upper.leistung;
                         } else {
-                            score = displayMin;
+                            continue;
                         }
                         
-                        return { value: score, label: zielLeistung };
-                    }).filter(t => t.value >= displayMin && t.value <= displayMax);
+                        // Runde die Leistung auf den nächsten schönen Wert
+                        const gerundeteLeistung = Math.round(leistung / rundungsSchritt) * rundungsSchritt;
+                        
+                        ticks.push({ 
+                            value: zielScore, 
+                            label: Number(gerundeteLeistung.toFixed(3))
+                        });
+                    }
                     
+                    axis.ticks = ticks;
                     console.log('DEBUG y1 finale ticks:', axis.ticks);
                 },
                 ticks: {
@@ -11171,36 +11219,73 @@ async function zeigeDiagramm() {
                             return;
                         }
                         
-                        // Finde Min/Max der Leistungen
-                        const alleLeistungenInPaaren = scoreLeistungPaare.map(p => p.leistung);
-                        const minLeist = Math.min(...alleLeistungenInPaaren);
-                        const maxLeist = Math.max(...alleLeistungenInPaaren);
+                        // NEUE STRATEGIE: Erstelle gleichmäßig verteilte Score-Werte, 
+                        // berechne die Leistungen und runde sie intelligent
                         
-                        const schoeneLeistungen = generiereSchoeneLeistungen(minLeist, maxLeist, vergleichsDisziplin, numTicks);
+                        const scoreBereich = displayMax - displayMin;
+                        const scoreSchritt = scoreBereich / (numTicks - 1);
                         
-                        const nachLeistungSortiert = [...scoreLeistungPaare].sort((a, b) => a.leistung - b.leistung);
+                        // Bestimme Rundungsgenauigkeit basierend auf Leistungsbereich
+                        const alleLeistungen = scoreLeistungPaare.map(p => p.leistung);
+                        const minLeist = Math.min(...alleLeistungen);
+                        const maxLeist = Math.max(...alleLeistungen);
+                        const leistungsBereich = maxLeist - minLeist;
                         
-                        axis.ticks = schoeneLeistungen.map(zielLeistung => {
+                        // Bestimme schöne Rundungsschritte
+                        const idealerLeistungsSchritt = leistungsBereich / (numTicks - 1);
+                        const schoeneSchritte = [0.01, 0.02, 0.05, 0.1, 0.2, 0.25, 0.5, 1, 2, 2.5, 5, 10, 20, 25, 50, 100];
+                        let rundungsSchritt = schoeneSchritte[0];
+                        let minDiff = Math.abs(idealerLeistungsSchritt - rundungsSchritt);
+                        for (const s of schoeneSchritte) {
+                            const diff = Math.abs(idealerLeistungsSchritt - s);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                rundungsSchritt = s;
+                            }
+                        }
+                        
+                        console.log('DEBUG y2 Rundungsschritt:', rundungsSchritt, 'für Bereich:', leistungsBereich);
+                        
+                        const ticks = [];
+                        for (let i = 0; i < numTicks; i++) {
+                            const zielScore = displayMin + (i * scoreSchritt);
+                            
+                            // Finde die Leistung für diesen Score (Interpolation)
                             let lower = null, upper = null;
-                            for (let i = 0; i < nachLeistungSortiert.length; i++) {
-                                const pair = nachLeistungSortiert[i];
-                                if (pair.leistung <= zielLeistung) lower = pair;
-                                if (pair.leistung >= zielLeistung && upper === null) {
+                            for (let j = 0; j < scoreLeistungPaare.length; j++) {
+                                const pair = scoreLeistungPaare[j];
+                                if (pair.score <= zielScore) {
+                                    lower = pair;
+                                }
+                                if (pair.score >= zielScore && upper === null) {
                                     upper = pair;
                                     break;
                                 }
                             }
                             
-                            let score;
-                            if (lower && upper && lower.leistung !== upper.leistung) {
-                                const ratio = (zielLeistung - lower.leistung) / (upper.leistung - lower.leistung);
-                                score = lower.score + ratio * (upper.score - lower.score);
-                            } else if (lower) score = lower.score;
-                            else if (upper) score = upper.score;
-                            else score = displayMin;
+                            let leistung;
+                            if (lower && upper && lower.score !== upper.score) {
+                                const ratio = (zielScore - lower.score) / (upper.score - lower.score);
+                                leistung = lower.leistung + ratio * (upper.leistung - lower.leistung);
+                            } else if (lower) {
+                                leistung = lower.leistung;
+                            } else if (upper) {
+                                leistung = upper.leistung;
+                            } else {
+                                continue;
+                            }
                             
-                            return { value: score, label: zielLeistung };
-                        }).filter(t => t.value >= displayMin && t.value <= displayMax);
+                            // Runde die Leistung auf den nächsten schönen Wert
+                            const gerundeteLeistung = Math.round(leistung / rundungsSchritt) * rundungsSchritt;
+                            
+                            ticks.push({ 
+                                value: zielScore, 
+                                label: Number(gerundeteLeistung.toFixed(3))
+                            });
+                        }
+                        
+                        axis.ticks = ticks;
+                        console.log('DEBUG y2 finale ticks:', axis.ticks);
                     },
                     ticks: {
                         color: '#000',
@@ -11314,8 +11399,8 @@ async function zeigeDiagramm() {
 
         // Zweite Y-Achse nur wenn Vergleichsmodus aktiv
         if (vergleichsModus && vergleichsDisziplin && data2 && data2.length > 0) {
-            // Berechne Min/Max für zweite Disziplin - verwende chartData2 falls vorhanden
-            const alleLeistungen2 = chartData2 ? chartData2.map(d => d.y) : data2.map(d => d.y);
+            // Berechne Min/Max für zweite Disziplin - verwende data2.y direkt (keine Scores)
+            const alleLeistungen2 = data2.map(d => d.leistung);
             const minLeistung2 = Math.min(...alleLeistungen2);
             const maxLeistung2 = Math.max(...alleLeistungen2);
             
