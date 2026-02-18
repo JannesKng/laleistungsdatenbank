@@ -8057,7 +8057,7 @@ function decodeHtmlEntities(text) {
 }
 
 // Funktion zum Auswählen eines Athleten
-function selectAthlete(id, vorname, name, jahrgang) {
+async function selectAthlete(id, vorname, name, jahrgang) {
   selectedAthleteId = id;
   
   // Dekodiere HTML-Entities zurück zu normalen Zeichen
@@ -8076,7 +8076,18 @@ function selectAthlete(id, vorname, name, jahrgang) {
   document.getElementById('athletId').textContent = id;
   document.getElementById('ausgewaehlterAthlet').classList.add('active');
   
-  console.log('Athlet ausgewählt:', id, decodedVorname, decodedName, jahrgang);
+  console.log('🏃 Athlet ausgewählt:', id, decodedVorname, decodedName, jahrgang);
+  console.log('🔄 Lade Athleten-Daten SYNCHRON...');
+  
+  // WICHTIG: Lade Daten SOFORT und WARTE darauf, bevor irgendetwas anderes passiert
+  await ladeDisziplinen();
+  await ladeFilterOptionen();
+  
+  console.log('✅ Athleten-Daten geladen:');
+  console.log('   - Disziplinen:', disziplinenListe.length);
+  console.log('   - Altersklassen:', alleAK.length);
+  console.log('   - Meisterschaften:', alleMS.length);
+  console.log('   - Jahre:', verfuegbareJahre.length);
   
   // Lade Dashboard-Daten wenn Dashboard-Tab aktiv ist
   const dashboardTab = document.getElementById('dashboardTab');
@@ -8088,6 +8099,12 @@ function selectAthlete(id, vorname, name, jahrgang) {
   const zieleTab = document.getElementById('zieleTab');
   if(zieleTab && zieleTab.classList.contains('active')) {
     updateGoalsTab();
+  }
+  
+  // Aktualisiere Leistungen-Tab wenn Leistungen-Tab aktiv ist
+  const leistungenTab = document.getElementById('leistungenTab');
+  if(leistungenTab && leistungenTab.classList.contains('active')) {
+    ladeLeistungen();
   }
 }
 
@@ -8262,8 +8279,127 @@ function befuelleJahrDropdowns() {
   }
 }
 
+/* ================= AKTUALISIERE FILTER-DROPDOWNS ================= */
+let letzteFilterAktualisierung = 0; // Timestamp der letzten Aktualisierung
+
+function aktualisiereFilterDropdowns() {
+  console.log('Aktualisiere Filter-Dropdowns mit neuen Athleten-Daten');
+  console.log('Disziplinen:', disziplinenListe.length, 'AK:', alleAK.length, 'MS:', alleMS.length);
+  
+  // Setze Timestamp
+  letzteFilterAktualisierung = Date.now();
+  
+  // Prüfe ob Filter überhaupt existieren
+  const filterContainer = document.getElementById('filterContainer');
+  if (!filterContainer || filterContainer.children.length === 0) {
+    console.log('Filter-Container leer oder nicht vorhanden - baue Filter neu');
+    baueFilter();
+    return; // WICHTIG: Nicht weiter machen, baueFilter() hat alles schon gebaut
+  }
+  
+  // Aktualisiere alle Disziplin-Dropdowns im Leistungen-Tab
+  const disziplinDropdowns = document.querySelectorAll('.disziplin-dropdown');
+  console.log('Gefundene Disziplin-Dropdowns:', disziplinDropdowns.length);
+  disziplinDropdowns.forEach(dropdown => {
+    const aktuellerWert = dropdown.value;
+    dropdown.innerHTML = '<option value="">– alle –</option>' + 
+      disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
+    // Versuche, den alten Wert wiederherzustellen (falls noch in der neuen Liste)
+    if (aktuellerWert && disziplinenListe.includes(aktuellerWert)) {
+      dropdown.value = aktuellerWert;
+    }
+  });
+  
+  // Aktualisiere Statistik-Filter Disziplin-Dropdown
+  const statistikFilterDisziplin = document.getElementById('statistikFilterDisziplin');
+  if (statistikFilterDisziplin) {
+    const aktuellerWert = statistikFilterDisziplin.value;
+    statistikFilterDisziplin.innerHTML = '<option value="">– Alle –</option>' + 
+      disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
+    if (aktuellerWert && disziplinenListe.includes(aktuellerWert)) {
+      statistikFilterDisziplin.value = aktuellerWert;
+    }
+  }
+  
+  // Aktualisiere Bestleistungen-Filter Disziplin-Dropdown
+  const bestleistungenFilterDisziplin = document.getElementById('bestleistungenFilterDisziplin');
+  if (bestleistungenFilterDisziplin) {
+    const aktuellerWert = bestleistungenFilterDisziplin.value;
+    bestleistungenFilterDisziplin.innerHTML = '<option value="">– Alle –</option>' + 
+      disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
+    if (aktuellerWert && disziplinenListe.includes(aktuellerWert)) {
+      bestleistungenFilterDisziplin.value = aktuellerWert;
+    }
+  }
+  
+  // Aktualisiere Analyse-Disziplin Dropdown
+  const analyseDisziplinSelect = document.getElementById('analyseDisziplin');
+  if (analyseDisziplinSelect) {
+    const aktuellerWert = analyseDisziplinSelect.value;
+    analyseDisziplinSelect.innerHTML = '<option value="">– Disziplin wählen –</option>' + 
+      disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
+    if (aktuellerWert && disziplinenListe.includes(aktuellerWert)) {
+      analyseDisziplinSelect.value = aktuellerWert;
+    }
+  }
+  
+  // Aktualisiere Prognose-Disziplin Dropdown
+  const prognoseDisziplinSelect = document.getElementById('prognoseDisziplin');
+  if (prognoseDisziplinSelect) {
+    const aktuellerWert = prognoseDisziplinSelect.value;
+    prognoseDisziplinSelect.innerHTML = '<option value="">– Disziplin wählen –</option>' + 
+      disziplinenListe.map(d => `<option value="${d}">${d}</option>`).join('');
+    if (aktuellerWert && disziplinenListe.includes(aktuellerWert)) {
+      prognoseDisziplinSelect.value = aktuellerWert;
+    }
+  }
+  
+  // Aktualisiere Altersklassen-Dropdown
+  const akDropdowns = document.querySelectorAll('[data-filter-dropdown="ak"]');
+  akDropdowns.forEach(dropdown => {
+    const aktuellerWert = dropdown.value;
+    dropdown.innerHTML = '<option value="">– alle –</option>' + 
+      alleAK.map(a => `<option value="${a}">${a}</option>`).join('');
+    if (aktuellerWert && alleAK.includes(aktuellerWert)) {
+      dropdown.value = aktuellerWert;
+    }
+  });
+  
+  // Aktualisiere Runden-Dropdown
+  const rundenDropdowns = document.querySelectorAll('[data-filter-dropdown="runde"]');
+  rundenDropdowns.forEach(dropdown => {
+    const aktuellerWert = dropdown.value;
+    dropdown.innerHTML = '<option value="">– alle –</option>' + 
+      alleRunden.map(r => `<option value="${r}">${RUNDEN_ANZEIGE[r] || r}</option>`).join('');
+    if (aktuellerWert && alleRunden.includes(aktuellerWert)) {
+      dropdown.value = aktuellerWert;
+    }
+  });
+  
+  // Aktualisiere Meisterschafts-Dropdowns
+  befuelleMeisterschaftsDropdowns();
+  
+  // Aktualisiere Jahr-Dropdowns
+  befuelleJahrDropdowns();
+  
+  // Aktualisiere Jahr-Dropdowns in Leistungen-Filtern
+  const jahrDropdowns = document.querySelectorAll('[data-filter-jahr]');
+  jahrDropdowns.forEach(dropdown => {
+    const aktuellerWert = dropdown.value;
+    dropdown.innerHTML = '<option value="">– alle Jahre –</option>' + 
+      verfuegbareJahre.map(j => `<option value="${j}">${j}</option>`).join('');
+    if (aktuellerWert && verfuegbareJahre.includes(parseInt(aktuellerWert))) {
+      dropdown.value = aktuellerWert;
+    }
+  });
+  
+  console.log('Filter-Dropdowns aktualisiert');
+}
+
 /* ================= FILTER BAUEN ================= */
 function baueFilter() {
+  console.log('🔨 baueFilter() aufgerufen');
+  
   const container = document.getElementById("filterContainer");
   if(!container) {
     console.error("filterContainer nicht gefunden!");
@@ -15778,10 +15914,40 @@ async function saveLeistung(event) {
   // For non-admins, always use their own athlete_id
   // For admins, use selectedAthleteId if they've selected another athlete
   let athletId;
+  
   if (isAdmin && selectedAthleteId && selectedAthleteId !== currentAthlete.id) {
     athletId = selectedAthleteId;
   } else {
     athletId = currentAthlete.id;
+  }
+  
+  // Extrahiere Geschlecht aus Altersklasse (AK)
+  const ak = document.getElementById('modalAK').value || '';
+  let geschlecht = null;
+  
+  if (ak) {
+    const akUpper = ak.toUpperCase().trim();
+    // Prüfe ersten Buchstaben: M = männlich, W = weiblich
+    if (akUpper.startsWith('M') || akUpper.startsWith('U')) {
+      geschlecht = 'M';
+    } else if (akUpper.startsWith('W') || akUpper.startsWith('F')) {
+      geschlecht = 'W';
+    }
+  }
+  
+  // Fallback: Verwende Geschlecht vom Athleten-Profil
+  if (!geschlecht) {
+    if (isAdmin && selectedAthleteId && selectedAthleteId !== currentAthlete.id) {
+      // Lade Geschlecht des ausgewählten Athleten
+      const { data: selectedAthlete } = await supabaseClient
+        .schema('la').from('athlet')
+        .select('geschlecht')
+        .eq('id', selectedAthleteId)
+        .single();
+      geschlecht = selectedAthlete?.geschlecht || null;
+    } else {
+      geschlecht = currentAthlete.geschlecht || null;
+    }
   }
   
   const leistungId = document.getElementById('editLeistungId').value;
@@ -15793,10 +15959,11 @@ async function saveLeistung(event) {
     ort: document.getElementById('modalOrt').value || null,
     wk_bz: document.getElementById('modalWK').value || null,
     platzierung: parseInt(document.getElementById('modalPlatzierung').value) || null,
-    ak: document.getElementById('modalAK').value || null,
+    ak: ak || null,
     typ: document.getElementById('modalTyp').value || null,
     runde: document.getElementById('modalRunde').value || null,
-    ms: document.getElementById('modalMs').value || null
+    ms: document.getElementById('modalMs').value || null,
+    geschlecht: geschlecht
   };
   
   let error;
@@ -16595,20 +16762,28 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
           <input type="number" id="modalPlatzierung" min="1" placeholder="z.B. 1" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
         </div>
         <div>
-          <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Altersklasse</label>
-          <input type="text" id="modalAK" placeholder="z.B. U20" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
+          <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Altersklasse *</label>
+          <input type="text" id="modalAK" required placeholder="z.B. U20" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
         </div>
         <div>
-          <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Saison</label>
-          <select id="modalTyp" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em; background: #ffffff; color: #333; cursor: pointer;">
-            <option value="">-</option>
+          <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Saison *</label>
+          <select id="modalTyp" required style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em; background: #ffffff; color: #333; cursor: pointer;">
+            <option value="">Bitte wählen</option>
             <option value="f">Freiluft</option>
             <option value="h">Halle</option>
           </select>
         </div>
         <div>
           <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Runde</label>
-          <input type="text" id="modalRunde" placeholder="z.B. Finale" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
+          <select id="modalRunde" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em; background: #ffffff; color: #333; cursor: pointer;">
+            <option value="">-</option>
+            <option value="f">Finale</option>
+            <option value="af">A-Finale</option>
+            <option value="bf">B-Finale</option>
+            <option value="zl">Zeitlauf</option>
+            <option value="vl">Vorlauf</option>
+            <option value="hf">Halbfinale</option>
+          </select>
         </div>
       </div>
       
