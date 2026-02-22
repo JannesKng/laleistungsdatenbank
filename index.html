@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- SEO Meta Tags -->
-  <meta name="description" content="TrackUp - Professionelle Leichtathletik-Leistungsdatenbank zur Verwaltung und Analyse sportlicher Wettkampfergebnisse">
+  <meta name="description" content="TrackUp - Deine Leichtathletik-Datenbank zur Verwaltung und Analyse sportlicher Wettkampfergebnisse">
   <meta name="keywords" content="Leichtathletik, Leistungsanalyse, Wettkampf, Training, Statistik, Performance Tracking">
   <meta name="author" content="TrackUp">
   <meta name="robots" content="index, follow">
@@ -78,6 +78,14 @@ function openDetailPopup(leistungData) {
   // Set title
   title.textContent = `${leistungData.disziplin} - ${formatiereDatum(leistungData.datum)}`;
   
+  // Edit-Button: nur anzeigen wenn eigene Leistung
+  const editBtn = document.getElementById('detailEditBtn');
+  if (editBtn) {
+    const isOwnLeistung = currentAthlete && leistungData.athlet_id === currentAthlete.id;
+    editBtn.style.display = (isOwnLeistung || isAdmin) ? 'flex' : 'none';
+    editBtn.dataset.leistungId = leistungData.id || '';
+  }
+
   // Build info grid
   infoGrid.innerHTML = '';
   
@@ -1466,20 +1474,22 @@ document.addEventListener('keydown', function(e) {
       background: var(--container-bg);
       border-radius: 0;
       box-shadow: none;
-      overflow: hidden;
+      overflow: visible;
       transition: background 0.3s ease;
       min-height: 100vh;
     }
 
     .header {
-      background: linear-gradient(90deg, #FFD700 0%, rgba(255, 255, 255, 0.95) 25%);
+      background: #ffffff;
       color: #1e3c72;
       padding: 8px 0;
       text-align: center;
-      position: sticky;
+      position: fixed;
       top: 0;
+      left: 0;
+      right: 0;
       z-index: 1002;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
       height: 60px;
       display: flex;
       align-items: center;
@@ -4080,7 +4090,7 @@ document.addEventListener('keydown', function(e) {
     
     .map-reset-btn:hover {
       background: #1e3a8a;
-      color: #1e3c72;
+      color: white;
       transform: none;
     }
     
@@ -4104,7 +4114,7 @@ document.addEventListener('keydown', function(e) {
     
     .map-fullscreen-btn:hover {
       background: #1e3a8a;
-      color: #1e3c72;
+      color: white;
       transform: scale(1.05);
     }
     
@@ -4771,24 +4781,41 @@ document.addEventListener('keydown', function(e) {
       font-size: 1.4em;
     }
 
-    .detail-popup-close {
-      background: none;
-      border: none;
-      color: #1e3c72;
-      font-size: 2em;
+    .detail-popup-close,
+    .detail-popup-edit {
+      background: white;
+      border: 2px solid navy;
+      color: navy;
       cursor: pointer;
       padding: 0;
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      transition: all 0.3s;
+      transition: all 0.2s;
+      flex-shrink: 0;
     }
 
-    .detail-popup-close:hover {
-      background: rgba(255,255,255,0.2);
+    .detail-popup-close {
+      font-size: 1.5em;
+      line-height: 1;
+    }
+
+    .detail-popup-edit {
+      font-size: 0.95em;
+    }
+
+    .detail-popup-close:hover,
+    .detail-popup-edit:hover {
+      background: #e8eef8;
+    }
+
+    .detail-popup-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .detail-popup-body {
@@ -5565,6 +5592,10 @@ html, body {
   overflow-x: hidden !important;
 }
 
+body {
+  padding-top: 0;
+}
+
 #mainApp, .main-app {
   margin: 0 !important;
   padding: 0 !important;
@@ -5638,9 +5669,12 @@ details,
     }
     
     /* Ensure main containers don't add extra space */
-    html, body, #mainApp, .main-app, .container {
+    html, body, #mainApp, .main-app {
       margin: 0 !important;
       padding: 0 !important;
+    }
+    .container {
+      margin: 0 !important;
     }
 
     /* Header Tab Button - komplett ohne Box/Border */
@@ -5956,6 +5990,8 @@ details,
     body.dark-mode * {
       scrollbar-color: #555 #2a2a2a;
     }
+
+    /* Fixed header offset wird per JS gesetzt */
   </style>
 
   <!-- Performance Optimization -->
@@ -6180,7 +6216,7 @@ details,
 <div id="mainApp" class="main-app" style="display: none;">
 
 <div class="container">
-  <div class="header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 30px; gap: 30px; box-shadow: none;">
+  <div class="header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 30px; gap: 30px;">
     
     <!-- Logo links mit gleichem Abstand wie rechts -->
     <div style="display: flex; align-items: center; flex-shrink: 0; margin-left: 15px;">
@@ -6247,7 +6283,7 @@ details,
     
   </div>
 
-  <div class="content">
+  <div class="content" style="margin-top: 8px;">
 
     <!-- ================= LEISTUNGEN ================= -->
     <div class="section">
@@ -7121,12 +7157,15 @@ function hideMessage() {
 function showLoginScreen() {
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('mainApp').style.display = 'none';
+  document.body.style.removeProperty('padding-top');
 }
 
 function showMainApp() {
   console.log('showMainApp called - displaying main app');
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('mainApp').style.display = 'block';
+  // Abstand unter dem fixed header (60px Header + 8px Abstand)
+  document.body.style.setProperty('padding-top', '68px', 'important');
   console.log('mainApp display set to block');
 }
 
@@ -7486,6 +7525,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
       // Show main app
       document.getElementById('loginScreen').style.display = 'none';
       document.getElementById('mainApp').style.display = 'block';
+      document.body.style.setProperty('padding-top', '68px', 'important');
       
       // Show admin features if user is admin
       if (isAdmin) {
@@ -7970,6 +8010,15 @@ function initAthleteSearch() {
     return;
   }
   isAthleteSearchInitialized = true;
+  
+  // Enter-Taste waehlt ersten Vorschlag aus
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const firstItem = suggestionsDiv.querySelector('.autocomplete-item[onclick]');
+      if (firstItem) firstItem.click();
+    }
+  });
   
   searchInput.addEventListener('input', async function() {
     const searchTerm = this.value.trim();
@@ -9311,8 +9360,8 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
   const spaltenAnzahl = Object.keys(angezeigteDaten[0]).length;
   
   // Prüfe ob Aktions-Spalte angezeigt wird
-  const hatAktionsSpalte = currentAthlete && (!isAdmin || selectedAthleteId === currentAthlete.id);
-  const gesamtSpaltenAnzahl = hatAktionsSpalte ? spaltenAnzahl + 1 : spaltenAnzahl;
+  const hatAktionsSpalte = false;
+  const gesamtSpaltenAnzahl = spaltenAnzahl;
 
   let html = infoHtml + '<div class="table-wrapper"><table><tr>';
   Object.keys(angezeigteDaten[0]).forEach(sp=>{
@@ -9326,10 +9375,7 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
     }
   });
   
-  // Add Actions column if user can edit (not admin viewing others)
-  if (hatAktionsSpalte) {
-    html += `<th>Aktionen</th>`;
-  }
+
   
   html += "</tr>";
 
@@ -9373,11 +9419,7 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
       html+=`<td>${wert??""}</td>`;
     });
     
-    // Add Edit button if user can edit
-    if (currentAthlete && (!isAdmin || selectedAthleteId === currentAthlete.id)) {
-      const leistungId = vollstaendigeDaten[index].id;
-      html += `<td><button onclick="openEditLeistungModal(${leistungId})" style="padding: 6px 12px; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em;">✏️ Bearbeiten</button></td>`;
-    }
+
     
     html+="</tr>";
   });
@@ -15110,6 +15152,15 @@ function initCompactAthleteSearch() {
   
   console.log('✅ Event Listener wird hinzugefügt...');
   
+  // Enter-Taste wählt ersten Vorschlag aus
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const firstItem = suggestionsDiv.querySelector('.suggestion-item[onclick]');
+      if (firstItem) firstItem.click();
+    }
+  });
+
   searchInput.addEventListener('input', async function(e) {
     const query = this.value.trim().toLowerCase();
     console.log('🔎 Input Event! Query:', query);
@@ -15841,8 +15892,8 @@ async function openEditLeistungModal(leistungId) {
     return;
   }
   
-  // Check if this is the user's own performance
-  if (data.athlet_id !== currentAthlete.id) {
+  // Check if this is the user's own performance (admins can edit any athlete)
+  if (data.athlet_id !== currentAthlete.id && !isAdmin) {
     alert('Du kannst nur deine eigenen Leistungen bearbeiten');
     return;
   }
@@ -15900,6 +15951,14 @@ async function deleteLeistung() {
 // Close Leistung Modal
 function closeLeistungModal() {
   document.getElementById('leistungModal').style.display = 'none';
+}
+
+// Edit from Detail Popup (Popup bleibt offen)
+function editFromDetailPopup() {
+  const editBtn = document.getElementById('detailEditBtn');
+  const leistungId = editBtn ? editBtn.dataset.leistungId : null;
+  if (!leistungId) return;
+  openEditLeistungModal(leistungId);
 }
 
 // Save Leistung
@@ -15988,11 +16047,23 @@ async function saveLeistung(event) {
     return;
   }
   
-  alert(leistungId ? 'Leistung aktualisiert!' : 'Leistung hinzugefügt!');
   closeLeistungModal();
-  
+
   // Reload performances
-  ladeLeistungen();
+  await ladeLeistungen();
+
+  // Falls Detail-Popup noch offen ist, Daten aktualisieren
+  if (leistungId) {
+    const detailPopup = document.getElementById('detailPopup');
+    if (detailPopup && detailPopup.style.display !== 'none') {
+      const { data: updatedData } = await supabaseClient
+        .schema('la').from('leistung')
+        .select('*')
+        .eq('id', leistungId)
+        .single();
+      if (updatedData) openDetailPopup(updatedData);
+    }
+  }
 }
 
 // Open Import Modal
@@ -16024,29 +16095,42 @@ async function importCSV() {
   
   reader.onload = async function(e) {
     const text = e.target.result;
-    const rows = text.split('\n').map(row => row.split(','));
-    
-    // Skip header
-    const dataRows = rows.slice(1).filter(row => row.length >= 3 && row[0].trim() !== '');
-    
+
+    // Trennzeichen automatisch erkennen: Semikolon (Excel DE) oder Komma
+    const firstLine = text.split('\n')[0];
+    const delimiter = firstLine.includes(';') ? ';' : ',';
+
+    const rows = text.split('\n')
+      .map(row => row.replace(/\r$/, '').split(delimiter));
+
+    // Header-basiertes Lesen: Spaltenreihenfolge egal
+    const headers = rows[0].map(h => h.trim().toLowerCase());
+    const idx = key => headers.indexOf(key);
+    const get = (row, key) => {
+      const i = idx(key);
+      return i >= 0 ? row[i]?.trim() || null : null;
+    };
+
+    const dataRows = rows.slice(1).filter(row => row.some(cell => cell.trim() !== ''));
+
     if (dataRows.length === 0) {
       alert('Keine gültigen Daten in der CSV-Datei gefunden');
       return;
     }
-    
+
     const leistungen = dataRows.map(row => ({
-      athlet_id: currentAthlete.id,
-      datum: row[0]?.trim(),
-      disziplin: row[1]?.trim(),
-      leistung: parseFloat(row[2]?.trim().replace(',', '.')),
-      ort: row[3]?.trim() || null,
-      wk_bz: row[4]?.trim() || null,
-      platzierung: parseInt(row[5]?.trim()) || null,
-      ak: row[6]?.trim() || null,
-      typ: row[7]?.trim() || null,
-      runde: row[8]?.trim() || null,
-      ms: row[9]?.trim() || null
-    }));
+      athlet_id:   currentAthlete.id,
+      datum:       get(row, 'datum'),
+      disziplin:   get(row, 'disziplin'),
+      leistung:    parseFloat(get(row, 'leistung')?.replace(',', '.')) || null,
+      ort:         get(row, 'ort'),
+      wk_bz:       get(row, 'wk_bz'),
+      platzierung: parseInt(get(row, 'platzierung')) || null,
+      ak:          get(row, 'ak'),
+      typ:         get(row, 'typ'),
+      runde:       get(row, 'runde'),
+      ms:          get(row, 'ms')
+    })).filter(l => l.datum && l.disziplin && l.leistung);
     
     const { error } = await supabaseClient
       .schema('la').from('leistung')
@@ -16718,11 +16802,11 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
 
 </div> <!-- Close mainApp -->
 <!-- Modal: Leistung hinzufügen/bearbeiten -->
-<div id="leistungModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
+<div id="leistungModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10002; justify-content: center; align-items: center; padding: 20px;">
   <div style="background: #f2f6fa;  padding: 25px; border-radius: var(--border-radius); max-width: 750px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2 id="modalTitle" style="color: navy; margin: 0;">Leistung hinzufügen</h2>
-      <button onclick="closeLeistungModal()" aria-label="Modal schließen" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
+      <button onclick="closeLeistungModal()" aria-label="Modal schließen" style="background: white; border: 2px solid navy; color: navy; font-size: 1.5em; cursor: pointer; padding: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.background='#e8eef8'" onmouseout="this.style.background='white'">×</button>
     </div>
     <form id="leistungForm" onsubmit="saveLeistung(event)">
       <input type="hidden" id="editLeistungId">
@@ -16809,15 +16893,14 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
   <div style="background: #f2f6fa;  padding: 30px; border-radius: var(--border-radius); max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
       <h2 style="color: navy; margin: 0;">Leistungen importieren</h2>
-      <button onclick="closeImportModal()" aria-label="Import-Dialog schließen" style="background: none; border: none; font-size: 1.5em; cursor: pointer; color: #666; padding: 0; width: 30px; height: 30px;">×</button>
+      <button onclick="closeImportModal()" aria-label="Import-Dialog schließen" style="background: white; border: 2px solid navy; color: navy; font-size: 1.5em; cursor: pointer; padding: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.background='#e8eef8'" onmouseout="this.style.background='white'">×</button>
     </div>
-    <p>CSV-Datei mit folgenden Spalten hochladen:</p>
-    <p style="background: #f0f0f0; padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.85em;">datum,disziplin,leistung,ort,wk_bz,platzierung,ak,typ,runde,ms</p>
-    <p style="font-size: 0.85em; color: #666; margin-top: 10px;">
-      <strong>typ:</strong> f (Freiluft) oder h (Halle)<br>
-      <strong>Optionale Felder:</strong> ort, wk_bz, platzierung, ak, typ, runde, ms
+    <p style="margin-bottom: 15px; color: #555; font-size: 0.95em;">
+      Bitte fülle die 
+      <a href="vorlage_import.xlsx" download style="color: navy; font-weight: 600; text-decoration: underline;">📥 Importvorlage</a>
+      aus und lade sie hier als CSV hoch.
     </p>
-    <div style="margin: 20px 0;">
+    <div style="margin: 0 0 20px 0;">
       <input type="file" id="importFile" accept=".csv" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
     </div>
     <div style="display: flex; gap: 10px; justify-content: flex-end;">
@@ -16832,7 +16915,10 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
   <div class="detail-popup-content" onclick="event.stopPropagation()">
     <div class="detail-popup-header">
       <h2 id="detailPopupTitle">Leistungsdetails</h2>
-      <button class="detail-popup-close" onclick="closeDetailPopup()" aria-label="Details schließen">×</button>
+      <div class="detail-popup-actions">
+        <button class="detail-popup-edit" id="detailEditBtn" onclick="editFromDetailPopup()" aria-label="Leistung bearbeiten" title="Leistung bearbeiten">✏️</button>
+        <button class="detail-popup-close" onclick="closeDetailPopup()" aria-label="Details schließen">×</button>
+      </div>
     </div>
     <div class="detail-popup-body">
       <!-- Info Grid -->
@@ -16863,7 +16949,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
   <div style="background: #f2f6fa;  padding: 30px; border-radius: 12px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3);" onclick="event.stopPropagation()">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #1e3a8a; padding-bottom: 15px;">
       <h2 style="color: #1e3c72; margin: 0; font-size: 1.5em;">🏃 Letzte 3 Wettkämpfe</h2>
-      <button onclick="closeLetzteWettkaempfe()" aria-label="Popup schließen" style="background: none; border: none; font-size: 2em; cursor: pointer; color: #1e3c72; padding: 0; width: 40px; height: 40px; line-height: 1; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s;" onmouseover="this.style.background='rgba(255,255,255,0.2)'" onmouseout="this.style.background='none'">×</button>
+      <button onclick="closeLetzteWettkaempfe()" aria-label="Popup schließen" style="background: white; border: 2px solid navy; color: navy; font-size: 1.5em; cursor: pointer; padding: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.2s; flex-shrink: 0;" onmouseover="this.style.background='#e8eef8'" onmouseout="this.style.background='white'">×</button>
     </div>
     <div id="letzteWettkaempfeContent" style="display: flex; flex-direction: column; gap: 15px;">
       <!-- Wird dynamisch gefüllt -->
