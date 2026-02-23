@@ -407,20 +407,12 @@ async function initDetailMap(ort) {
     container.innerHTML = '<p style="text-align:center;padding:30px;color:#888;">Kein Ort angegeben</p>';
     return;
   }
-  
-  // Geocode mit Nominatim
-  let markerCoords = null;
-  try {
-    const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}&limit=1`);
-    const data = await resp.json();
-    if (data && data.length > 0) {
-      markerCoords = { lon: parseFloat(data[0].lon), lat: parseFloat(data[0].lat) };
-    }
-  } catch(e) {
-    console.warn('Geocoding failed:', e);
-  }
 
-  // SVG-Karte aufbauen (gleiche Projektion wie Dashboard)
+  // Cache für Geocoding-Ergebnisse (verhindert doppelte Requests und Rate-Limit-Probleme)
+  if (!window._geocodeCache) window._geocodeCache = {};
+  const cacheKey = ort.toLowerCase().trim();
+
+  // SVG-Karte sofort aufbauen (ohne Marker) damit die Karte sofort sichtbar ist
   const svgNS = 'http://www.w3.org/2000/svg';
   const vbX = -100, vbWidth = 600, vbHeight = 650, padding = 30;
   const lonMin = 5.8, lonMax = 15.0, latMin = 47.3, latMax = 55.0;
@@ -471,8 +463,44 @@ async function initDetailMap(ort) {
     });
   }
   svg.appendChild(borderGroup);
-  
-  // Marker
+
+  // Lade-Text als Platzhalter
+  const loadingText = document.createElementNS(svgNS, 'text');
+  loadingText.setAttribute('x', String(vbX + vbWidth / 2));
+  loadingText.setAttribute('y', String(vbHeight / 2));
+  loadingText.setAttribute('text-anchor', 'middle');
+  loadingText.setAttribute('font-size', '22');
+  loadingText.setAttribute('fill', '#aaa');
+  loadingText.setAttribute('font-family', 'sans-serif');
+  loadingText.textContent = '📍 Ort wird gesucht…';
+  svg.appendChild(loadingText);
+
+  // Sofort rendern
+  container.innerHTML = '';
+  container.appendChild(svg);
+  detailMap = svg;
+
+  // Geocode mit Nominatim (mit Cache)
+  let markerCoords = null;
+  if (cacheKey in window._geocodeCache) {
+    markerCoords = window._geocodeCache[cacheKey];
+  } else {
+    try {
+      const resp = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(ort)}&limit=1`);
+      const data = await resp.json();
+      if (data && data.length > 0) {
+        markerCoords = { lon: parseFloat(data[0].lon), lat: parseFloat(data[0].lat) };
+      }
+      window._geocodeCache[cacheKey] = markerCoords;
+    } catch(e) {
+      console.warn('Geocoding failed:', e);
+    }
+  }
+
+  // Lade-Text entfernen
+  svg.removeChild(loadingText);
+
+  // Marker hinzufügen
   if (markerCoords) {
     const p = toSVG(markerCoords.lon, markerCoords.lat);
     
@@ -515,6 +543,7 @@ async function initDetailMap(ort) {
       svg.appendChild(note);
     }
   } else {
+    // Ort nicht gefunden
     const note = document.createElementNS(svgNS, 'text');
     note.setAttribute('x', String(vbX + vbWidth / 2));
     note.setAttribute('y', String(vbHeight / 2));
@@ -524,10 +553,6 @@ async function initDetailMap(ort) {
     note.textContent = 'Ort nicht gefunden';
     svg.appendChild(note);
   }
-  
-  container.innerHTML = '';
-  container.appendChild(svg);
-  detailMap = svg;
 }
 
 async function initDetailChart(disziplin, highlightId) {
@@ -1997,26 +2022,26 @@ document.addEventListener('keydown', function(e) {
     /* Neue schöne Statistik-Buttons im Grid */
     .statistik-buttons-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 15px;
-      margin-top: 20px;
-      margin-bottom: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+      gap: 8px;
+      margin-top: 12px;
+      margin-bottom: 12px;
     }
 
     .statistik-btn {
       background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
       color: white;
       border: none;
-      border-radius: 12px;
-      padding: 20px;
+      border-radius: 8px;
+      padding: 8px 6px;
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+      box-shadow: 0 2px 6px rgba(30, 58, 138, 0.2);
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
-      min-height: 100px;
+      gap: 4px;
+      min-height: 0;
       position: relative;
       overflow: hidden;
     }
@@ -2047,13 +2072,13 @@ document.addEventListener('keydown', function(e) {
     }
 
     .statistik-btn-icon {
-      font-size: 2.5em;
+      font-size: 1.4em;
       line-height: 1;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
     }
 
     .statistik-btn-text {
-      font-size: 1em;
+      font-size: 0.75em;
       font-weight: 600;
       text-align: center;
       line-height: 1.2;
@@ -2111,21 +2136,21 @@ document.addEventListener('keydown', function(e) {
 
     @media (max-width: 768px) {
       .statistik-buttons-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
       }
       
       .statistik-btn {
-        padding: 15px;
-        min-height: 85px;
+        padding: 6px 4px;
+        min-height: 0;
       }
       
       .statistik-btn-icon {
-        font-size: 2em;
+        font-size: 1.2em;
       }
       
       .statistik-btn-text {
-        font-size: 0.9em;
+        font-size: 0.7em;
       }
     }
 
@@ -5491,42 +5516,45 @@ document.addEventListener('keydown', function(e) {
     /* Analyse Subtabs - Optimiertes Unter-Tab Design */
     .analyse-subtabs {
       display: flex;
-      gap: 8px;
-      margin: 0 calc(-15px - 1px) 20px calc(-15px - 1px);
-      padding: 0 0;
-      background: transparent;
+      gap: 0;
+      margin: 0 calc(-15px - 1px) 24px calc(-15px - 1px);
+      padding: 0;
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      border-bottom: none;
     }
     
     .analyse-subtab-btn {
-      flex: 1;
-      padding: 8px 16px;
-      background: #f5f5f5;
-      border: 1px solid #d0d0d0;
-      border-radius: 6px;
+      flex: 0 0 auto;
+      padding: 12px 28px;
+      background: transparent;
+      border: none;
+      border-bottom: 3px solid transparent;
+      border-radius: 0;
       cursor: pointer;
-      font-size: 0.85em;
+      font-size: 0.95em;
       font-weight: 500;
-      color: #666;
+      color: rgba(255,255,255,0.7);
       transition: all 0.2s ease;
       position: relative;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      box-shadow: none;
+      letter-spacing: 0.01em;
     }
     
     .analyse-subtab-btn:hover {
-      background: #e8e8e8;
-      color: #333;
-      border-color: #b0b0b0;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.95);
+      border-bottom-color: rgba(255,255,255,0.5);
+      transform: none;
+      box-shadow: none;
     }
     
     .analyse-subtab-btn.active {
-      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      background: rgba(255,255,255,0.15);
       color: white;
-      border-color: #1e3a8a;
-      font-weight: 600;
-      box-shadow: 0 2px 8px rgba(30, 58, 138, 0.25);
-      transform: translateY(-1px);
+      border-bottom: 3px solid #FFD700;
+      font-weight: 700;
+      box-shadow: none;
+      transform: none;
     }
     
     .analyse-subtab-content {
@@ -5538,28 +5566,24 @@ document.addEventListener('keydown', function(e) {
     }
     
     body.dark-mode .analyse-subtabs {
-      background: transparent;
+      background: linear-gradient(135deg, #1a2a5e 0%, #1a30a0 100%);
     }
     
     body.dark-mode .analyse-subtab-btn {
-      background: #2a2a2a;
-      color: #999;
-      border-color: #404040;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      color: rgba(255,255,255,0.6);
+      border-bottom-color: transparent;
     }
     
     body.dark-mode .analyse-subtab-btn:hover {
-      background: #353535;
-      color: #ccc;
-      border-color: #555;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+      background: rgba(255,255,255,0.08);
+      color: rgba(255,255,255,0.9);
+      border-bottom-color: rgba(255,255,255,0.4);
     }
     
     body.dark-mode .analyse-subtab-btn.active {
-      background: linear-gradient(135deg, #2a4a8a 0%, #2a50bf 100%);
+      background: rgba(255,255,255,0.12);
       color: white;
-      border-color: #2a4a8a;
-      box-shadow: 0 2px 8px rgba(42, 74, 138, 0.4);
+      border-bottom-color: #FFD700;
     }
     body.dark-mode .chart-data-table {
       background: #2d2d2d;
@@ -5724,7 +5748,7 @@ details,
       z-index: 999;
     }
     
-    /* Analyse Subtabs - mit Hover-Hintergrund */
+    /* Analyse Subtabs - Dropdown Items */
     .analyse-subtab {
       text-decoration: none;
       background: none !important;
@@ -5733,13 +5757,16 @@ details,
     }
     
     .analyse-subtab:hover {
-      text-decoration: underline;
-      text-underline-offset: 4px;
-      text-decoration-color: #1e3c72;
-      text-decoration-thickness: 2px;
+      background: linear-gradient(135deg, #eef2ff 0%, #e8eef8 100%) !important;
       color: #1e3c72 !important;
-      background: #f0f4ff !important;
       border: none !important;
+      text-decoration: none;
+    }
+
+    .analyse-subtab.active-subtab {
+      background: linear-gradient(135deg, #dde7ff 0%, #d0ddf5 100%) !important;
+      color: #1e3a8a !important;
+      font-weight: 700 !important;
     }
 
     /* ========================================
@@ -6087,6 +6114,315 @@ details,
       }
     }
 
+    /* =============================================
+       COMPREHENSIVE MOBILE RESPONSIVE OVERHAUL
+       ============================================= */
+    @media (max-width: 768px) {
+
+      /* === HEADER === */
+      .header {
+        padding: 8px 12px !important;
+        gap: 8px !important;
+        height: auto !important;
+        min-height: 56px;
+      }
+
+      /* Logo kleiner */
+      .header-logo {
+        width: 52px !important;
+      }
+
+      .header-logo-wrap {
+        margin-left: 4px !important;
+      }
+
+      .header-actions-wrap {
+        gap: 6px !important;
+        margin-right: 4px !important;
+      }
+
+      .header-tabs-wrap {
+        gap: 2px !important;
+      }
+
+      /* Tabs: kleinere Schrift, weniger padding */
+      .header-tab-btn {
+        padding: 6px 10px !important;
+        font-size: 0.82em !important;
+      }
+
+      /* Icon-Buttons kleiner */
+      .icon-button {
+        width: 32px !important;
+        height: 32px !important;
+      }
+      .icon-button svg {
+        width: 16px !important;
+        height: 16px !important;
+      }
+
+      /* === TAB CONTENT === */
+      .tab-content {
+        padding: 10px 0 !important;
+      }
+
+      /* === FILTER & COLUMN SECTIONS === */
+      .filter-section,
+      .columns-section {
+        padding: 10px !important;
+        margin-bottom: 8px !important;
+        border-radius: 10px !important;
+      }
+
+      /* === TABLES === */
+      .table-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+        margin: 0 !important;
+      }
+
+      table {
+        font-size: 0.78em !important;
+        min-width: 500px;
+      }
+
+      th, td {
+        padding: 6px 5px !important;
+        white-space: nowrap;
+      }
+
+      /* Erste Spalte nicht sticky scrollbar blockieren */
+      th:first-child, td:first-child {
+        padding-left: 8px !important;
+      }
+
+      /* === DASHBOARD === */
+      .athlete-stats-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      .athlete-stats-secondary {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      .athlete-stat-item {
+        padding: 12px 10px !important;
+        gap: 8px !important;
+      }
+
+      .stat-icon {
+        font-size: 1.2em !important;
+      }
+
+      .stat-value {
+        font-size: 0.95em !important;
+      }
+
+      .athlete-profile-header {
+        padding: 16px !important;
+        gap: 10px !important;
+      }
+
+      .athlete-name-section h2 {
+        font-size: 1.2em !important;
+      }
+
+      .athlete-avatar {
+        width: 48px !important;
+        height: 48px !important;
+      }
+
+      .athlete-avatar svg {
+        width: 28px !important;
+        height: 28px !important;
+      }
+
+      /* Dashboard Performance & PB grids */
+      .dashboard-performance-container,
+      .dashboard-top3-container,
+      .dashboard-goals-container {
+        padding: 12px !important;
+        margin: 0 15px 12px !important;
+        border-radius: 10px !important;
+      }
+
+      .pb-grid-dashboard {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+
+      .pb-grid-dashboard-2col {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+
+      .pb-card-dashboard {
+        padding: 10px !important;
+      }
+
+      .dashboard-section-title {
+        font-size: 1em !important;
+        margin: 12px 15px 8px !important;
+      }
+
+      /* Stat grid auf Dashboard */
+      .stat-grid-dashboard {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px !important;
+      }
+
+      /* === ANALYSE TAB === */
+      #analyseTab .filter-section > div[style*="grid-template-columns"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* Bestleistungen Tabelle */
+      .bestleistungen-table-wrapper {
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* Statistik Buttons */
+      .statistik-buttons-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 6px !important;
+      }
+
+      .statistik-btn {
+        padding: 7px 5px !important;
+      }
+
+      .statistik-btn-icon {
+        font-size: 1.2em !important;
+      }
+
+      .statistik-btn-text {
+        font-size: 0.7em !important;
+      }
+
+      /* Analyse Chart */
+      #diagrammContainer {
+        padding: 8px !important;
+      }
+
+      /* === LEISTUNGEN TAB === */
+      #leistungenTab .filter-section,
+      #leistungenTab .columns-section {
+        padding: 8px !important;
+        margin-bottom: 6px !important;
+      }
+
+      /* Checkbox-Grid enger */
+      .checkbox-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 5px !important;
+      }
+
+      .checkbox-label {
+        padding: 5px 8px !important;
+        font-size: 0.82em !important;
+      }
+
+      /* === ZIELE TAB === */
+      .goal-values {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      /* === MODALS === */
+      #leistungModal > div,
+      #importModal > div {
+        padding: 16px !important;
+        border-radius: 12px !important;
+        max-height: 92vh;
+        overflow-y: auto;
+      }
+
+      /* Modal Grid 3-col → 1-col */
+      #leistungModal div[style*="grid-template-columns: 1fr 1fr 1fr"] {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      #leistungModal div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+
+      /* === DETAIL POPUP === */
+      .detail-popup-content {
+        width: 100% !important;
+        height: 95vh !important;
+        border-radius: 12px !important;
+        min-width: 0 !important;
+      }
+
+      .detail-visualizations {
+        grid-template-columns: 1fr !important;
+      }
+
+      .detail-info-grid {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      /* === DROPDOWN ANALYSE === */
+      .header-analyse-dropdown {
+        left: 0 !important;
+        transform: none !important;
+        min-width: 160px !important;
+      }
+
+      /* === SCORE TABLE === */
+      #scoreAusgabe {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* === BOTTOM SECTION === */
+      #bottomSection {
+        grid-template-columns: 1fr !important;
+        gap: 10px !important;
+      }
+
+      /* === MAP === */
+      .dashboard-map-container {
+        margin: 0 15px 12px !important;
+        border-radius: 10px !important;
+      }
+
+      /* === TOP PERFORMANCES === */
+      .dashboard-top-performances {
+        margin: 0 15px 12px !important;
+      }
+    }
+
+    /* Extra small phones */
+    @media (max-width: 390px) {
+      .header-tab-btn {
+        padding: 5px 7px !important;
+        font-size: 0.76em !important;
+      }
+
+      .athlete-stats-grid,
+      .athlete-stats-secondary {
+        grid-template-columns: 1fr 1fr !important;
+      }
+
+      .pb-grid-dashboard,
+      .pb-grid-dashboard-2col {
+        grid-template-columns: 1fr !important;
+      }
+
+      .statistik-buttons-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      .checkbox-grid {
+        grid-template-columns: 1fr !important;
+      }
+
+      table {
+        font-size: 0.72em !important;
+      }
+    }
+
     </style>
 
 
@@ -6219,23 +6555,26 @@ details,
   <div class="header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 30px; gap: 30px;">
     
     <!-- Logo links mit gleichem Abstand wie rechts -->
-    <div style="display: flex; align-items: center; flex-shrink: 0; margin-left: 15px;">
-      <img src="transparent-logo-trackup.svg" alt="TrackUp Logo" style="width: 80px; height: auto;">
+    <div style="display: flex; align-items: center; flex-shrink: 0; margin-left: 15px;" class="header-logo-wrap">
+      <img src="transparent-logo-trackup.svg" alt="TrackUp Logo" class="header-logo" style="width: 80px; height: auto;">
     </div>
     
     <!-- Tabs in der Mitte -->
-    <div style="display: flex; gap: 10px; flex-grow: 1; justify-content: center;">
+    <div style="display: flex; gap: 10px; flex-grow: 1; justify-content: center;" class="header-tabs-wrap">
       <button class="header-tab-btn active" onclick="switchTab('dashboard')" style="padding: 10px 20px; background: none; border: none; color: #1e3c72; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Dashboard</button>
       <button class="header-tab-btn" onclick="switchTab('leistungen')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Leistungen</button>
       <div style="position: relative;" class="analyse-tab-wrapper">
         <button class="header-tab-btn header-tab-analyse" onclick="switchTab('analyse')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Analyse</button>
-        <!-- Analyse Dropdown - mit Box für bessere Sichtbarkeit -->
-        <div class="header-analyse-dropdown" style="display: none; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); background: #f2f6fa; border: 2px solid #1e3c72; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 8px 0; margin-top: 5px; z-index: 1000; min-width: 200px;">
-          <div class="analyse-subtab" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('entwicklungen');" style="padding: 8px 20px; cursor: pointer; transition: all 0.2s; color: #666; font-size: 0.95em; text-align: center;">
-            📈 Entwicklungen
+        <!-- Analyse Dropdown - schönes Design -->
+        <div class="header-analyse-dropdown" style="display: none; position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: white; border: none; border-radius: 12px; box-shadow: 0 8px 30px rgba(30,58,138,0.18), 0 2px 8px rgba(0,0,0,0.08); padding: 6px; margin-top: 0; z-index: 1000; min-width: 210px; overflow: hidden;">
+          <div style="position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; background: white; border-top: 1px solid rgba(30,58,138,0.1); border-left: 1px solid rgba(30,58,138,0.1); rotate: 45deg; z-index: 1;"></div>
+          <div class="analyse-subtab" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('entwicklungen');" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; transition: all 0.18s; color: #1e3c72; font-size: 0.92em; font-weight: 500; border-radius: 8px; margin-bottom: 2px;">
+            <span style="font-size: 1.15em; line-height: 1;">📈</span>
+            <span>Entwicklungen</span>
           </div>
-          <div class="analyse-subtab" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('statistiken');" style="padding: 8px 20px; cursor: pointer; transition: all 0.2s; color: #666; font-size: 0.95em; text-align: center;">
-            📊 Statistiken
+          <div class="analyse-subtab" onclick="event.stopPropagation(); switchTab('analyse'); switchAnalyseSubtab('statistiken');" style="display: flex; align-items: center; gap: 10px; padding: 10px 14px; cursor: pointer; transition: all 0.18s; color: #1e3c72; font-size: 0.92em; font-weight: 500; border-radius: 8px;">
+            <span style="font-size: 1.15em; line-height: 1;">📊</span>
+            <span>Statistiken</span>
           </div>
         </div>
       </div>
@@ -6243,7 +6582,7 @@ details,
     </div>
     
     <!-- Rechte Seite: Athletensuche, Dark Mode, Logout -->
-    <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-right: 15px;">
+    <div style="display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-right: 15px;" class="header-actions-wrap">
       <!-- Athletensuche - fixed width container to prevent layout shift -->
       <div style="position: relative; width: 40px; height: 40px;">
         <div id="compactAthleteSearch" class="compact-athlete-search" style="display: none; position: absolute; right: 0; top: 0;">
@@ -6725,7 +7064,7 @@ details,
       <!-- ANALYSE TAB -->
       <div id="analyseTab" class="tab-content">
 
-        <!-- Sub-Tabs werden jetzt über Dropdown im Haupttab angezeigt -->
+        <!-- Sub-Tabs über Dropdown im Haupttab -->
         <div class="analyse-subtabs" style="display: none;">
           <button class="analyse-subtab-btn active" onclick="switchAnalyseSubtab('entwicklungen')">📈 Entwicklungen</button>
           <button class="analyse-subtab-btn" onclick="switchAnalyseSubtab('statistiken')">📊 Statistiken</button>
@@ -6931,12 +7270,12 @@ details,
 <div class="filter-section">
           <!-- Filter einklappbar -->
           <details>
-      <summary style="font-weight: 600; color: #2a5298; cursor: pointer; padding: 12px; background: #ffffff; border-radius: 8px; margin-bottom: 15px;">
+      <summary class="statistik-summary">
         🔍 Filter
       </summary>
     
           <div style="margin-bottom: 15px;">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #ffffff; border-radius: 6px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; border-radius: 6px;">
         <div>
           <label style="font-size: 0.9em; font-weight: 500;">Disziplin:</label>
           <select id="statistikFilterDisziplin" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
@@ -7025,12 +7364,12 @@ details,
           
           <!-- Filter einklappbar -->
           <details>
-      <summary style="font-weight: 600; color: #2a5298; cursor: pointer; padding: 12px; background: #ffffff; border-radius: 8px; margin-bottom: 15px;">
+      <summary class="statistik-summary">
         🔍 Filter
       </summary>
     
           <div style="margin-bottom: 15px;">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; background: #ffffff; border-radius: 6px;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; padding: 12px; border-radius: 6px;">
         <div>
           <label style="font-size: 0.9em; font-weight: 500;">Disziplin:</label>
           <select id="bestleistungenFilterDisziplin" style="width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px;">
@@ -7974,7 +8313,7 @@ const SPALTEN_ANZEIGE = {
   typ: "Saison",
   ms: "Meisterschaft",
   runde: "Runde",
-  score: "Score",
+  score: `Score <span class="score-info-icon" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:white;color:#1e3a8a;border:1.5px solid #1e3a8a;border-radius:50%;font-size:0.7em;font-weight:700;font-style:normal;font-family:Inter,sans-serif;line-height:1;flex-shrink:0;cursor:default;margin-left:4px;vertical-align:middle;position:relative;">i<span class="score-tooltip" style="display:none;position:fixed;left:0;top:0;background:#1e3a8a;color:white;border-radius:8px;padding:14px 18px;font-size:1.05em;font-weight:400;white-space:normal;z-index:2147483647;box-shadow:0 6px 24px rgba(0,0,0,0.4);min-width:300px;max-width:420px;line-height:1.85;pointer-events:none;text-align:left;word-wrap:break-word;">Der Score vergleicht Leistungen über Disziplinen hinweg auf einer einheitlichen Skala (0–1000+). Er basiert auf der IAAF-Weltranglisten-Formel und berücksichtigt Weltrekord und Leistungsniveau. Nur für bestimmte Disziplinen verfügbar.</span></span>`,
   zeitraum: "Zeitraum",
   name: "Nachname",
   vorname: "Vorname",
@@ -8921,7 +9260,7 @@ function renderScoreTable() {
               <th onclick="sortScoreTable('disziplin')" style="cursor: pointer;">Disziplin${getSortArrow('disziplin')}</th>
               <th onclick="sortScoreTable('leistung')" style="cursor: pointer;">Leistung${getSortArrow('leistung')}</th>
               <th onclick="sortScoreTable('ort')" style="cursor: pointer;">Ort${getSortArrow('ort')}</th>
-              <th onclick="sortScoreTable('score')" style="cursor: pointer;">Score${getSortArrow('score')}</th>
+              <th onclick="sortScoreTable('score')" style="cursor: pointer;">Score <span class="score-info-icon" onclick="event.stopPropagation()" style="display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;background:white;color:#1e3a8a;border:1.5px solid #1e3a8a;border-radius:50%;font-size:0.7em;font-weight:700;font-style:normal;font-family:Inter,sans-serif;line-height:1;flex-shrink:0;cursor:default;margin-left:4px;vertical-align:middle;position:relative;">i<span class="score-tooltip" style="display:none;position:fixed;left:0;top:0;background:#1e3a8a;color:white;border-radius:8px;padding:14px 18px;font-size:1.05em;font-weight:400;white-space:normal;z-index:2147483647;box-shadow:0 6px 24px rgba(0,0,0,0.4);min-width:300px;max-width:420px;line-height:1.85;pointer-events:none;text-align:left;word-wrap:break-word;">Der Score vergleicht Leistungen über Disziplinen hinweg auf einer einheitlichen Skala (0–1000+). Er basiert auf der IAAF-Weltranglisten-Formel und berücksichtigt Weltrekord und Leistungsniveau. Nur für bestimmte Disziplinen verfügbar.</span></span>${getSortArrow('score')}</th>
             </tr>
           </thead>
           <tbody>
@@ -10642,6 +10981,12 @@ function switchTab(tabName) {
     }
   }
   
+  // Entferne active-subtab Highlight im Dropdown wenn nicht Analyse-Tab
+  if (tabName !== 'analyse') {
+    document.querySelectorAll('.analyse-subtab').forEach(item => item.classList.remove('active-subtab'));
+    document.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active-subtab'));
+  }
+
   // Orte-Tabelle und Top-Disziplinen nur im Dashboard anzeigen
   const topDisziplinenSection = document.getElementById('topDisziplinenSection');
   const ortLeistungenTable = document.getElementById('ortLeistungenTable');
@@ -13390,24 +13735,45 @@ function renderOrtTable() {
     }
 
     .detail-popup-close {
-      background: none;
-      border: none;
-      color: white;
-      font-size: 2em;
+      background: white;
+      border: 2px solid navy;
+      color: navy;
+      font-size: 1.5em;
       cursor: pointer;
       padding: 0;
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
       border-radius: 50%;
-      transition: all 0.3s;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      line-height: 1;
     }
 
     .detail-popup-close:hover {
-      background: rgba(255,255,255,0.2);
+      background: #e8eef8;
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     .detail-popup-body {
       padding: 30px;
@@ -13719,33 +14085,34 @@ function renderOrtTable() {
       display: flex;
       gap: 0;
       margin: 20px 0 0 0;
-      border-bottom: 2px solid #e0e0e0;
-      background: #f2f6fa;
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      border-bottom: none;
     }
     
     .analyse-subtab-btn {
-      flex: 1;
-      padding: 15px 20px;
-      background: #f8f9fa;
+      flex: 0 0 auto;
+      padding: 12px 28px;
+      background: transparent;
       border: none;
       border-bottom: 3px solid transparent;
       cursor: pointer;
-      font-size: 1em;
+      font-size: 0.95em;
       font-weight: 500;
-      color: #666;
-      transition: all 0.3s ease;
+      color: rgba(255,255,255,0.7);
+      transition: all 0.2s ease;
     }
     
     .analyse-subtab-btn:hover {
-      background: #e9ecef;
-      color: #1e3a8a;
+      background: rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.95);
+      border-bottom-color: rgba(255,255,255,0.5);
     }
     
     .analyse-subtab-btn.active {
-      background: #f2f6fa;
-      color: #1e3a8a;
-      border-bottom-color: #1e3a8a;
-      font-weight: 600;
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border-bottom: 3px solid #FFD700;
+      font-weight: 700;
     }
     
     .analyse-subtab-content {
@@ -16320,9 +16687,13 @@ window.setTimeout = function(fn, delay) {
 function switchAnalyseSubtab(subtabName) {
   const buttons = document.querySelectorAll('.analyse-subtab-btn');
   buttons.forEach(btn => btn.classList.remove('active'));
-  if (event && event.target) {
-    event.target.classList.add('active');
-  }
+  // Activate the correct button by matching text content
+  buttons.forEach(btn => {
+    if ((subtabName === 'entwicklungen' && btn.textContent.includes('Entwicklungen')) ||
+        (subtabName === 'statistiken' && btn.textContent.includes('Statistiken'))) {
+      btn.classList.add('active');
+    }
+  });
   
   const entwicklungen = document.getElementById('entwicklungenSubtab');
   const statistiken = document.getElementById('statistikenSubtab');
@@ -16343,12 +16714,18 @@ function switchAnalyseSubtab(subtabName) {
   dropdownItems.forEach(item => {
     item.classList.remove('active-subtab');
   });
+  const analyseSubtabItems = document.querySelectorAll('.analyse-subtab');
+  analyseSubtabItems.forEach(item => {
+    item.classList.remove('active-subtab');
+  });
   
   // Add active class to corresponding dropdown item
   if (subtabName === 'entwicklungen') {
     dropdownItems[0]?.classList.add('active-subtab');
+    analyseSubtabItems[0]?.classList.add('active-subtab');
   } else if (subtabName === 'statistiken') {
     dropdownItems[1]?.classList.add('active-subtab');
+    analyseSubtabItems[1]?.classList.add('active-subtab');
   }
 }
 
@@ -16818,7 +17195,23 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
           <input type="date" id="modalDatum" required style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
         </div>
         <div>
-          <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Disziplin *</label>
+          <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Disziplin *
+            <span class="disziplin-info-icon" tabindex="0" aria-label="Info zu Disziplinen" style="display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; background: #1e3a8a; color: white; border-radius: 50%; font-size: 0.7em; font-weight: 700; cursor: pointer; margin-left: 4px; vertical-align: middle; position: relative;">i
+              <span class="disziplin-tooltip" style="display: none; position: absolute; left: 0; transform: none; top: calc(100% + 8px); background: #1e3a8a; color: white; border-radius: 8px; padding: 14px 16px; font-size: 1.05em; font-weight: 400; white-space: nowrap; z-index: 99999; box-shadow: 0 4px 16px rgba(0,0,0,0.25); min-width: 340px; line-height: 2; pointer-events: none;">
+                <strong>Score-Berechnung möglich für:</strong><br>
+                60m · 100m · 200m · 400m · 800m · 1500m · 3000m · 5000m · 10000m<br>
+                60m Hü. · 100m Hü. · 110m Hü. · 400m Hü. · 3000m Hi.<br>
+                Hoch · StabHoch · Dreisprung · Weit · Kugel · Speer · Diskus · Hammer<br><br>
+                <strong>Weitere mögliche Disziplinen:</strong><br>
+                Alle Laufdistanzen (50m, 300m, 20000m …)<br>
+                Hürdenläufe (60m Hü., 80m Hü., 300m Hü.)<br>
+                Staffeln (4x50m, 4x75m, 4x100m, …)<br>
+                Würfe: Gewichtswurf (Gewicht), Ballwurf (Ball)<br>
+                Mehrkämpfe: 3K, 5K, 7K, 9K, 10K<br>
+                Wurfmehrkämpfe: W3K, W5K
+              </span>
+            </span>
+          </label>
           <input type="text" id="modalDisziplin" required placeholder="z.B. 100m" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
         </div>
         <div>
@@ -16839,8 +17232,8 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
         </div>
       </div>
       
-      <!-- Zeile 3: Platzierung, Altersklasse, Saison, Runde -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+      <!-- Zeile 3: Platzierung, Altersklasse, Meisterschaft -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 15px;">
         <div>
           <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Platzierung</label>
           <input type="number" id="modalPlatzierung" min="1" placeholder="z.B. 1" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
@@ -16849,6 +17242,14 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
           <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Altersklasse *</label>
           <input type="text" id="modalAK" required placeholder="z.B. U20" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
         </div>
+        <div>
+          <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Meisterschaft</label>
+          <input type="text" id="modalMs" placeholder="z.B. DM, EM, WM" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
+        </div>
+      </div>
+      
+      <!-- Zeile 4: Saison, Runde -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
         <div>
           <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Saison *</label>
           <select id="modalTyp" required style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em; background: #ffffff; color: #333; cursor: pointer;">
@@ -16871,11 +17272,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
         </div>
       </div>
       
-      <!-- Zeile 4: Meisterschaft -->
-      <div style="margin-bottom: 20px;">
-        <label style="display: block; margin-bottom: 6px; color: #333; font-weight: 600; font-size: 0.9em;">Meisterschaft</label>
-        <input type="text" id="modalMs" placeholder="z.B. DM, EM, WM" style="width: 100%; padding: 9px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 0.9em;">
-      </div>
+      <p style="font-size: 0.8em; color: #666; margin-bottom: 10px;">* Pflichtfeld</p>
       
       <div style="display: flex; gap: 10px; justify-content: space-between; margin-top: 20px;">
         <button type="button" id="deleteLeistungBtn" onclick="deleteLeistung()" style="display: none; padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.95em; font-weight: 600; background: #dc3545; color: white;">🗑️ Löschen</button>
@@ -16958,6 +17355,64 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
 </div>
 
 
+<style>
+  .disziplin-info-icon:hover .disziplin-tooltip,
+  .disziplin-info-icon:focus .disziplin-tooltip {
+    display: block !important;
+  }
+  .disziplin-info-icon {
+    position: relative;
+  }
+  .score-info-icon:hover .score-tooltip {
+    display: block !important;
+  }
+  .score-info-icon {
+    position: relative;
+  }
+</style>
 
+<style>
+  /* Score-Icon hover → Tooltip */
+  .score-info-icon { position: relative; }
+  .score-info-icon:hover .score-tooltip { display: block !important; }
+
+  /* Disziplin-Icon hover → Tooltip */
+  .disziplin-info-icon { position: relative; }
+  .disziplin-info-icon:hover .disziplin-tooltip,
+  .disziplin-info-icon:focus .disziplin-tooltip { display: block !important; }
+
+  /* Statistiken-Tab: summary transparent, hover weiß */
+  .statistik-summary {
+    font-weight: 600;
+    color: #2a5298;
+    cursor: pointer;
+    padding: 12px;
+    background: transparent;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    transition: background 0.2s ease;
+    display: list-item;
+  }
+  .statistik-summary:hover { background: #ffffff; }
+
+  /* Statistiken filter-section: gleicher Stil wie Leistungen, kein Hover-Effekt */
+  #statistikenSubtab .filter-section {
+    background: #f2f6fa !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+  }
+</style>
+
+<script>
+// Score-Tooltip: position:fixed via JS damit er nie verdeckt wird
+document.addEventListener('mouseover', function(e) {
+  var icon = e.target.closest('.score-info-icon');
+  if (!icon) return;
+  var tip = icon.querySelector('.score-tooltip');
+  if (!tip) return;
+  var r = icon.getBoundingClientRect();
+  tip.style.top  = (r.bottom + 8) + 'px';
+  tip.style.left = Math.min(r.left, window.innerWidth - 440) + 'px';
+});
+</script>
 </body>
 </html>
