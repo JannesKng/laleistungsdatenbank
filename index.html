@@ -33,7 +33,9 @@
   <title>TrackUp - Deine Leichtathletik-Datenbank</title>
   
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg width='128' height='128' viewBox='0 0 128 128' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3ClinearGradient id='faviconGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23FFD700;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23764ba2;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Ctext x='64' y='90' font-family='Arial, sans-serif' font-size='72' font-weight='bold' fill='url(%23faviconGrad)' text-anchor='middle'%3ETU%3C/text%3E%3C/svg%3E">
+  <link rel="icon" type="image/svg+xml" href="transparent-logo-tu.svg?v=3">
+  <link rel="shortcut icon" href="transparent-logo-tu.svg?v=3">
+  <link rel="apple-touch-icon" href="transparent-logo-tu.svg?v=3">
 
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -5663,10 +5665,7 @@ details,
     }
     
     .header-tab-btn:hover {
-      text-decoration: underline;
-      text-underline-offset: 4px;
-      text-decoration-color: #1e3c72;
-      text-decoration-thickness: 2px;
+      text-decoration: none !important;
       background: none !important;
       border: none !important;
       box-shadow: none !important;
@@ -5681,6 +5680,153 @@ details,
       border: none !important;
       box-shadow: none !important;
     }
+
+/* ===== STICKMAN TAB HOVER ANIMATION ===== */
+.header-tab-btn {
+  overflow: visible !important;
+}
+
+/* wrapper sits below the button text */
+.header-tab-btn .tab-stickman-wrap {
+  position: absolute;
+  bottom: 0px;
+  left: 0;
+  width: 100%;
+  height: 18px;
+  pointer-events: none;
+}
+
+/* Growing underline — replaces text-decoration on hover */
+.header-tab-btn .tab-underline {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0%;
+  background: #1e3c72;
+  border-radius: 1px;
+}
+
+/* Stickman SVG */
+.header-tab-btn .tab-stickman {
+  position: absolute;
+  bottom: 1px;   /* feet touch the underline */
+  left: -22px;
+  width: 18px;
+  height: 16px;
+  opacity: 0;
+}
+
+/* Trigger on hover */
+.header-tab-btn:hover .tab-stickman {
+  animation: stickmanRun 0.6s cubic-bezier(.4,0,.6,1) forwards;
+}
+.header-tab-btn:hover .tab-underline {
+  animation: underlineGrow 0.6s cubic-bezier(.4,0,.6,1) forwards;
+}
+
+/* Stickman runs left→right, then fades out */
+@keyframes stickmanRun {
+  0%   { left: -22px; opacity: 1; }
+  82%  { left: calc(100% + 4px); opacity: 1; }
+  100% { left: calc(100% + 4px); opacity: 0; }
+}
+
+/* Line grows in sync with runner */
+@keyframes underlineGrow {
+  0%   { width: 0%; }
+  82%  { width: 100%; }
+  100% { width: 100%; }
+}
+
+/* Leg oscillation on the stickman paths */
+@keyframes legFrontSwing {
+  0%,100% { transform-origin: 50% 55%; transform: rotate(-25deg); }
+  50%     { transform-origin: 50% 55%; transform: rotate(30deg); }
+}
+@keyframes legBackSwing {
+  0%,100% { transform-origin: 50% 55%; transform: rotate(30deg); }
+  50%     { transform-origin: 50% 55%; transform: rotate(-25deg); }
+}
+@keyframes armFrontSwing {
+  0%,100% { transform-origin: 50% 30%; transform: rotate(25deg); }
+  50%     { transform-origin: 50% 30%; transform: rotate(-20deg); }
+}
+@keyframes armBackSwing {
+  0%,100% { transform-origin: 50% 30%; transform: rotate(-20deg); }
+  50%     { transform-origin: 50% 30%; transform: rotate(25deg); }
+}
+@keyframes bodyBob {
+  0%,100% { transform: translateY(0px); }
+  50%     { transform: translateY(-1px); }
+}
+
+.header-tab-btn:hover .stickman-body {
+  animation: bodyBob 0.18s ease-in-out infinite;
+}
+.header-tab-btn:hover .stickman-leg-front {
+  animation: legFrontSwing 0.18s ease-in-out infinite;
+}
+.header-tab-btn:hover .stickman-leg-back {
+  animation: legBackSwing 0.18s ease-in-out infinite;
+}
+.header-tab-btn:hover .stickman-arm-front {
+  animation: armFrontSwing 0.18s ease-in-out infinite;
+}
+.header-tab-btn:hover .stickman-arm-back {
+  animation: armBackSwing 0.18s ease-in-out infinite;
+}
+
+/* Dark mode */
+[data-theme="dark"] .header-tab-btn .tab-underline,
+body.dark-mode .header-tab-btn .tab-underline {
+  background: #8b9ef5 !important;
+}
+body.dark-mode .tab-stickman circle,
+body.dark-mode .tab-stickman line,
+body.dark-mode .tab-stickman path {
+  stroke: #8b9ef5 !important;
+  fill: #8b9ef5 !important;
+}
+
+/* ===== PLUS BUTTON HEADER ===== */
+.header-add-btn {
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  background: linear-gradient(135deg, #1e3c72, #764ba2) !important;
+  border: none !important;
+  border-radius: 20px !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.2s !important;
+  box-shadow: 0 2px 8px rgba(30,60,114,0.3) !important;
+}
+.header-add-btn svg {
+  stroke: #ffffff;
+  transition: stroke 0.2s;
+}
+.header-add-btn:hover {
+  background: #ffffff !important;
+  border: 2px solid #1e3c72 !important;
+  box-shadow: 0 4px 14px rgba(30,60,114,0.35) !important;
+  transform: scale(1.08) !important;
+}
+.header-add-btn:hover svg {
+  stroke: #1e3c72 !important;
+}
+body.dark-mode .header-add-btn:hover {
+  background: #1a1a2e !important;
+  border-color: #8b9ef5 !important;
+}
+body.dark-mode .header-add-btn:hover svg {
+  stroke: #8b9ef5 !important;
+}
+
+
     
     /* Analyse Dropdown - bleibt sichtbar, erweiterte Hover-Area */
     .analyse-tab-wrapper:hover .header-analyse-dropdown,
@@ -5762,7 +5908,7 @@ details,
     }
     
     body.dark-mode .header-tab-btn:hover {
-      text-decoration-color: #8b9ef5 !important;
+      text-decoration: none !important;
     }
     
     /* Analyse Dropdown im Dark Mode */
@@ -6524,10 +6670,10 @@ details,
     
     <!-- Tabs in der Mitte -->
     <div style="display: flex; gap: 10px; flex-grow: 1; justify-content: center;" class="header-tabs-wrap">
-      <button class="header-tab-btn active" onclick="switchTab('dashboard')" style="padding: 10px 20px; background: none; border: none; color: #1e3c72; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Dashboard</button>
-      <button class="header-tab-btn" onclick="switchTab('leistungen')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Leistungen</button>
+      <button class="header-tab-btn active" onclick="switchTab('dashboard')" style="padding: 10px 20px; background: none; border: none; color: #1e3c72; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Dashboard<span class="tab-stickman-wrap"><span class="tab-underline"></span><svg class="tab-stickman" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle class="stickman-body" cx="9" cy="2" r="2" fill="#1e3c72"/><line class="stickman-body" x1="9" y1="4" x2="9" y2="9" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-arm-back" x1="9" y1="5.5" x2="5.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-arm-front" x1="9" y1="5.5" x2="12.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-leg-back" x1="9" y1="9" x2="5.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-leg-front" x1="9" y1="9" x2="12.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/></svg></span></button>
+      <button class="header-tab-btn" onclick="switchTab('leistungen')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Leistungen<span class="tab-stickman-wrap"><span class="tab-underline"></span><svg class="tab-stickman" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle class="stickman-body" cx="9" cy="2" r="2" fill="#1e3c72"/><line class="stickman-body" x1="9" y1="4" x2="9" y2="9" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-arm-back" x1="9" y1="5.5" x2="5.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-arm-front" x1="9" y1="5.5" x2="12.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-leg-back" x1="9" y1="9" x2="5.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-leg-front" x1="9" y1="9" x2="12.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/></svg></span></button>
       <div style="position: relative;" class="analyse-tab-wrapper">
-        <button class="header-tab-btn header-tab-analyse" onclick="switchTab('analyse')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Analyse</button>
+        <button class="header-tab-btn header-tab-analyse" onclick="switchTab('analyse')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Analyse<span class="tab-stickman-wrap"><span class="tab-underline"></span><svg class="tab-stickman" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle class="stickman-body" cx="9" cy="2" r="2" fill="#1e3c72"/><line class="stickman-body" x1="9" y1="4" x2="9" y2="9" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-arm-back" x1="9" y1="5.5" x2="5.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-arm-front" x1="9" y1="5.5" x2="12.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-leg-back" x1="9" y1="9" x2="5.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-leg-front" x1="9" y1="9" x2="12.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/></svg></span></button>
         <!-- Analyse Dropdown - schönes Design -->
         <div class="header-analyse-dropdown" style="display: none; position: absolute; top: calc(100% + 8px); left: 50%; transform: translateX(-50%); background: white; border: none; border-radius: 12px; box-shadow: 0 8px 30px rgba(30,58,138,0.18), 0 2px 8px rgba(0,0,0,0.08); padding: 6px; margin-top: 0; z-index: 1000; min-width: 210px; overflow: hidden;">
           <div style="position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 12px; height: 12px; background: white; border-top: 1px solid rgba(30,58,138,0.1); border-left: 1px solid rgba(30,58,138,0.1); rotate: 45deg; z-index: 1;"></div>
@@ -6542,8 +6688,8 @@ details,
         </div>
       </div>
 
-      <button class="header-tab-btn" onclick="switchTab('kalender')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Wettkämpfe</button>
-      <button class="header-tab-btn" onclick="switchTab('training')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Training</button>
+      <button class="header-tab-btn" onclick="switchTab('kalender')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Wettkämpfe<span class="tab-stickman-wrap"><span class="tab-underline"></span><svg class="tab-stickman" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle class="stickman-body" cx="9" cy="2" r="2" fill="#1e3c72"/><line class="stickman-body" x1="9" y1="4" x2="9" y2="9" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-arm-back" x1="9" y1="5.5" x2="5.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-arm-front" x1="9" y1="5.5" x2="12.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-leg-back" x1="9" y1="9" x2="5.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-leg-front" x1="9" y1="9" x2="12.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/></svg></span></button>
+      <button class="header-tab-btn" onclick="switchTab('training')" style="padding: 10px 20px; background: none; border: none; color: #666; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.2s;">Training<span class="tab-stickman-wrap"><span class="tab-underline"></span><svg class="tab-stickman" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle class="stickman-body" cx="9" cy="2" r="2" fill="#1e3c72"/><line class="stickman-body" x1="9" y1="4" x2="9" y2="9" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-arm-back" x1="9" y1="5.5" x2="5.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-arm-front" x1="9" y1="5.5" x2="12.5" y2="7.5" stroke="#1e3c72" stroke-width="1.2"/><line class="stickman-leg-back" x1="9" y1="9" x2="5.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/><line class="stickman-leg-front" x1="9" y1="9" x2="12.5" y2="15" stroke="#1e3c72" stroke-width="1.4"/></svg></span></button>
     </div>
     
     <!-- Rechte Seite: Athletensuche, Dark Mode, Logout -->
@@ -6565,6 +6711,14 @@ details,
           </div>
         </div>
       </div>
+      
+      <!-- Plus Button: Leistung direkt hinzufügen -->
+      <button class="icon-button header-add-btn" onclick="openAddLeistungModal()" title="Leistung hinzufügen">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
       
       <!-- Dark Mode Button - mit navy blauer Umrandung, runder -->
       <button class="icon-button" onclick="toggleDarkMode()" title="Dark Mode umschalten" style="width: 40px; height: 40px; padding: 0; background: none; border: 2px solid #1e3c72; border-radius: 20px; color: #1e3c72; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
@@ -7854,7 +8008,7 @@ function buildTypePicker(currentType, onChange) {
     const dot = document.createElement('span');
     dot.style.cssText = 'width:8px;height:8px;border-radius:2px;flex-shrink:0;background:'+getColorForType(selected)+';';
     const lbl = document.createElement('span'); lbl.style.cssText = 'flex:1;'; lbl.textContent = selected;
-    const arrow = document.createElement('span'); arrow.style.cssText = 'font-size:0.6rem;color:var(--tp-muted);margin-left:auto;'; arrow.textContent = 'â–¾';
+    const arrow = document.createElement('span'); arrow.style.cssText = 'font-size:0.6rem;color:var(--tp-muted);margin-left:auto;'; arrow.textContent = '▾';
     display.appendChild(dot); display.appendChild(lbl); display.appendChild(arrow);
   }
   updateDisplay();
@@ -8870,15 +9024,15 @@ function buildDayCell(iso, date) {
       // detail editor row (duration + intensity)
       const editor=document.createElement('div'); editor.className='chip-editor';
 
-      // â–¼/â–² Dauer-Stepper
+      // ▼/▲ Dauer-Stepper
       const stepWrap=document.createElement('div');
       stepWrap.style.cssText='display:flex;align-items:center;flex-shrink:0;';
-      const durDown=document.createElement('button'); durDown.textContent='â–¼';
+      const durDown=document.createElement('button'); durDown.textContent='▼';
       durDown.style.cssText='font-size:0.5rem;background:none;border:1px solid var(--tp-border);border-right:none;border-radius:4px 0 0 4px;padding:0.2rem 0.28rem;cursor:pointer;color:var(--tp-muted);line-height:1;';
       const durDisplay=document.createElement('span');
       durDisplay.style.cssText='font-family:var(--tp-mono);font-size:0.68rem;font-weight:500;min-width:42px;text-align:center;border:1px solid var(--tp-border);padding:0.18rem 0.25rem;background:var(--tp-bg);color:var(--tp-text);display:inline-block;';
       durDisplay.textContent=w.duration?w.duration+'min':'Dauer';
-      const durUp=document.createElement('button'); durUp.textContent='â–²';
+      const durUp=document.createElement('button'); durUp.textContent='▲';
       durUp.style.cssText='font-size:0.5rem;background:none;border:1px solid var(--tp-border);border-left:none;border-radius:0 4px 4px 0;padding:0.2rem 0.28rem;cursor:pointer;color:var(--tp-muted);line-height:1;';
 
       function updateDur(val){
@@ -9236,12 +9390,12 @@ function openUnitTplModal() {
     const durLbl=document.createElement('span'); durLbl.style.cssText='font-size:0.72rem;color:var(--tp-muted);white-space:nowrap;';
     durLbl.textContent='Dauer:';
     const stepWrap=document.createElement('div'); stepWrap.style.cssText='display:flex;align-items:center;';
-    const btnDown=document.createElement('button'); btnDown.textContent='â–¼';
+    const btnDown=document.createElement('button'); btnDown.textContent='▼';
     btnDown.style.cssText='font-size:0.5rem;background:none;border:1px solid var(--tp-border);border-right:none;border-radius:4px 0 0 4px;padding:0.22rem 0.32rem;cursor:pointer;color:var(--tp-muted);line-height:1;';
     const durDisplay=document.createElement('span');
     durDisplay.style.cssText='font-family:var(--tp-mono);font-size:0.76rem;font-weight:500;min-width:52px;text-align:center;border:1px solid var(--tp-border);padding:0.2rem 0.3rem;background:var(--tp-bg);color:var(--tp-text);display:inline-block;';
     durDisplay.textContent='Dauer';
-    const btnUp=document.createElement('button'); btnUp.textContent='â–²';
+    const btnUp=document.createElement('button'); btnUp.textContent='▲';
     btnUp.style.cssText='font-size:0.5rem;background:none;border:1px solid var(--tp-border);border-left:none;border-radius:0 4px 4px 0;padding:0.22rem 0.32rem;cursor:pointer;color:var(--tp-muted);line-height:1;';
     function updateDurDisplay(){ durDisplay.textContent=durVal>0?durVal+'min':'Dauer'; }
     btnUp.addEventListener('click',()=>{ durVal=Math.min(durVal+10,360); updateDurDisplay(); });
@@ -9323,12 +9477,12 @@ function openTplEditPanel(tpl, ti, onSave) {
   const durRow = document.createElement('div'); durRow.style.cssText = 'display:flex;align-items:center;gap:0.4rem;';
   const durLbl = document.createElement('span'); durLbl.style.cssText = 'font-size:0.72rem;color:var(--tp-muted);white-space:nowrap;'; durLbl.textContent = 'Dauer:';
   const stepWrap = document.createElement('div'); stepWrap.style.cssText = 'display:flex;align-items:center;';
-  const btnDown = document.createElement('button'); btnDown.textContent = 'â–¼';
+  const btnDown = document.createElement('button'); btnDown.textContent = '▼';
   btnDown.style.cssText = 'font-size:0.5rem;background:none;border:1px solid var(--tp-border);border-right:none;border-radius:4px 0 0 4px;padding:0.22rem 0.32rem;cursor:pointer;color:var(--tp-muted);line-height:1;';
   const durDisplay = document.createElement('span');
   durDisplay.style.cssText = 'font-family:var(--tp-mono);font-size:0.76rem;font-weight:500;min-width:52px;text-align:center;border:1px solid var(--tp-border);padding:0.2rem 0.3rem;background:var(--tp-bg);color:var(--tp-text);display:inline-block;';
   durDisplay.textContent = durVal > 0 ? durVal + 'min' : 'Dauer';
-  const btnUp = document.createElement('button'); btnUp.textContent = 'â–²';
+  const btnUp = document.createElement('button'); btnUp.textContent = '▲';
   btnUp.style.cssText = 'font-size:0.5rem;background:none;border:1px solid var(--tp-border);border-left:none;border-radius:0 4px 4px 0;padding:0.22rem 0.32rem;cursor:pointer;color:var(--tp-muted);line-height:1;';
   btnUp.addEventListener('click', () => { durVal = Math.min(durVal + 10, 360); durDisplay.textContent = durVal + 'min'; });
   btnDown.addEventListener('click', () => { if (durVal <= 0) return; durVal = Math.max(0, durVal - 10); durDisplay.textContent = durVal > 0 ? durVal + 'min' : 'Dauer'; });
@@ -11567,7 +11721,7 @@ function getSortArrow(column) {
   if (window.scoreTableSortColumn !== column) {
     return '';
   }
-  return window.scoreTableSortDirection === 'asc' ? ' â–²' : ' â–¼';
+  return window.scoreTableSortDirection === 'asc' ? ' ▲' : ' ▼';
 }
 
 async function berechneDurchschnitt(typ) {
@@ -11925,7 +12079,7 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
     let name = SPALTEN_ANZEIGE[sp]||sp;
     
     if(sortierbar){
-      const pfeil = sortSpalte===sp ? (sortAsc?" â–²":" â–¼") : "";
+      const pfeil = sortSpalte===sp ? (sortAsc?" ▲":" ▼") : "";
       html += `<th onclick="setSort('${sp}')">${name}${pfeil}</th>`;
     } else {
       html += `<th>${name}</th>`;
@@ -12019,8 +12173,8 @@ function zeigeTabelle(data, containerId, isPB = false, isAthleten = false) {
   cols.forEach(c => {
     const label = SPALTEN_ANZEIGE[c] || c;
     const arrow = isAthleten 
-      ? (sortSpalteAthleten === c ? (sortAscAthleten ? " â–²" : " â–¼") : "")
-      : (sortSpalte === c ? (sortAsc ? " â–²" : " â–¼") : "");
+      ? (sortSpalteAthleten === c ? (sortAscAthleten ? " ▲" : " ▼") : "")
+      : (sortSpalte === c ? (sortAsc ? " ▲" : " ▼") : "");
     
     html += `<th onclick="${isAthleten ? `sortiereAthleten('${c}')` : `sortiereLeistungen('${c}')` }">${label}${arrow}</th>`;
   });
@@ -12454,7 +12608,7 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
   let html = infoHtml + '<div class="table-wrapper"><table><tr>';
   tatsaechlicheSpalten.forEach(sp=>{
     let name = SPALTEN_ANZEIGE[sp]||sp;
-    const pfeil = sortSpalte===sp ? (sortAsc?" â–²":" â–¼") : "";
+    const pfeil = sortSpalte===sp ? (sortAsc?" ▲":" ▼") : "";
     html += `<th onclick="setSortPBsSBs('${sp}')" style="cursor: pointer;">${name}${pfeil}</th>`;
   });
   html += "</tr>";
@@ -15890,7 +16044,7 @@ function renderOrtTable() {
   
   // Header mit Sortier-Pfeilen
   spalten.forEach(col => {
-    const pfeil = ortTableSortColumn === col.key ? (ortTableSortAsc ? " â–²" : " â–¼") : "";
+    const pfeil = ortTableSortColumn === col.key ? (ortTableSortAsc ? " ▲" : " ▼") : "";
     tableHTML += `<th onclick="setOrtTableSort('${col.key}')" style="cursor: pointer;">${col.name}${pfeil}</th>`;
   });
   
