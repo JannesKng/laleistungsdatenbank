@@ -1,0 +1,65 @@
+﻿gender;event_name;event_type;const_a;const_b;const_c;typ
+M;100m;track;254347;180;181;f
+M;200m;track;58425;380;181;f
+M;400m;track;153;820;181;f
+M;800m;track;1074;2540;188;f
+M;1500m;track;143;5400;192;f
+M;3000m;track;17;11400;185;f
+M;5000m;track;4;19800;185;f
+M;10000m;track;1;41500;185;f
+M;110m Hü.;track;57424;285;192;f
+M;400m Hü.;track;645;955;192;f
+M;3000m Hi.;track;19;10800;185;f
+M;Hoch;field;8465;750;142;f
+M;Weit;field;1399;2200;14;f
+M;Dreisprung;field;462;4850;14;f
+M;StabHoch;field;2797;1000;135;f
+M;Kugel;field;5139;15;105;f
+M;Diskus;field;1291;40;11;f
+M;Speer;field;1014;70;108;f
+M;Hammer;field;79096;35;105;f
+F;100m;track;178574;210;181;f
+F;200m;track;4075;425;181;f
+F;400m;track;1034;915;181;f
+F;800m;track;68;3050;188;f
+F;1500m;track;82;6600;192;f
+F;3000m;track;1;14200;185;f
+F;5000m;track;24;25200;185;f
+F;10000m;track;0.00055;54000;185;f
+F;100m Hü.;track;92297;267;1835;f
+F;400m Hü.;track;351;1100;1835;f
+F;3000m Hi.;track;12;13500;185;f
+F;Hoch;field;1848;750;142;f
+F;Weit;field;188;2100;14;f
+F;Dreisprung;field;655;4200;14;f
+F;StabHoch;field;4436;1000;135;f
+F;Kugel;field;560211;15;105;f
+F;Diskus;field;123311;30;11;f
+F;Speer;field;159803;38;104;f
+F;Hammer;field;79096;15;105;f
+M;60m;track;58015;115;181;h
+M;200m;track;58425;380;181;h
+M;400m;track;153;820;181;h
+M;800m;track;1074;2540;188;h
+M;1500m;track;143;5400;192;h
+M;3000m;track;17;11400;185;h
+M;5000m;track;4;19800;185;h
+M;60m Hü.;track;205173;155;192;h
+M;Hoch;field;8465;750;142;h
+M;StabHoch;field;2797;1000;135;h
+M;Weit;field;1399;2200;14;h
+M;Dreisprung;field;462;4850;14;h
+M;Kugel;field;5139;15;105;h
+F;60m;track;404386;135;181;h
+F;200m;track;4075;425;181;h
+F;400m;track;1034;915;181;h
+F;800m;track;68;3050;188;h
+F;1500m;track;82;6600;192;h
+F;3000m;track;1;14200;185;h
+F;5000m;track;24;25200;185;h
+F;60m Hü.;track;200479;170;1835;h
+F;Hoch;field;1848;750;142;h
+F;StabHoch;field;4436;1000;135;h
+F;Weit;field;188;2100;14;h
+F;Dreisprung;field;655;4200;14;h
+F;Kugel;field;560211;15;105;h
