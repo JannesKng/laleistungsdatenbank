@@ -1,0 +1,24 @@
+TrackUp v7.2.0 — Changelog
+==========================
+
+2026-05-09 14:30
+  - CSV-Import vollständig entfernt (Leistungen-Tab)
+    · Toolbar-Button "CSV Import" entfernt
+    · <div id="importModal"> HTML-Modal entfernt
+    · JS-Funktionen openImportModal / closeImportModal / importCSV entfernt
+    · Alle CSS-Referenzen auf #importModal aus Selektoren entfernt
+      (print/responsive max-width, mobile bottom-sheet, ::before drag-indicator, dark-mode)
+
+2026-05-09 14:00
+  - Einstellungen: Hintergrund weiß, .settings-card Hintergrund #f8fafc (wie Dashboard-Kästen)
+  - Profile-Dropdown: Hover-Lücke geschlossen via ::after Pseudo-Element auf .header-profile-wrap
+
+2026-05-09 13:00
+  - #einstellungenTab: position:fixed entfernt — normaler Flow, kein Overlay
+  - switchTab: .container min-height auf 0 wenn Einstellungen aktiv, sonst restore
+  - .settings-page-header: sticky top 68px (Desktop) / 52px (Mobile)
+  - Profile-Dropdown: öffnet bei Hover via CSS
+
+2026-05-09 12:15
+  - year-separator CSS global gemacht (war nur in @media max-width:768px)
+  - Einstellungen: container-hide-Logik entfernt (zu aggressiv)
