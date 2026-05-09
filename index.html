@@ -1,5 +1,5 @@
-﻿<!DOCTYPE html>
-<!-- Letzte Änderung: 2026-05-02 19:30 (34) -->
+<!DOCTYPE html>
+<!-- Letzte Änderung: 2026-05-09 14:30 -->
 <html lang="de">
 <head>
 	<!-- Google tag (gtag.js) -->
@@ -554,7 +554,7 @@ function _renderDiszOption(d) {
         onmousedown="waehleDisziplinFromEl(this)"
         style="display:flex;align-items:center;gap:8px;padding:8px 12px;cursor:pointer;border-radius:6px;font-size:0.9em;">
      <span style="display:inline-flex;align-items:center;width:20px;justify-content:center;">${getDisziplinIcon(d.name, d.icon)}</span>
-     <span style="flex:1;display:inline-flex;align-items:center;gap:3px;">${d.name}${hatScoreBerechnung(d.name) ? `<img src="icons/score.png" width="14" height="14" style="object-fit:contain;opacity:0.75;flex-shrink:0;" title="Score-Berechnung verfügbar" alt="">` : ''}</span>
+     <span style="flex:1;">${d.name}</span>
      ${isFav ? '<span style="color:#f59e0b;font-size:1.1em;line-height:1;flex-shrink:0;" title="Meine Disziplin">★</span>' : ''}
    </div>`;
 }
@@ -569,7 +569,7 @@ function _renderDiszOptionCustom(d) {
           onmousedown="waehleDisziplinFromEl(this)"
           style="display:flex;align-items:center;gap:8px;flex:1;cursor:pointer;padding:6px 0;">
        <span style="display:inline-flex;align-items:center;width:20px;justify-content:center;">${getDisziplinIcon(d.name, d.icon)}</span>
-       <span style="flex:1;display:inline-flex;align-items:center;gap:3px;">${d.name}${hatScoreBerechnung(d.name) ? `<img src="icons/score.png" width="14" height="14" style="object-fit:contain;opacity:0.75;flex-shrink:0;" title="Score-Berechnung verfügbar" alt="">` : ''}</span>
+       <span style="flex:1;">${d.name}</span>
        ${isFav ? '<span style="color:#f59e0b;font-size:1.1em;line-height:1;flex-shrink:0;" title="Meine Disziplin">★</span>' : ''}
      </div>
      <span onmousedown="event.preventDefault();event.stopPropagation();bearbeiteDisziplin(${d.id})"
@@ -1030,7 +1030,7 @@ function _buildShareInfoCard(cfg, l) {
     'border-radius:14px', 'box-sizing:border-box',
   ].join(';');
 
-  const datumStr = l.wettkampf?.startdatum ? formatiereDatum(l.wettkampf.startdatum) : null;
+  const datumStr = (l.datum || l.wettkampf?.startdatum) ? formatiereDatum(l.datum || l.wettkampf?.startdatum) : null;
   const ort      = l.wettkampf?.ort_display || l.wettkampf?.ort;
   let html = '';
 
@@ -1755,7 +1755,6 @@ document.addEventListener('keydown', function(e) {
     #wettkampfFormModal > div,
     #ortBearbeitenModal > div,
     #leistungModal > div,
-    #importModal > div,
     #trainingFormModal > div,
     #competitionFormModal > div,
     #templateFormModal > div,
@@ -1775,7 +1774,6 @@ document.addEventListener('keydown', function(e) {
       #wettkampfFormModal > div,
       #ortBearbeitenModal > div,
       #leistungModal > div,
-      #importModal > div,
       #trainingFormModal > div,
       #competitionFormModal > div,
       #templateFormModal > div,
@@ -2699,6 +2697,17 @@ body.dark-mode tr.pb-row:hover td {
 }
 
 /* ── Jahr-Trennzeile ── */
+/* ── Year-Separator (global, Desktop + Mobile) ── */
+tr.year-separator {
+  height: 2px;
+}
+tr.year-separator td {
+  padding: 0 !important;
+  border-top: 1px solid #1e3a8a;
+  border-bottom: none !important;
+  background: linear-gradient(90deg, transparent 0%, #1e3a8a 50%, transparent 100%) !important;
+}
+
 body.dark-mode tr.year-separator td {
   border-top: 1px solid rgba(99, 120, 255, 0.20);
   border-bottom: none;
@@ -3113,6 +3122,8 @@ body.dark-mode #sbDiagrammContainer {
       overflow: visible;
       transition: background 0.3s ease;
       min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .header {
@@ -7012,55 +7023,23 @@ tr.pb-row:hover {
     /* Leistung Modal & Import Modal */
     @media (max-width: 768px) {
       #leistungModal > div,
-      #importModal > div {
-        max-width: 95% !important;
-        width: 95% !important;
-        padding: 20px !important;
-      }
       
       #leistungModal h2,
-      #importModal h2 {
-        font-size: 1.3em !important;
-      }
     }
     
     @media (max-width: 480px) {
       #leistungModal,
-      #importModal {
-        padding: 10px !important;
-      }
       
       #leistungModal > div,
-      #importModal > div {
-        max-width: 100% !important;
-        width: 100% !important;
-        padding: 10px 5px !important;
-        max-height: 95vh;
-        overflow-y: auto;
-      }
       
       #leistungModal h2,
-      #importModal h2 {
-        font-size: 1.1em !important;
-      }
       
       #leistungModal input,
       #leistungModal select,
-      #importModal input {
-        padding: 8px !important;
-        font-size: 0.9em !important;
-      }
       
       #leistungModal label,
-      #importModal label {
-        font-size: 0.85em !important;
-      }
       
       #leistungModal button,
-      #importModal button {
-        padding: 8px 15px !important;
-        font-size: 0.9em !important;
-      }
     }
     
     /* Overflow fix für body */
@@ -7459,6 +7438,15 @@ body {
   user-select: none;
 }
 .header-profile-wrap:hover { background: rgba(30,60,114,0.07); }
+/* Unsichtbare Brücke zwischen Button und Dropdown: verhindert Schließen beim Runterfahren */
+.header-profile-wrap::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  right: 0;
+  height: 6px;
+}
 .header-profile-avatar {
   width: 34px;
   height: 34px;
@@ -7498,6 +7486,7 @@ body {
   overflow: hidden;
 }
 .profile-dropdown.open { display: block; }
+.header-profile-wrap:hover .profile-dropdown { display: block; }
 .profile-dropdown-item {
   display: flex;
   align-items: center;
@@ -7550,14 +7539,17 @@ body.dark-mode .app-footer a {
 body.dark-mode .app-footer a:hover { color: #93c5fd !important; }
 
 /* ── Einstellungen Seite ── */
-#einstellungenTab { padding: 0; min-height: 100vh; background: #f8fafc; }
+#einstellungenTab { padding: 0; background: #ffffff; }
 body.dark-mode #einstellungenTab { background: #0f172a; }
 .settings-page-header {
   display: flex; align-items: center; gap: 14px;
   padding: 20px 28px 16px; border-bottom: 1px solid #e2e8f0;
-  background: #fff; position: sticky; top: 0; z-index: 10;
+  background: #fff; position: sticky; top: 68px; z-index: 10;
 }
 body.dark-mode .settings-page-header { background: #1e293b; border-bottom-color: #334155; }
+@media (max-width: 768px) {
+  .settings-page-header { top: 52px; }
+}
 .settings-back-btn {
   display: flex; align-items: center; gap: 6px; background: none; border: none;
   color: #64748b; font-size: 0.88em; font-weight: 500; cursor: pointer;
@@ -7569,125 +7561,12 @@ body.dark-mode .settings-back-btn:hover { background: #334155; color: #e2e8f0; }
 body.dark-mode .settings-page-title { color: #e2e8f0; }
 .settings-page-body { max-width: 600px; margin: 28px auto; padding: 0 20px 60px; }
 .settings-card {
-  background: #fff; border-radius: 14px; border: 1px solid #e2e8f0;
+  background: #f8fafc; border-radius: 14px; border: 1px solid #e8eef5;
   margin-bottom: 20px; overflow: hidden;
 }
 body.dark-mode .settings-card { background: #1e293b; border-color: #334155; }
 
 /* ── Einstellungen Modal (Legacy) ── */
-/* ============================================================
-   ONBOARDING TUTORIAL
-   Halbtransparentes Overlay + Spotlight + Tooltip-Karte.
-   Variablen aus dem Theme — funktioniert in Light & Dark Mode.
-   ============================================================ */
-#tutorialOverlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 99988;
-  pointer-events: none;
-}
-#tutorialOverlay.tut-active { display: block; }
-
-/* Halbtransparenter Backdrop — fängt Klicks ab */
-#tutorialBackdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  z-index: 99988;
-  pointer-events: all;
-  animation: tutFadeIn 0.2s ease;
-}
-@keyframes tutFadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-/* Spotlight: stanzt das hervorgehobene Element aus dem Backdrop aus */
-#tutorialSpotlight {
-  position: fixed;
-  border-radius: 10px;
-  box-shadow: 0 0 0 9999px rgba(15, 23, 42, 0.55),
-              0 0 0 3px var(--accent-primary, #1e3a8a),
-              0 0 24px 4px rgba(99, 120, 255, 0.35);
-  z-index: 99989;
-  pointer-events: none;
-  transition: left 0.28s ease, top 0.28s ease, width 0.28s ease, height 0.28s ease;
-}
-/* Wenn Spotlight aktiv ist, brauchen wir den Backdrop nicht mehr */
-#tutorialOverlay.tut-active #tutorialBackdrop.tut-has-spotlight { display: none; }
-
-/* Tooltip-Karte */
-#tutorialCard {
-  position: fixed;
-  width: 340px;
-  background: var(--surface-elevated, #ffffff);
-  border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 12px;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.35);
-  z-index: 99995;
-  pointer-events: all;
-  overflow: hidden;
-  animation: tutCardIn 0.22s ease;
-}
-@keyframes tutCardIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
-.tut-header {
-  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-.tut-step-badge {
-  background: rgba(255, 255, 255, 0.22);
-  color: #ffffff;
-  font-size: 0.72em;
-  font-weight: 700;
-  padding: 2px 8px;
-  border-radius: 20px;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-.tut-title {
-  color: #ffffff;
-  font-size: 1.05em;
-  font-weight: 700;
-}
-.tut-body { padding: 14px 16px 10px; }
-.tut-text {
-  color: var(--text-secondary, #334155);
-  font-size: 0.9em;
-  line-height: 1.55;
-  margin: 0;
-}
-.tut-footer {
-  padding: 10px 16px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid var(--border-color, #e5e7eb);
-}
-.tut-skip {
-  background: none !important; border: none !important; box-shadow: none !important;
-  color: var(--text-muted, #94a3b8) !important; font-size: 0.8em !important; font-weight: 500 !important;
-  cursor: pointer !important; padding: 4px 0 !important;
-}
-.tut-skip:hover { color: var(--text-secondary, #64748b) !important; }
-.tut-nav { display: flex; gap: 8px; }
-.tut-btn {
-  padding: 7px 16px !important; border-radius: 20px !important; border: none !important;
-  font-size: 0.85em !important; font-weight: 600 !important; cursor: pointer !important;
-  box-shadow: none !important; transition: opacity 0.15s, background 0.15s !important;
-}
-.tut-back { background: var(--card-bg, #e2e8f0) !important; color: var(--text-secondary, #475569) !important; }
-.tut-back:hover { background: var(--toolbar-btn-hover, #cbd5e1) !important; }
-.tut-next { background: linear-gradient(135deg,#1e3a8a,#1e40af) !important; color: #ffffff !important; }
-.tut-next:hover { opacity: 0.88 !important; }
-
-body.dark-mode #tutorialCard { background: var(--bg-elevated, #1e293b); border-color: var(--border-strong, #334155); }
-body.dark-mode .tut-header { background: linear-gradient(135deg, #4a5ce8 0%, #6378ff 100%); }
-body.dark-mode .tut-text { color: var(--text-secondary, #cbd5e1); }
-body.dark-mode .tut-footer { border-top-color: var(--border-strong, #334155); }
-body.dark-mode .tut-back { background: var(--bg-card, #334155) !important; color: var(--text-primary, #cbd5e1) !important; }
-body.dark-mode .tut-back:hover { background: var(--bg-surface, #475569) !important; }
-
 /* ============================================================
    EMPTY STATE — einheitliche, einladende Darstellung
    "Füge deinen ersten Wettkampf hinzu" statt "Keine Daten"
@@ -7854,6 +7733,12 @@ details,
   margin-left: 0 !important;
   margin-right: 0 !important;
   width: 100%;
+}
+/* Analyse-Tabellen (Entwicklung, SB) bündig mit Diagramm */
+#leistungsentwicklungTable .table-wrapper,
+#sbTable .table-wrapper {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 #leistungenAusgabe .table-wrapper table {
   width: max-content;
@@ -8740,12 +8625,6 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
 
       /* === MODALS === */
       #leistungModal > div,
-      #importModal > div {
-        padding: 16px !important;
-        border-radius: 12px !important;
-        max-height: 92vh;
-        overflow-y: auto;
-      }
 
       /* Modal Grid 3-col → 1-col */
       #leistungModal div[style*="grid-template-columns: 1fr 1fr 1fr"] {
@@ -9042,29 +8921,6 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
       </div>
     </div>
 
-    <!-- Sprache -->
-    <div class="settings-card">
-      <div style="padding:14px 20px 4px;"><p class="settings-section-title" style="margin:0;">Sprache</p></div>
-      <div class="settings-row" style="padding:12px 20px;">
-        <span class="settings-row-label">App-Sprache</span>
-        <div style="display:flex;gap:8px;">
-          <button id="langBtnDe" onclick="setAppLanguage('de')"
-                  style="padding:6px 16px;border-radius:20px;border:2px solid #1e3a8a;background:#1e3a8a;color:#fff;font-size:0.85em;font-weight:600;cursor:pointer;">
-            Deutsch
-          </button>
-          <button id="langBtnEn" onclick="setAppLanguage('en')"
-                  style="padding:6px 16px;border-radius:20px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-size:0.85em;font-weight:500;cursor:pointer;">
-            English
-          </button>
-        </div>
-      </div>
-      <div id="langComingSoon" style="display:none;padding:2px 20px 14px;">
-        <div style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:#fffbeb;border-radius:8px;border:1px solid #fde68a;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span style="font-size:0.85em;color:#92400e;font-weight:500;">Coming Soon</span>
-        </div>
-      </div>
-    </div>
 
     <!-- Kartenstil -->
     <div class="settings-card">
@@ -9081,17 +8937,6 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
       </div>
     </div>
 
-    <!-- Hilfe -->
-    <div class="settings-card">
-      <div style="padding:14px 20px 4px;"><p class="settings-section-title" style="margin:0;">Hilfe</p></div>
-      <div class="settings-row" style="padding:12px 20px;border-bottom:none;">
-        <span class="settings-row-label">App-Tour starten</span>
-        <button onclick="settingsGoBack(); setTimeout(openOnboarding, 200)"
-                style="padding:7px 16px;background:linear-gradient(135deg,#1e3a8a,#1e40af);color:white;border:none;border-radius:20px;font-size:0.82em;font-weight:600;cursor:pointer;">
-          Tour starten
-        </button>
-      </div>
-    </div>
 
   </div>
 </div>
@@ -9214,44 +9059,11 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
         </div>
       </div>
 
-      <!-- Tutorial -->
-      <div class="settings-section">
-        <p class="settings-section-title">Hilfe</p>
-        <div class="settings-row">
-          <span class="settings-row-label">App-Tour starten</span>
-          <button onclick="closeSettings(); setTimeout(openOnboarding, 200)" style="padding:7px 16px !important;background:linear-gradient(135deg,#1e3a8a,#1e40af) !important;color:white !important;border:none !important;border-radius:20px !important;font-size:0.82em !important;font-weight:600 !important;cursor:pointer !important;box-shadow:none !important;">Tour starten</button>
-        </div>
-      </div>
 
     </div>
   </div>
 </div>
 
-<!-- ── Onboarding-Tutorial Overlay ──────────────────────────────────── -->
-<!--
-  Halbtransparentes Overlay, Spotlight um das aktive UI-Element +
-  Tooltip-Karte mit Text & Buttons. JS-Logik weiter unten in TUT_STEPS.
--->
-<div id="tutorialOverlay" aria-hidden="true">
-  <div id="tutorialBackdrop" onclick="tutSkip()"></div>
-  <div id="tutorialSpotlight"></div>
-  <div id="tutorialCard" role="dialog" aria-labelledby="tutTitle">
-    <div class="tut-header">
-      <span class="tut-step-badge" id="tutStepBadge">1 / 4</span>
-      <span class="tut-title" id="tutTitle"></span>
-    </div>
-    <div class="tut-body">
-      <p class="tut-text" id="tutText"></p>
-    </div>
-    <div class="tut-footer">
-      <button class="tut-skip" onclick="tutSkip()">Überspringen</button>
-      <div class="tut-nav">
-        <button class="tut-btn tut-back" id="tutBackBtn" onclick="tutBack()">‹ Zurück</button>
-        <button class="tut-btn tut-next" id="tutNextBtn" onclick="tutNext()">Weiter ›</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- Profil-Bearbeiten Modal -->
 <div id="profilBearbeitenModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9999;align-items:center;justify-content:center;">
@@ -9295,11 +9107,6 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
         <div class="profile-dropdown-item" onclick="closeProfileDropdown(); openSettings()">
           <span class="profile-dropdown-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></span>
           Einstellungen
-        </div>
-        <!-- Tutorial neu starten: setzt onboardingCompleted zurück -->
-        <div class="profile-dropdown-item" onclick="event.stopPropagation(); closeProfileDropdown(); openOnboarding()">
-          <span class="profile-dropdown-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-          Tutorial anzeigen
         </div>
         <div class="profile-dropdown-divider"></div>
         <div class="profile-dropdown-item profile-dropdown-logout" onclick="event.stopPropagation(); closeProfileDropdown(); handleLogout()">
@@ -9753,10 +9560,10 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
         <!-- Main content area -->
         <div id="leistungenMain">
 
-          <!-- Top bar: Leistung hinzufügen | CSV Import | Suche | [spacer] | Spalten | Filter -->
+          <!-- Top bar: Suche | Spalten | Filter -->
           <div id="leistungenTopBar">
 
-            <!-- Zeile 1: Suchleiste + CSV Import -->
+            <!-- Zeile 1: Suchleiste -->
             <div class="wk-toolbar-row">
               <div class="wk-search-wrap" id="leistungenSuchContainer">
                 <svg class="wk-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
@@ -9766,10 +9573,7 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
                   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
-              <button class="ls-secondary-btn" onclick="openImportModal()">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                CSV Import
-              </button>
+
             </div>
 
             <!-- Zeile 2: Spalten + Filter + Leistungen-Anzahl -->
@@ -10801,7 +10605,7 @@ body.dark-mode .profile-dropdown-logout .profile-dropdown-icon { color: #f87171;
 
     <!-- Footer -->
     <footer id="appFooter" class="app-footer">
-      <span style="font-size:0.75em; color:#94a3b8; white-space:nowrap;">&copy; <span id="footerYear"></span> TrackUp &nbsp;·&nbsp; <span style="font-size:0.9em; opacity:0.75;">v7.0.0</span></span>
+      <span style="font-size:0.75em; color:#94a3b8; white-space:nowrap;">&copy; <span id="footerYear"></span> TrackUp &nbsp;·&nbsp; <span style="font-size:0.9em; opacity:0.75;">v7.2.0</span></span>
       <nav style="display:flex; gap:14px;">
         <a href="impressum.html" style="font-size:0.75em; color:#94a3b8; text-decoration:none; transition:color 0.15s;" onmouseover="this.style.color='#1e3a8a'" onmouseout="this.style.color='#94a3b8'">Impressum</a>
         <a href="datenschutz.html" style="font-size:0.75em; color:#94a3b8; text-decoration:none; transition:color 0.15s;" onmouseover="this.style.color='#1e3a8a'" onmouseout="this.style.color='#94a3b8'">Datenschutz</a>
@@ -11272,10 +11076,11 @@ async function _processSession(session) {
     await initializeApp();
     if (isAdmin) initCompactAthleteSearch();
 
-    // Kalender-Daten sofort aus DB laden (parallel zu ladeLeistungen)
+    // Kalender-Daten + Wettkämpfe sofort aus DB laden (parallel zu ladeLeistungen)
     const _calLoad = Promise.all([
       typeof dbLoadEvents    === 'function' ? dbLoadEvents(selectedAthleteId)    : Promise.resolve(),
       typeof dbLoadTemplates === 'function' ? dbLoadTemplates(selectedAthleteId) : Promise.resolve(),
+      typeof ladeWettkaempfe === 'function' ? ladeWettkaempfe() : Promise.resolve(),
     ]);
 
     await ladeLeistungen();
@@ -12785,12 +12590,14 @@ async function ladeLeistungen(optionen) {
   // Füge athlet_id und disziplin hinzu falls nicht vorhanden (für PB-Erkennung)
   // Felder die jetzt über wettkampf-Join kommen, nicht direkt als DB-Spalten anfragen
   // "typ" kommt jetzt aus wettkampf.saison (nicht mehr aus la.leistung.typ)
-  const WETTKAMPF_JOIN_FELDER = new Set(["datum", "ort", "wk_bz", "typ"]);
+  // "datum" ist eine echte Spalte auf leistung — wird immer geladen (nicht über wettkampf-Join)
+  const WETTKAMPF_JOIN_FELDER = new Set(["ort", "wk_bz", "typ"]);
   const colsForQuery = cols.filter(c => !WETTKAMPF_JOIN_FELDER.has(c));
   if(!colsForQuery.includes('athlet_id')) colsForQuery.push('athlet_id');
   if(!colsForQuery.includes('disziplin')) colsForQuery.push('disziplin');
   if(!colsForQuery.includes('leistung')) colsForQuery.push('leistung');
   if(!colsForQuery.includes('id')) colsForQuery.push('id');
+  if(!colsForQuery.includes('datum')) colsForQuery.push('datum'); // immer laden für korrekte Anzeige + Jahres-Trenner
 
   let query = supabaseClient.schema("la").from("leistung").select(colsForQuery.join(",") + ",score,status,wettkampf_id,wettkampf(id,bezeichnung,startdatum,enddatum,ort,ort_display,saison)");
 
@@ -12916,7 +12723,7 @@ async function ladeLeistungen(optionen) {
   if(selectedAthleteId) {
     const { data: allData } = await supabaseClient
       .schema("la").from("leistung")
-      .select("id, athlet_id, disziplin, leistung, ak, typ, ms, runde, platzierung, score, notizen, geschlecht, status, wettkampf_id, wettkampf(id,bezeichnung,startdatum,enddatum,ort,ort_display,saison)")
+      .select("id, datum, athlet_id, disziplin, leistung, ak, typ, ms, runde, platzierung, score, notizen, geschlecht, status, wettkampf_id, wettkampf(id,bezeichnung,startdatum,enddatum,ort,ort_display,saison)")
       .eq("athlet_id", selectedAthleteId);
     // Für PB-Berechnung und Analyse nur abgeschlossene Leistungen verwenden (Fallback: kein Status = abgeschlossen)
     alleLeistungenFuerPBs = (allData || []).filter(l => !l.status || l.status === 'abgeschlossen');
@@ -12929,8 +12736,8 @@ async function ladeLeistungen(optionen) {
   let sortierteDaten = data;
   if(sortSpalte === 'datum') {
     sortierteDaten = [...data].sort((a, b) => {
-      const da = new Date(a.wettkampf?.startdatum || a.datum || 0);
-      const db = new Date(b.wettkampf?.startdatum || b.datum || 0);
+      const da = new Date(a.datum || a.wettkampf?.startdatum || 0);
+      const db = new Date(b.datum || b.wettkampf?.startdatum || 0);
       return sortAsc ? da - db : db - da;
     });
   } else if(manuellesSortieren) {
@@ -12958,7 +12765,7 @@ async function ladeLeistungen(optionen) {
     cols.forEach(col => {
       // Felder die jetzt aus dem wettkampf-Join kommen
       if (col === "datum") {
-        filtered["datum"] = row.wettkampf?.startdatum ?? row.datum ?? null;
+        filtered["datum"] = row.datum ?? row.wettkampf?.startdatum ?? null;
       } else if (col === "ort") {
         filtered["ort"] = row.wettkampf?.ort_display ?? row.wettkampf?.ort ?? null;
       } else if (col === "wk_bz") {
@@ -13083,8 +12890,15 @@ function renderScoreTable() {
           <tbody>
   `;
 
+  let lastYear = null;
   data.forEach((l, index) => {
-    const formatierteDatum = l.wettkampf?.startdatum ? formatiereDatum(l.wettkampf.startdatum) : '-';
+    const _dateStr = l.datum || l.wettkampf?.startdatum;
+    const _year = _dateStr ? new Date(_dateStr).getFullYear() : null;
+    if (_year && lastYear !== null && _year !== lastYear) {
+      html += '<tr class="year-separator"><td colspan="6"></td></tr>';
+    }
+    if (_year) lastYear = _year;
+    const formatierteDatum = _dateStr ? formatiereDatum(_dateStr) : '-';
     const formatierteLeistung = formatiereLeistung(l.leistung, l.disziplin);
     const scoreFormatiert = Math.round(l.score); // Keine Kommastellen
     
@@ -13588,10 +13402,11 @@ function zeigeTabelleMitPBs(angezeigteDaten, vollstaendigeDaten, ziel, sortierba
   
   angezeigteDaten.forEach((z, index)=>{
     // Prüfe ob Jahr gewechselt hat (nur wenn Datum-Spalte vorhanden)
-    if(vollstaendigeDaten[index].wettkampf?.startdatum) {
-      const aktuellesJahr = new Date(vollstaendigeDaten[index].wettkampf.startdatum).getFullYear();
+    // Jahres-Trenner: primär leistung.datum, Fallback wettkampf.startdatum
+    const _sepDat = vollstaendigeDaten[index].datum || vollstaendigeDaten[index].wettkampf?.startdatum;
+    if(_sepDat) {
+      const aktuellesJahr = new Date(_sepDat).getFullYear();
       if(letzesJahr !== null && aktuellesJahr !== letzesJahr) {
-        // Füge Trennzeile ein - verwende gesamtSpaltenAnzahl
         html += `<tr class="year-separator"><td colspan="${gesamtSpaltenAnzahl}"></td></tr>`;
       }
       letzesJahr = aktuellesJahr;
@@ -14075,7 +13890,7 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
     const filtered = {};
     cols.forEach(col => {
       if (col === "datum") {
-        filtered["datum"] = row.wettkampf?.startdatum ?? row.datum ?? null;
+        filtered["datum"] = row.datum ?? row.wettkampf?.startdatum ?? null;
       } else if (col === "ort") {
         filtered["ort"] = row.wettkampf?.ort_display ?? row.wettkampf?.ort ?? null;
       } else if (col === "wk_bz") {
@@ -14118,10 +13933,11 @@ function zeigePBsSBsTabelle(daten, icon, titel, jahr = null, mitJahrTrennung = f
 
   angezeigteDaten.forEach((z, index)=>{
     // Jahr-Trennung Logik
-    if(mitJahrTrennung && daten[index].wettkampf?.startdatum) {
-      const aktuellesJahr = new Date(daten[index].wettkampf.startdatum).getFullYear();
+    const _dStr = daten[index].datum || daten[index].wettkampf?.startdatum;
+    if(_dStr) {
+      const aktuellesJahr = new Date(_dStr).getFullYear();
       if(letzesJahr !== null && aktuellesJahr !== letzesJahr) {
-        html += `<tr class="year-separator"><td colspan="${spaltenAnzahl}" style="text-align: center; color: #1e3a8a; font-weight: bold; padding: 4px; font-size: 0.9em;">─── ${aktuellesJahr} ───</td></tr>`;
+        html += `<tr class="year-separator"><td colspan="${spaltenAnzahl}"></td></tr>`;
       }
       letzesJahr = aktuellesJahr;
     }
@@ -14553,14 +14369,14 @@ async function initializeApp() {
   const statistikFilterDisziplinSelect = document.getElementById('statistikFilterDisziplin');
   if(statistikFilterDisziplinSelect && disziplinenListe.length > 0) {
     statistikFilterDisziplinSelect.innerHTML = '<option value="">– Alle –</option>' + 
-      disziplinenListe.map(d => `<option value="${d}">${d}${hatScoreBerechnung(d) ? ' ★' : ''}</option>`).join('');
+      _diszOptHtml(disziplinenListe, null);
   }
   
   // Befülle Bestleistungen-Filter-Disziplin Dropdown
   const bestleistungenFilterDisziplinSelect = document.getElementById('bestleistungenFilterDisziplin');
   if(bestleistungenFilterDisziplinSelect && disziplinenListe.length > 0) {
     bestleistungenFilterDisziplinSelect.innerHTML = '<option value="">– Alle –</option>' + 
-      disziplinenListe.map(d => `<option value="${d}">${d}${hatScoreBerechnung(d) ? ' ★' : ''}</option>`).join('');
+      _diszOptHtml(disziplinenListe, null);
   }
   
   console.log('=== APP INIT COMPLETE ===');
@@ -15049,6 +14865,10 @@ function switchTab(tabName) {
     tab.classList.remove('active');
   });
   
+  // .container min-height zurücksetzen (wurde für Einstellungen auf 0 gesetzt)
+  const _settingsContainer = document.querySelector('#mainApp > .container');
+  if (_settingsContainer) _settingsContainer.style.minHeight = '';
+
   // Sidebar ausblenden (wird bei leistungen wieder eingeblendet)
   setLeistungenSidebar(false);
   
@@ -15168,6 +14988,9 @@ function switchTab(tabName) {
   } else if(tabName === 'einstellungen') {
     const tab = document.getElementById('einstellungenTab');
     if (tab) tab.classList.add('active');
+    // .container min-height auf 0: verhindert leeren 100vh-Block unter dem Settings-Inhalt
+    const _sc = document.querySelector('#mainApp > .container');
+    if (_sc) _sc.style.minHeight = '0';
     _syncSettingsPage();
     renderMeineDisziplinenSettings();
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -15483,7 +15306,7 @@ async function zeigeDiagramm() {
 
     // Query für erste Disziplin  
     let query1 = supabaseClient.schema("la").from("leistung")
-        .select("id, leistung, score, disziplin, platzierung, ak, typ, wettkampf_id, wettkampf(id, bezeichnung, startdatum, enddatum, ort, ort_display, saison)")
+        .select("id, datum, leistung, score, disziplin, platzierung, ak, typ, wettkampf_id, wettkampf(id, bezeichnung, startdatum, enddatum, ort, ort_display, saison)")
         .eq("athlet_id", athletId)
         .eq("disziplin", disziplin)
 if (jahr) {
@@ -15518,7 +15341,7 @@ if (jahr) {
         if (dataWithScores.length === 0) {
             console.warn('Keine gültigen Vergleichsscores für', disziplin);
             chartData1 = data1.map(d => ({
-                x: d.wettkampf?.startdatum, y: d.leistung,
+                x: d.datum || d.wettkampf?.startdatum, y: d.leistung,
                 id: d.id, ort: d.wettkampf?.ort_display || d.wettkampf?.ort,
                 disziplin: d.disziplin, wk_bz: d.wettkampf?.bezeichnung,
                 platzierung: d.platzierung, ak: d.ak, typ: d.typ
@@ -15526,7 +15349,7 @@ if (jahr) {
         } else {
             // Verwende Scores für Y-Position, x kommt direkt aus dem Original-Eintrag
             chartData1 = dataWithScores.map(d => ({
-                x: d.wettkampf?.startdatum,
+                x: d.datum || d.wettkampf?.startdatum,
                 y: d.score,
                 original: d.leistung,
                 id: d.id,
@@ -15548,7 +15371,7 @@ if (jahr) {
         }
     } else {
         chartData1 = data1.map(d => ({ 
-            x: d.wettkampf?.startdatum, 
+            x: d.datum || d.wettkampf?.startdatum, 
             y: d.leistung, 
             id: d.id, 
             ort: d.wettkampf?.ort_display || d.wettkampf?.ort, 
@@ -15562,6 +15385,17 @@ if (jahr) {
     
     // Nach Datum sortieren (Supabase liefert keine garantierte Reihenfolge)
     chartData1.sort((a, b) => new Date(a.x) - new Date(b.x));
+    chartData1 = chartData1.filter(p => p.x); // Invalid-Date-Guard
+    // Client-seitiger Datumsfilter — substring(0,10) für robuste YYYY-MM-DD Vergleiche
+    // (PostgREST gibt alle Leistungen zurück; d.datum kann ein eigenes Datum haben)
+    if (jahr) {
+      chartData1 = chartData1.filter(p => p.x && p.x.substring(0, 4) === String(jahr));
+    } else {
+      if (from) chartData1 = chartData1.filter(p => p.x && p.x.substring(0, 10) >= from);
+      if (to)   chartData1 = chartData1.filter(p => p.x && p.x.substring(0, 10) <= to);
+    }
+    // Leistungen ohne Ergebnis überspringen (DNS, DNF, etc.)
+    chartData1 = chartData1.filter(p => p.y !== null && p.y !== undefined && p.y > 0);
 
     // Speichere Original-Leistungen für Tooltip (wenn Vergleichsscores verwendet werden)
     const originalLeistungen1 = useVergleichsScores && chartData1[0]?.original !== undefined
@@ -15577,7 +15411,7 @@ if (jahr) {
         backgroundColor: 'rgba(30, 58, 138, 0.1)',
         fill: false,
         tension: 0.3,
-        spanGaps: true,
+        spanGaps: false,
         pointRadius: 5,
         pointHoverRadius: 8,
         pointHitRadius: 12,
@@ -15588,12 +15422,13 @@ if (jahr) {
 
     // Wenn Vergleichsmodus aktiv und zweite Disziplin gewählt
     let data2 = null;
+    let chartData2 = null;
     let istZeitDisziplin2 = false;
     let minScore2, maxScore2, minLeistung2, maxLeistung2;
     
     if (vergleichsModus && vergleichsDisziplin) {
         let query2 = supabaseClient.schema("la").from("leistung")
-            .select("id, leistung, score, disziplin, platzierung, ak, typ, wettkampf_id, wettkampf(id, bezeichnung, startdatum, enddatum, ort, ort_display, saison)")
+            .select("id, datum, leistung, score, disziplin, platzierung, ak, typ, wettkampf_id, wettkampf(id, bezeichnung, startdatum, enddatum, ort, ort_display, saison)")
             .eq("athlet_id", athletId)
             .eq("disziplin", vergleichsDisziplin)
 if (jahr) {
@@ -15609,7 +15444,6 @@ if (jahr) {
         if (data2 && data2.length > 0) {
             istZeitDisziplin2 = checkIstZeitDisziplin(vergleichsDisziplin);
             
-            let chartData2;
             if (useVergleichsScores) {
                 // Filtere Einträge mit gültigem Score — Original-Eintrag bleibt erhalten
                 const dataWithScores = data2.filter(d => d.score !== null && d.score > 0);
@@ -15621,7 +15455,7 @@ if (jahr) {
                 if (dataWithScores.length === 0) {
                     console.warn('Keine gültigen Vergleichsscores für', vergleichsDisziplin);
                     chartData2 = data2.map(d => ({
-                        x: d.wettkampf?.startdatum,
+                        x: d.datum || d.wettkampf?.startdatum,
                         y: d.leistung,
                         id: d.id,
                         ort: d.wettkampf?.ort_display || d.wettkampf?.ort,
@@ -15634,7 +15468,7 @@ if (jahr) {
                 } else {
                     // Verwende Scores für Y-Position, x kommt direkt aus dem Original-Eintrag
                     chartData2 = dataWithScores.map(d => ({
-                        x: d.wettkampf?.startdatum,
+                        x: d.datum || d.wettkampf?.startdatum,
                         y: d.score,
                         original: d.leistung,
                         id: d.id,
@@ -15656,7 +15490,7 @@ if (jahr) {
                 }
             } else {
                 chartData2 = data2.map(d => ({ 
-                    x: d.wettkampf?.startdatum, 
+                    x: d.datum || d.wettkampf?.startdatum, 
                     y: d.leistung,
                     id: d.id, 
                     ort: d.wettkampf?.ort_display || d.wettkampf?.ort, 
@@ -15670,6 +15504,16 @@ if (jahr) {
             
             // Nach Datum sortieren
             chartData2.sort((a, b) => new Date(a.x) - new Date(b.x));
+            chartData2 = chartData2.filter(p => p.x); // Invalid-Date-Guard
+            // Client-seitiger Datumsfilter — substring(0,10) für robuste YYYY-MM-DD Vergleiche
+            if (jahr) {
+              chartData2 = chartData2.filter(p => p.x && p.x.substring(0, 4) === String(jahr));
+            } else {
+              if (from) chartData2 = chartData2.filter(p => p.x && p.x.substring(0, 10) >= from);
+              if (to)   chartData2 = chartData2.filter(p => p.x && p.x.substring(0, 10) <= to);
+            }
+            // Leistungen ohne Ergebnis überspringen (DNS, DNF, etc.)
+            chartData2 = chartData2.filter(p => p.y !== null && p.y !== undefined && p.y > 0);
 
             // Speichere Original-Leistungen für Tooltip (wenn Vergleichsscores verwendet werden)
             const originalLeistungen2 = useVergleichsScores && chartData2[0]?.original !== undefined
@@ -15695,7 +15539,7 @@ if (jahr) {
                 backgroundColor: 'rgba(240, 147, 251, 0.1)',
                 fill: false,
                 tension: 0.3,
-                spanGaps: true,
+                spanGaps: false,
                 pointRadius: 3,
                 pointBackgroundColor: '#ffffff',
                 pointBorderWidth: 2,
@@ -16197,8 +16041,7 @@ if (jahr) {
                 x: {
                     type: 'time',
                     time: {
-                        unit: 'month',
-                        displayFormats: { month: 'MMM yyyy' },
+                        displayFormats: { day: 'dd.MM.yy', month: 'MMM yyyy', year: 'yyyy' },
                         tooltipFormat: 'dd.MM.yyyy'
                     },
                     title: { display: true, text: 'Datum', color: _chartTick },
@@ -16246,7 +16089,11 @@ if (jahr) {
     document.getElementById('diagrammSchließenBtn').style.display = 'inline-block';
     
     // Erstelle Tabelle mit allen Leistungen der ausgewählten Disziplin
-    createLeistungsentwicklungTable(disziplin, chartData1);
+    createLeistungsentwicklungTable(
+      disziplin, chartData1,
+      vergleichsModus && vergleichsDisziplin ? vergleichsDisziplin : null,
+      vergleichsModus && vergleichsDisziplin && data2 && data2.length > 0 ? chartData2 : null
+    );
     document.getElementById('diagrammAusklappenBtn').style.display = 'none';
 }
 
@@ -16278,8 +16125,7 @@ function toggleVergleichsModus() {
         // Alle Disziplinen wieder verfügbar machen
         if (analyseDisziplinSelect) {
             const aktuellerWert = analyseDisziplinSelect.value;
-            analyseDisziplinSelect.innerHTML = '<option value="">– Disziplin wählen –</option>' +
-                disziplinenListe.map(d => `<option value="${d}">${d}${hatScoreBerechnung(d) ? ' ★' : ''}</option>`).join('');
+            analyseDisziplinSelect.innerHTML = _diszOptHtml(disziplinenListe, '– Disziplin wählen –');
             if (aktuellerWert && disziplinenListe.includes(aktuellerWert)) {
                 analyseDisziplinSelect.value = aktuellerWert;
             }
@@ -16890,6 +16736,13 @@ async function zeigeSBDiagramm() {
     document.getElementById('sbDiagrammAnzeigenBtn').style.display = 'none';
     document.getElementById('sbDiagrammAktualisierenBtn').style.display = 'inline-block';
     document.getElementById('sbDiagrammSchließenBtn').style.display = 'inline-block';
+    // Tabelle unterhalb des Diagramms befüllen
+    createSBTable(
+      disziplin, werte1.sbWerte, werte1.durchschnittsWerte,
+      werte2 ? vergleichsDisziplin : null,
+      werte2 ? werte2.sbWerte      : null,
+      werte2 ? werte2.durchschnittsWerte : null
+    );
 }
 
 function schließeSBDiagramm() {
@@ -16898,6 +16751,7 @@ function schließeSBDiagramm() {
     document.getElementById('sbDiagrammAktualisierenBtn').style.display = 'none';
     document.getElementById('sbDiagrammSchließenBtn').style.display = 'none';
     document.getElementById('sbDiagrammAusklappenBtn').style.display = 'inline-block';
+    const sbTbl = document.getElementById('sbTable'); if (sbTbl) sbTbl.style.display = 'none';
 }
 
 function klappeAusSBDiagramm() {
@@ -16935,8 +16789,7 @@ function toggleSBVergleichsModus() {
         // Alle Disziplinen wieder verfügbar machen
         if (sbDisziplinSelect) {
             const aktuellerWert = sbDisziplinSelect.value;
-            sbDisziplinSelect.innerHTML = '<option value="">– Disziplin wählen –</option>' +
-                disziplinenListe.map(d => `<option value="${d}">${d}${hatScoreBerechnung(d) ? ' ★' : ''}</option>`).join('');
+            sbDisziplinSelect.innerHTML = _diszOptHtml(disziplinenListe, '– Disziplin wählen –');
             if (aktuellerWert && disziplinenListe.includes(aktuellerWert)) {
                 sbDisziplinSelect.value = aktuellerWert;
             }
@@ -17621,7 +17474,6 @@ function _syncSettingsPage() {
   document.querySelectorAll('.map-style-option').forEach(el => {
     el.classList.toggle('active', el.dataset.style === _userMapStyle);
   });
-  _updateLanguageButtons(localStorage.getItem('appLanguage') || 'de');
   // Profil-Felder befüllen
   const v = document.getElementById('settingsProfilVorname');
   const n = document.getElementById('settingsProfilNachname');
@@ -17633,29 +17485,6 @@ function _syncSettingsPage() {
   if (m) m.style.display = 'none';
 }
 
-function setAppLanguage(lang) {
-  localStorage.setItem('appLanguage', lang);
-  _updateLanguageButtons(lang);
-}
-
-function _updateLanguageButtons(lang) {
-  const btnDe = document.getElementById('langBtnDe');
-  const btnEn = document.getElementById('langBtnEn');
-  const cs    = document.getElementById('langComingSoon');
-  if (!btnDe || !btnEn) return;
-  const activeStyle   = 'padding:6px 16px;border-radius:20px;border:2px solid #1e3a8a;background:#1e3a8a;color:#fff;font-size:0.85em;font-weight:600;cursor:pointer;';
-  const inactiveStyle = 'padding:6px 16px;border-radius:20px;border:2px solid #e2e8f0;background:transparent;color:#64748b;font-size:0.85em;font-weight:500;cursor:pointer;';
-  const comingSoonStyle = 'padding:6px 16px;border-radius:20px;border:2px solid #fde68a;background:#fffbeb;color:#92400e;font-size:0.85em;font-weight:600;cursor:pointer;';
-  if (lang === 'de') {
-    btnDe.style.cssText = activeStyle;
-    btnEn.style.cssText = inactiveStyle;
-    if (cs) cs.style.display = 'none';
-  } else {
-    btnDe.style.cssText = inactiveStyle;
-    btnEn.style.cssText = comingSoonStyle;
-    if (cs) cs.style.display = 'block';
-  }
-}
 
 function settingsToggleDarkMode(enabled) {
   document.body.classList.toggle('dark-mode', enabled);
@@ -17954,7 +17783,7 @@ function renderOrtPopup() {
   if (tbody) {
     tbody.innerHTML = '';
     currentOrtLeistungen.forEach(leistung => {
-      const datumFormatiert = leistung.wettkampf?.startdatum ? formatiereDatum(leistung.wettkampf?.startdatum) : '-';
+      const datumFormatiert = (leistung.datum || leistung.wettkampf?.startdatum) ? formatiereDatum(leistung.datum || leistung.wettkampf?.startdatum) : '-';
       const leistungFormatiert = (leistung.leistung != null) ? formatiereLeistung(leistung.leistung, leistung.disziplin) : '-';
       const tr = document.createElement('tr');
       tr.dataset.leistungId = leistung.id || '';
@@ -20058,7 +19887,10 @@ async function openEditLeistungModal(leistungId) {
   const wkName = data.wettkampf?.bezeichnung || 'Wettkampf';
   document.getElementById('modalTitle').textContent = `Leistung bearbeiten — ${wkName}`;
   document.getElementById('editLeistungId').value = leistungId;
-  // Datum setzen
+  // Originale wettkampf_id für saveLeistung sichern (currentWettkampf kann null sein)
+  const _wkIdField = document.getElementById('editLeistungWettkampfId');
+  if (_wkIdField) _wkIdField.value = data.wettkampf_id != null ? String(data.wettkampf_id) : '';
+  // Datum setzen — primär aus Leistung, Fallback Wettkampf-Startdatum
   const datumEditEl = document.getElementById('modalDatum');
   if (datumEditEl) datumEditEl.value = data.datum || data.wettkampf?.startdatum || '';
   // Disziplin-Dropdown befüllen und gespeicherten Wert setzen
@@ -20205,7 +20037,11 @@ async function saveLeistung(event) {
   const leistungData = {
     athlet_id: athletId,
     datum: datumWert || null,
-    wettkampf_id: currentWettkampf?.id || null,
+    wettkampf_id: leistungId
+      // Edit: gespeicherte Original-ID beibehalten (currentWettkampf kann null sein)
+      ? ((_wkOrigId => _wkOrigId ? parseInt(_wkOrigId) : null)(document.getElementById('editLeistungWettkampfId')?.value))
+      // Neu: wettkampf_id aus aktuellem Wettkampf-Kontext
+      : (currentWettkampf?.id || null),
     disziplin: document.getElementById('modalDisziplin').value,
     leistung: leistungNumerisch,
     platzierung: parseInt(document.getElementById('modalPlatzierung').value) || null,
@@ -20263,88 +20099,6 @@ async function saveLeistung(event) {
 }
 
 // Open Import Modal
-function openImportModal() {
-  document.getElementById('importModal').style.display = 'flex';
-}
-
-// Close Import Modal
-function closeImportModal() {
-  document.getElementById('importModal').style.display = 'none';
-}
-
-// Import CSV
-async function importCSV() {
-  if (!currentAthlete) {
-    alert('Fehler: Kein Athlet geladen');
-    return;
-  }
-  
-  const fileInput = document.getElementById('importFile');
-  const file = fileInput.files[0];
-  
-  if (!file) {
-    alert('Bitte wähle eine CSV-Datei aus');
-    return;
-  }
-  
-  const reader = new FileReader();
-  
-  reader.onload = async function(e) {
-    const text = e.target.result;
-
-    // Trennzeichen automatisch erkennen: Semikolon (Excel DE) oder Komma
-    const firstLine = text.split('\n')[0];
-    const delimiter = firstLine.includes(';') ? ';' : ',';
-
-    const rows = text.split('\n')
-      .map(row => row.replace(/\r$/, '').split(delimiter));
-
-    // Header-basiertes Lesen: Spaltenreihenfolge egal
-    const headers = rows[0].map(h => h.trim().toLowerCase());
-    const idx = key => headers.indexOf(key);
-    const get = (row, key) => {
-      const i = idx(key);
-      return i >= 0 ? row[i]?.trim() || null : null;
-    };
-
-    const dataRows = rows.slice(1).filter(row => row.some(cell => cell.trim() !== ''));
-
-    if (dataRows.length === 0) {
-      alert('Keine gültigen Daten in der CSV-Datei gefunden');
-      return;
-    }
-
-    const leistungen = dataRows.map(row => ({
-      athlet_id:   currentAthlete.id,
-      disziplin:   get(row, 'disziplin'),
-      leistung:    parseFloat(get(row, 'leistung')?.replace(',', '.')) || null,
-      platzierung: parseInt(get(row, 'platzierung')) || null,
-      ak:          get(row, 'ak'),
-      typ:         get(row, 'typ'),
-      runde:       get(row, 'runde'),
-      ms:          get(row, 'ms')
-    })).filter(l => l.disziplin && l.leistung);
-    
-    const { error } = await supabaseClient
-      .schema('la').from('leistung')
-      .insert(leistungen);
-    
-    if (error) {
-      alert('Fehler beim Import: ' + error.message);
-      return;
-    }
-    
-    alert(`${leistungen.length} Leistungen erfolgreich importiert!`);
-    closeImportModal();
-    fileInput.value = '';
-    
-    // Reload performances
-    ladeLeistungen();
-  };
-  
-  reader.readAsText(file);
-}
-
 /* ================= RESIZABLE TABLE COLUMNS ================= */
 // Globale Variablen für Spaltengrößenanpassung
 let resizingColumn = null;
@@ -20526,81 +20280,101 @@ function switchAnalyseSubtab(subtabName) {
 }
 
 // Table Functions
-function createLeistungsentwicklungTable(disziplin, chartData) {
+function createLeistungsentwicklungTable(disziplin, chartData, disziplin2, chartData2) {
   const container = document.getElementById('leistungsentwicklungTable');
   if (!container || !chartData || chartData.length === 0) {
     if (container) container.style.display = 'none';
     return;
   }
-  
-  const sorted = [...chartData].sort((a, b) => new Date(b.x) - new Date(a.x)); // Neueste zuerst
-  
-  let html = '<div class="table-wrapper"><table><thead><tr><th>DATUM</th><th>LEISTUNG</th><th>ORT</th></tr></thead><tbody>';
-  
-  sorted.forEach(p => {
-    const datum = new Date(p.x).toLocaleDateString('de-DE');
-    // Verwende die original Leistung wenn vorhanden (bei Vergleichsscores), sonst y
-    const leistungWert = p.original !== undefined ? p.original : p.y;
-    const formatierteLeistung = formatiereLeistung(leistungWert, p.disziplin || disziplin);
-    
-    // Erstelle vollständiges Datenobjekt für Popup
-    const fullData = {
-      id: p.id,
-      disziplin: p.disziplin || disziplin,
-      leistung: leistungWert,
-      platzierung: p.platzierung || '',
-      ak: p.ak || '',
-      typ: p.typ || '',
-      wettkampf: { startdatum: p.x, ort: p.ort || '', bezeichnung: p.wk_bz || '' }
-    };
-    const dataJson = JSON.stringify(fullData).replace(/'/g, "&apos;");
-    html += `<tr onclick='openDetailPopup(${dataJson})'><td>${datum}</td><td><strong>${formatierteLeistung}</strong></td><td>${p.ort || '-'}</td></tr>`;
-  });
-  
-  html += '</tbody></table></div>';
-  container.innerHTML = html;
+
+  function buildTableHTML(data, disz) {
+    const sorted = [...data].sort((a, b) => new Date(b.x) - new Date(a.x));
+    let html = '<div class="table-wrapper" style="overflow-x:auto;"><table><thead><tr><th>DATUM</th><th>LEISTUNG</th><th>ORT</th></tr></thead><tbody>';
+    let lastYear = null;
+    sorted.forEach(p => {
+      const _year = p.x ? new Date(p.x).getFullYear() : null;
+      if (_year && lastYear !== null && _year !== lastYear) {
+        html += '<tr class="year-separator"><td colspan="3"></td></tr>';
+      }
+      if (_year) lastYear = _year;
+      const datum = new Date(p.x).toLocaleDateString('de-DE');
+      const leistungWert = p.original !== undefined ? p.original : p.y;
+      const formatierteLeistung = formatiereLeistung(leistungWert, p.disziplin || disz);
+      const fullData = {
+        id: p.id, disziplin: p.disziplin || disz, leistung: leistungWert,
+        platzierung: p.platzierung || '', ak: p.ak || '', typ: p.typ || '',
+        wettkampf: { startdatum: p.x, ort: p.ort || '', bezeichnung: p.wk_bz || '' }
+      };
+      const dataJson = JSON.stringify(fullData).replace(/'/g, "&apos;");
+      html += `<tr onclick='openDetailPopup(${dataJson})'><td>${datum}</td><td><strong>${formatierteLeistung}</strong></td><td>${p.ort || '-'}</td></tr>`;
+    });
+    html += '</tbody></table></div>';
+    return html;
+  }
+
+  if (disziplin2 && chartData2 && chartData2.length > 0) {
+    // Vergleichsmodus: zwei Tabellen nebeneinander
+    const col = 'flex:1;min-width:0;';
+    container.innerHTML =
+      `<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">` +
+        `<div style="${col}"><h5 style="margin:0 0 8px;color:#1e3a8a;font-size:0.88em;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">${escapeHtml(disziplin)}</h5>${buildTableHTML(chartData, disziplin)}</div>` +
+        `<div style="${col}"><h5 style="margin:0 0 8px;color:#9333ea;font-size:0.88em;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;">${escapeHtml(disziplin2)}</h5>${buildTableHTML(chartData2, disziplin2)}</div>` +
+      `</div>`;
+  } else {
+    container.innerHTML = buildTableHTML(chartData, disziplin);
+  }
   container.style.display = 'block';
 }
-function createSBTable(disziplin, sbData, avgData) {
+function createSBTable(disziplin, sbData, avgData, disziplin2, sbData2, avgData2) {
   const container = document.getElementById('sbTable');
   if (!container) return;
-  
-  const showSB = document.getElementById('sbShowSBs')?.checked ?? true;
+
+  const showSB  = document.getElementById('sbShowSBs')?.checked ?? true;
   const showAvg = document.getElementById('sbShowAverages')?.checked ?? true;
-  
-  if (!showSB && !showAvg) {
-    container.style.display = 'none';
-    return;
+
+  if (!showSB && !showAvg) { container.style.display = 'none'; return; }
+
+  // Baut den Tabellen-HTML-String (ohne Überschrift — wird außen gesetzt wie bei Entwicklungen)
+  function buildSBTableHTML(disz, sbd, avgd) {
+    const seasons = new Set();
+    if (showSB  && sbd)  sbd.forEach(d => seasons.add(d.x));
+    if (showAvg && avgd) avgd.forEach(d => seasons.add(d.x));
+    if (seasons.size === 0) return '';
+    const sorted = Array.from(seasons).sort((a, b) => b - a);
+    let html = '<div class="table-wrapper" style="overflow-x:auto;"><table><thead><tr><th>SAISON</th>';
+    if (showSB)  html += '<th>SAISONBESTLEISTUNG</th>';
+    if (showAvg) html += '<th>DURCHSCHNITT</th>';
+    html += '</tr></thead><tbody>';
+    sorted.forEach(s => {
+      const sb  = showSB  && sbd  ? sbd.find(d => d.x === s)  : null;
+      const avg = showAvg && avgd ? avgd.find(d => d.x === s) : null;
+      html += '<tr><td><strong>' + s + '</strong></td>';
+      if (showSB)  html += '<td>' + (sb  ? formatiereLeistung(sb.y,  disz) : '-') + '</td>';
+      if (showAvg) html += '<td>' + (avg ? formatiereLeistung(avg.y, disz) : '-') + '</td>';
+      html += '</tr>';
+    });
+    html += '</tbody></table></div>';
+    return html;
   }
-  
-  const seasons = new Set();
-  if (showSB && sbData) sbData.forEach(d => seasons.add(d.x));
-  if (showAvg && avgData) avgData.forEach(d => seasons.add(d.x));
-  
-  if (seasons.size === 0) {
-    container.style.display = 'none';
-    return;
+
+  const col = 'flex:1;min-width:0;';
+  const h5Style = 'margin:0 0 8px;font-size:0.88em;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;';
+
+  if (disziplin2 && (sbData2 || avgData2)) {
+    // Vergleichsmodus: zwei Tabellen nebeneinander — identische Struktur wie Entwicklungen
+    const t1 = buildSBTableHTML(disziplin,  sbData,  avgData);
+    const t2 = buildSBTableHTML(disziplin2, sbData2, avgData2);
+    if (!t1 && !t2) { container.style.display = 'none'; return; }
+    container.innerHTML =
+      `<div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">` +
+        `<div style="${col}"><h5 style="${h5Style}color:#1e3a8a;">${escapeHtml(disziplin)}</h5>${t1}</div>` +
+        `<div style="${col}"><h5 style="${h5Style}color:#9333ea;">${escapeHtml(disziplin2)}</h5>${t2}</div>` +
+      `</div>`;
+  } else {
+    const t = buildSBTableHTML(disziplin, sbData, avgData);
+    if (!t) { container.style.display = 'none'; return; }
+    container.innerHTML = t;
   }
-  
-  const sorted = Array.from(seasons).sort((a, b) => b - a); // Neueste zuerst
-  
-  let html = '<div class="table-wrapper"><table><thead><tr><th>SAISON</th>';
-  if (showSB) html += '<th>SAISONBESTLEISTUNG</th>';
-  if (showAvg) html += '<th>DURCHSCHNITT</th>';
-  html += '</tr></thead><tbody>';
-  
-  sorted.forEach(s => {
-    const sb = showSB && sbData ? sbData.find(d => d.x === s) : null;
-    const avg = showAvg && avgData ? avgData.find(d => d.x === s) : null;
-    
-    html += '<tr><td><strong>' + s + '</strong></td>';
-    if (showSB) html += '<td>' + (sb ? formatiereLeistung(sb.y, disziplin) : '-') + '</td>';
-    if (showAvg) html += '<td>' + (avg ? formatiereLeistung(avg.y, disziplin) : '-') + '</td>';
-    html += '</tr>';
-  });
-  
-  html += '</tbody></table></div>';
-  container.innerHTML = html;
   container.style.display = 'block';
 }
 
@@ -20616,7 +20390,13 @@ function createPrognoseTable(disziplin, data) {
   
   let html = '<div class="table-wrapper"><table><thead><tr><th>DATUM</th><th>LEISTUNG</th><th>ORT</th></tr></thead><tbody>';
   
+  let lastYearProg = null;
   sorted.forEach(p => {
+    const _yearProg = p.x ? new Date(p.x).getFullYear() : null;
+    if (_yearProg && lastYearProg !== null && _yearProg !== lastYearProg) {
+      html += '<tr class="year-separator"><td colspan="3"></td></tr>';
+    }
+    if (_yearProg) lastYearProg = _yearProg;
     const datum = new Date(p.x).toLocaleDateString('de-DE');
     const formatierteLeistung = formatiereLeistung(p.y, p.disziplin || disziplin);
     // Erstelle vollständiges Datenobjekt für Popup
@@ -20704,17 +20484,20 @@ function _renderAlleSpalten(searchTerm) {
   const leistungenTab = document.getElementById('leistungenTab');
   const alleSpalten   = Array.from(leistungenTab.querySelectorAll('.spalte')).map(c => c.value);
 
+  // Sortierung nach leistung.datum (primär) oder wettkampf.startdatum (Fallback) — absteigend
   const sortierteDaten = [...alleLeistungenFuerPBs].sort((a, b) => {
-    if (!a.wettkampf?.startdatum && !b.wettkampf?.startdatum) return 0;
-    if (!a.wettkampf?.startdatum) return 1;
-    if (!b.wettkampf?.startdatum) return -1;
-    return b.wettkampf?.startdatum.localeCompare(a.wettkampf?.startdatum);
+    const dateA = a.datum || a.wettkampf?.startdatum;
+    const dateB = b.datum || b.wettkampf?.startdatum;
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1;
+    if (!dateB) return -1;
+    return dateB.localeCompare(dateA);
   });
   const angezeigteDaten = sortierteDaten.map(row => {
     const filtered = {};
     alleSpalten.forEach(col => {
       if (col === "datum") {
-        filtered["datum"] = row.wettkampf?.startdatum ?? row.datum ?? null;
+        filtered["datum"] = row.datum ?? row.wettkampf?.startdatum ?? null;
       } else if (col === "ort") {
         filtered["ort"] = row.wettkampf?.ort_display ?? row.wettkampf?.ort ?? null;
       } else if (col === "wk_bz") {
@@ -20993,6 +20776,7 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
 
     <form id="leistungForm" onsubmit="saveLeistung(event)">
       <input type="hidden" id="editLeistungId">
+      <input type="hidden" id="editLeistungWettkampfId">
 
       <!-- Disziplin (immer sichtbar) -->
       <div style="margin-bottom: 15px; position: relative;">
@@ -21093,28 +20877,6 @@ function vergleicheLeistungen(leistung1, leistung2, disziplin) {
         </div>
       </div>
     </form>
-  </div>
-</div>
-
-<!-- Modal: CSV Import -->
-<div id="importModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-  <div style="background: #f2f6fa;  padding: 30px; border-radius: var(--border-radius); max-width: 600px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-      <h2 style="color: navy; margin: 0;">Leistungen importieren</h2>
-      <button onclick="closeImportModal()" aria-label="Import-Dialog schließen" class="modal-close-btn">×</button>
-    </div>
-    <p style="margin-bottom: 15px; color: #555; font-size: 0.95em;">
-      Bitte fülle die 
-      <a href="vorlage_import.xlsx" download style="color: navy; font-weight: 600; text-decoration: underline;"><svg style="vertical-align:-0.125em" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Importvorlage</a>
-      aus und lade sie hier als CSV hoch.
-    </p>
-    <div style="margin: 0 0 20px 0;">
-      <input type="file" id="importFile" accept=".csv" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
-    </div>
-    <div style="display: flex; gap: 10px; justify-content: flex-end;">
-      <button onclick="closeImportModal()" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; background: #6c757d; color: white;">Abbrechen</button>
-      <button onclick="importCSV()" style="padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); color: white;">Importieren</button>
-    </div>
   </div>
 </div>
 
@@ -22998,180 +22760,6 @@ function renderWettkaempfeListe() {
   }).join('');
 }
 
-// ============================================================
-// ONBOARDING-TUTORIAL
-// ------------------------------------------------------------
-// Geführtes Onboarding aus genau 4 Schritten. Beim ersten Besuch
-// startet die Tour automatisch; nach Abschluss oder „Überspringen"
-// wird localStorage["onboardingCompleted"] = "1" gesetzt und die
-// Tour beim nächsten Besuch nicht mehr angezeigt.
-//
-// Re-Start: openOnboarding() (wird vom Profil-Dropdown und
-// vom Settings-Modal aufgerufen) → setzt localStorage zurück.
-// ============================================================
-
-const ONBOARDING_KEY = 'onboardingCompleted';
-
-// --- Schritt-Definition (4 Schritte) ---
-// `selector` / `selectorFn` → Element, das im Spotlight liegt.
-// `tab`                     → Tab, der vor dem Schritt aktiviert wird.
-// Die Reihenfolge entspricht der gewünschten Lern-Story:
-//   1) Navigation      2) Wettkampf erstellen
-//   3) Leistung anlegen 4) Dashboard / Entwicklung
-const TUT_STEPS = [
-  {
-    title: 'Navigation',
-    text: 'Oben im Header wechselst du zwischen Dashboard, Wettkämpfen, Leistungen, Analyse und Kalender.',
-    selector: '.header-tabs-wrap',
-    tab: 'dashboard',
-  },
-  {
-    title: 'Wettkampf erstellen',
-    text: 'Lege zuerst einen Wettkampf an — Name, Datum, Ort. Er ist die Basis für alle eingetragenen Leistungen.',
-    selector: '.header-add-competition',
-    tab: 'wettkaempfe',
-  },
-  {
-    title: 'Leistung hinzufügen',
-    text: 'Öffne einen Wettkampf in der Liste und klicke „+ Leistung hinzufügen", um Disziplin, Zeit/Weite und Platzierung einzutragen.',
-    selector: '#wettkaempfeTab',
-    tab: 'wettkaempfe',
-  },
-  {
-    title: 'Dashboard & Entwicklung',
-    text: 'Im Dashboard siehst du Kennzahlen, Bestleistungen und das Entwicklungs-Diagramm — dein Überblick auf einen Blick.',
-    selectorFn: () => document.getElementById('dashInnerTabs') || document.getElementById('dashboardTab'),
-    tab: 'dashboard',
-  },
-];
-
-let _tutStep = 0;
-let _tutActive = false;
-
-// Tour starten (resettet Step auf 0)
-function tutStart() {
-  _tutActive = true;
-  _tutStep = 0;
-  document.getElementById('tutorialOverlay').classList.add('tut-active');
-  tutShowStep();
-}
-
-// Tour beenden (egal ob „Überspringen" oder „Fertig") + Flag setzen
-function tutSkip() {
-  _tutActive = false;
-  document.getElementById('tutorialOverlay').classList.remove('tut-active');
-  document.getElementById('tutorialSpotlight').style.display = 'none';
-  try { localStorage.setItem(ONBOARDING_KEY, '1'); } catch (_) {}
-}
-
-// Nächster Schritt (oder Tour beenden, wenn letzter Schritt)
-function tutNext() {
-  if (_tutStep < TUT_STEPS.length - 1) {
-    _tutStep++;
-    tutShowStep();
-  } else {
-    tutSkip();
-    if (typeof showMessage === 'function') {
-      showMessage('Tour abgeschlossen! Du kannst sie jederzeit über dein Profil neu starten.', 'success');
-    }
-  }
-}
-
-// Vorheriger Schritt
-function tutBack() {
-  if (_tutStep > 0) { _tutStep--; tutShowStep(); }
-}
-
-// Aktuellen Schritt rendern (Tab wechseln, Spotlight + Karte positionieren)
-async function tutShowStep() {
-  const step = TUT_STEPS[_tutStep];
-
-  // Tab vorher umschalten, damit das Ziel-Element sichtbar ist
-  if (step.tab && typeof switchTab === 'function') {
-    switchTab(step.tab);
-    await new Promise(r => setTimeout(r, 320)); // kurze Wartezeit für DOM-Update
-  }
-
-  // Ziel-Element auflösen (selectorFn hat Priorität)
-  let target = null;
-  if (step.selectorFn) target = step.selectorFn();
-  if (!target && step.selector) target = document.querySelector(step.selector);
-
-  // Karten-Inhalt setzen
-  document.getElementById('tutStepBadge').textContent = `${_tutStep + 1} / ${TUT_STEPS.length}`;
-  document.getElementById('tutTitle').textContent    = step.title;
-  document.getElementById('tutText').textContent     = step.text;
-  document.getElementById('tutBackBtn').style.visibility = _tutStep === 0 ? 'hidden' : 'visible';
-  document.getElementById('tutNextBtn').textContent =
-    _tutStep === TUT_STEPS.length - 1 ? 'Fertig <svg style="vertical-align:-0.125em" viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>' : 'Weiter ›';
-
-  // Spotlight + Karte positionieren
-  const spotlight = document.getElementById('tutorialSpotlight');
-  const backdrop  = document.getElementById('tutorialBackdrop');
-  if (target) {
-    const PAD = 8;
-    const r = target.getBoundingClientRect();
-    spotlight.style.cssText =
-      `display:block; left:${r.left - PAD}px; top:${r.top - PAD}px; ` +
-      `width:${r.width + PAD * 2}px; height:${r.height + PAD * 2}px;`;
-    backdrop.classList.add('tut-has-spotlight');
-    tutPositionCard(r, PAD);
-  } else {
-    // Fallback: kein Element gefunden → nur Backdrop + zentrierte Karte
-    spotlight.style.display = 'none';
-    backdrop.classList.remove('tut-has-spotlight');
-    tutPositionCardCenter();
-  }
-}
-
-// Karte relativ zum Ziel platzieren (unterhalb, fallback oberhalb)
-function tutPositionCard(rect, pad) {
-  const card = document.getElementById('tutorialCard');
-  const W = 340, MARGIN = 16;
-  const vw = window.innerWidth, vh = window.innerHeight;
-
-  const spaceBelow = vh - (rect.bottom + pad + MARGIN);
-  const spaceAbove = rect.top - pad - MARGIN;
-  let top;
-  if (spaceBelow >= 180 || spaceBelow >= spaceAbove) {
-    top = rect.bottom + pad + MARGIN;
-  } else {
-    top = rect.top - pad - MARGIN - card.offsetHeight - 10;
-  }
-  let left = rect.left + rect.width / 2 - W / 2;
-  left = Math.max(MARGIN, Math.min(left, vw - W - MARGIN));
-  top  = Math.max(MARGIN, top);
-
-  card.style.cssText = `left:${left}px; top:${top}px; width:${W}px; transform:none;`;
-}
-
-// Karte mittig (wenn kein Ziel gefunden wurde)
-function tutPositionCardCenter() {
-  const card = document.getElementById('tutorialCard');
-  card.style.cssText = 'left:50%; top:50%; transform:translate(-50%,-50%); width:340px;';
-}
-
-// Auto-Start beim ersten Besuch
-function tutCheckAutoStart() {
-  try {
-    if (!localStorage.getItem(ONBOARDING_KEY)) {
-      // kleine Verzögerung, damit das UI bereits gerendert ist
-      setTimeout(tutStart, 900);
-    }
-  } catch (_) { /* localStorage nicht verfügbar → einfach nichts tun */ }
-}
-
-// Public API: Tour aus Profil-Dropdown / Einstellungen erneut starten
-function openOnboarding() {
-  try { localStorage.removeItem(ONBOARDING_KEY); } catch (_) {}
-  tutStart();
-}
-
-// Initialisierung: bei Resize Spotlight + Karte neu ausrichten
-window.addEventListener('resize', () => { if (_tutActive) tutShowStep(); });
-
-// Auto-Start beim ersten Laden der Seite
-document.addEventListener('DOMContentLoaded', tutCheckAutoStart);
 
 // CSV-Export aller gefilterten Wettkämpfe
 function exportiereWettkaempfeCSV() {
@@ -23214,7 +22802,21 @@ function exportiereWettkaempfeCSV() {
 // Zur Detailansicht eines Wettkampfs wechseln
 function zeigeWettkampfDetail(wkId) {
   currentWettkampf = wettkaempfeDaten.find(wk => Number(wk.id) === Number(wkId)) || null;
-  if (!currentWettkampf) return;
+  if (!currentWettkampf) {
+    // wettkaempfeDaten noch nicht geladen (z.B. Direktlink aus Leistungs-Popup) — nachladen und erneut versuchen
+    if (typeof ladeWettkaempfe === 'function') {
+      ladeWettkaempfe().then(() => {
+        currentWettkampf = wettkaempfeDaten.find(wk => Number(wk.id) === Number(wkId)) || null;
+        if (!currentWettkampf) return;
+        document.getElementById('wkListView').style.display   = 'none';
+        document.getElementById('wkDetailView').style.display = 'block';
+        const fab = document.getElementById('wkFab');
+        if (fab) fab.style.display = 'none';
+        renderWettkampfDetail();
+      });
+    }
+    return;
+  }
   document.getElementById('wkListView').style.display   = 'none';
   document.getElementById('wkDetailView').style.display = 'block';
   // FAB in Detailansicht ausblenden
@@ -23744,6 +23346,8 @@ document.addEventListener('DOMContentLoaded', function() {
   body {
     padding-bottom: calc(60px + env(safe-area-inset-bottom)) !important;
   }
+  /* Footer auf Mobile ausblenden – Bottom-Nav übernimmt Navigation */
+  #appFooter { display: none !important; }
 
   /* ── Header: Tabs ausblenden, kompakter ── */
   .header-tabs-wrap {
@@ -24035,7 +23639,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* ── MODALS: Bottom Sheet Stil ── */
   #leistungModal,
-  #importModal,
   #trainingFormModal,
   #competitionFormModal,
   #templateFormModal,
@@ -24052,7 +23655,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   #leistungModal > div,
-  #importModal > div,
   #trainingFormModal > div,
   #competitionFormModal > div,
   #templateFormModal > div,
@@ -24074,7 +23676,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
   /* Modals kleiner Drag-Indicator oben */
   #leistungModal > div::before,
-  #importModal > div::before,
   #trainingFormModal > div::before,
   #competitionFormModal > div::before,
   #wettkampfFormModal > div::before,
@@ -24089,7 +23690,6 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 
   body.dark-mode #leistungModal > div::before,
-  body.dark-mode #importModal > div::before,
   body.dark-mode #trainingFormModal > div::before,
   body.dark-mode #competitionFormModal > div::before,
   body.dark-mode #wettkampfFormModal > div::before,
@@ -24317,11 +23917,7 @@ document.addEventListener('DOMContentLoaded', function() {
      LEISTUNGEN — Inhalt
      ══════════════════════════════ */
 
-  /* Leistung-Toolbar: CSV-Import-Button nur Icon */
-  #leistungenTopBar .ls-secondary-btn span,
-  #leistungenTopBar .ls-secondary-btn .btn-label {
-    display: none !important;
-  }
+
 
   /* Spalten + Filter Dropdowns: links öffnen, volle Breite begrenzen */
   #ltSpaltenDropdown,
@@ -24752,12 +24348,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // Initialer Active-State der Bottom Nav beim Laden setzen
   document.addEventListener('DOMContentLoaded', function () {
     patchSwitchTab();
-    // Standard-Tab ist Dashboard → erster Button aktiv markieren
     const firstBtn = document.querySelector('.mob-nav-item[data-tab="dashboard"]');
     if (firstBtn) firstBtn.classList.add('active');
   });
 })();
 </script>
-
 </body>
 </html>
