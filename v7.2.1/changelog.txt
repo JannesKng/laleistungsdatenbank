@@ -1,0 +1,299 @@
+TrackUp v7.2.1 — Changelog
+==========================
+
+2026-05-16
+  - Wettkampf-Detail: Google-Ausschreibungssuche-Button hinzugefügt
+    · Neues Lupen-Icon neben LADV-Button im Wettkampf-Detail-Header
+    · Öffnet Google-Suche mit Wettkampfname + Jahr + "Leichtathletik Ausschreibung"
+    · URL wird dynamisch per encodeURIComponent aus wk.bezeichnung + startdatum gebaut
+    · &btnI=1 ("I'm Feeling Lucky") öffnet direkt das erste Suchergebnis
+  - Wettkampf-Share-Karte: Tabellenstil an TrackUp-Design angepasst
+    · th: blauer Gradient-Header (linear-gradient #1e3a8a→#1e40af), weißer Text, uppercase
+    · td: padding 10px 14px, font-size 0.875em, zebra-Stripes rgba(0,0,0,0.028)
+    · Tabelle in border-radius:10px Container mit Border und Box-Shadow gewrappt
+    · Letzte Zeile ohne border-bottom
+  - Wettkampf-Share-Karte: "TrackUp"-Footer entfernt (stand doppelt im Bild)
+  - Wettkampf-Detail: LADV-Monatslink-Button entfernt, Ausschreibungsbutton-Icon auf Dokument geändert
+    · _ladvUrl-Konstante und Button aus renderWettkampfDetail() entfernt
+    · Google-Button-Icon: Lupe → Dokument-Icon (passender da direkt Ausschreibung öffnet)
+  - Wettkampf-Zurück-Button: Pfeil-Text (←) durch SVG-Chevron ersetzt
+    · zeigeWettkampfDetail() setzte innerHTML mit ← Textzeichen
+    · Jetzt konsistent mit Einstellungen-Zurück-Button (SVG <polyline>)
+
+TrackUp v7.2.0 — Changelog
+==========================
+
+2026-05-15 14:00
+  - Diagramm Y-Achse: Pixel-Mindestabstand für Score-Ticks eingebaut
+    · Nach Tick-Generierung: Filter entfernt Ticks die näher als 22px beieinander liegen
+    · Schwellwert relativ zum Display-Range (22px * displayRange / 300px)
+    · Verhindert Clustering wenn Daten nur kleinen Score-Teilbereich abdecken
+    · Gilt für y1 und y2 im Score-Vergleichsmodus
+  - Wettkampf-Detail: LADV-Link zurück auf Monatsseite (Google-Suche funktionierte nicht)
+    · Aktuelles Jahr: ladv.de/ausschreibungen/{monat}
+    · Andere Jahre: ladv.de/ausschreibungenarchiv/{jahr}/{monat}
+
+2026-05-15 13:30
+  - Wettkampf-Detail: LADV-Link auf Google-Suche umgestellt
+    · Sucht "site:ladv.de {Bezeichnung} {Datum}" → erstes Ergebnis ist meist die richtige Ausschreibung
+  - Analyse-Diagramm: Max. Ticks von 5 auf 8 erhöht
+    · numTicks = 8 in Score-Vergleichsmodus (y1 + y2)
+    · generiereSchoeneLeistungen(..., 8) in normaler Skalierung (y1 + y2)
+
+2026-05-15 13:00
+  - Wettkampf-Detail: LADV-Link URL-Format korrigiert
+    · Statt Suchseite (Query-Parameter funktionieren nicht) jetzt Monatsseite
+    · Aktuelles Jahr: ladv.de/ausschreibungen/{monat}
+    · Andere Jahre: ladv.de/ausschreibungenarchiv/{jahr}/{monat}
+
+2026-05-15 12:30
+  - Wettkampf-Detail: LADV-Suchlink-Button hinzugefügt
+    · Externes Link-Icon neben Share- und Edit-Button im Wettkampf-Header
+    · Öffnet ladv.de/ausschreibung/suche mit Datum des Wettkampfs vorausgefüllt
+    · Nur sichtbar wenn Startdatum vorhanden
+    · Öffnet in neuem Tab (target="_blank")
+
+2026-05-15 12:15
+  - Diagramm Y-Achse: doppelte Tick-Labels bei Vergleichsmodus behoben
+    · Ursache: Ticks über gesamten Display-Bereich verteilt → außerhalb Daten-Score-Range → Randwert wiederholt
+    · Fix: Tick-Generierung auf tatsächlichen Daten-Score-Bereich [minDataScore, maxDataScore] beschränkt
+    · Gilt für y1 und y2
+
+2026-05-15 12:00
+  - Diagramm: "Aktualisieren"-Button entfernt (Auto-Refresh via onchange reicht)
+    · Button-Element aus HTML entfernt
+    · onchange-Bedingung auf diagrammContainer-Sichtbarkeit umgestellt
+    · Alle JS-Referenzen (zeigeDiagramm, schließeDiagramm, klappeAusDiagramm) bereinigt
+  - Diagramm Y-Achse: Bei genau 1 Datenpunkt → 1 Tick an exakter Score-Position
+    · Gilt für y1 (Haupt) und y2 (Vergleich)
+
+2026-05-15 11:30
+  - Diagramm: Tick-Logik und Chart-Container auf früheren Stand zurückgesetzt
+    · Y1/Y2 afterBuildTicks: wieder originale Score-Interpolation (numTicks=5, gleichmäßige Score-Verteilung)
+    · #leistungsChart CSS: width:100% !important wiederhergestellt
+    · Wrapper-Div: position:relative; width:100% entfernt (zurück zu height:400px only)
+
+2026-05-15 11:00
+  - Diagramm Y-Achse: Mindestabstand auf 18px gesenkt, Max-Ticks auf 8 erhöht
+    · 30px war zu groß: bei engem Datenbereich wurden fast alle Ticks herausgefiltert
+    · 18px Mindestabstand verhindert Overlap ohne zu viele Ticks zu entfernen
+    · Max. 8 Ticks (statt 5) für mehr Detailtreue bei vielen Datenpunkten
+    · Gilt für y1 und y2
+
+2026-05-15 10:30
+  - Diagramm: Resize-Loop behoben (Chart wurde immer breiter)
+    · Ursache: canvas width:100% !important überschrieb Chart.js-Breitensteuerung → Feedback-Loop
+    · Fix: width:100% !important vom #leistungsChart Canvas entfernt
+    · Wrapper-Div: position:relative + width:100% ergänzt (Chart.js-Anforderung)
+
+2026-05-15 10:15
+  - Diagramm Y-Achse: Tick-Filter überarbeitet (Vergleichsmodus-Fix)
+    · Abstandsfilter entfernt (war zu aggressiv bei engem Daten-Score-Bereich)
+    · Neu: gleichmäßiges Subsampling → max. 5 Ticks (erster + letzter + Zwischenwerte)
+    · Verhindert sowohl zu viele als auch zu wenige Ticks in beiden Modi
+    · Gilt für y1 (Haupt) und y2 (Vergleich)
+
+2026-05-14 17:00
+  - Diagramm: Hybride Y-Achsenbeschriftung (Anker + schöne Zwischenwerte)
+    · Anker-Ticks: echte Datenpunkte (Score→Label garantiert korrekt)
+    · Zwischenticks: schöne Leistungsintervalle per Perf→Score-Interpolation
+    · Schritt automatisch gewählt (0.01/0.05/0.1/0.25/0.5... je nach Bereich)
+    · Deduplizierung: Ticks mit <6% Score-Abstand werden zusammengeführt
+    · Bei nur 1 Datenpunkt: nur Anker-Tick (keine fehlerhafte Extrapolation)
+
+
+2026-05-14 16:30
+  - Diagramm Vergleichsmodus: Y-Achsen-Beschriftungen fundamental neu
+    · Alt: Interpolation über Score-Bereich → falsche Labels außerhalb Datenbereich
+    · Neu: Ticks nur an tatsächlichen Datenpunkt-Score-Positionen
+    · Jeder Tick-Label entspricht exakt dem danebenliegenden Datenpunkt
+    · Deduplizierung auf 0.1-Score-Granularität, max. 5 Ticks gleichmäßig verteilt
+    · Gilt für y1 (Haupt-Achse) und y2 (Vergleichs-Achse)
+
+
+2026-05-14 16:00
+  - Diagramm: Y-Achsen-Beschriftungen bei wenigen/einem Datenpunkt gefixt
+    · Wurzel: Interpolation liefert bei 1 Datenpunkt immer denselben Wert
+    · Fix: leistungsBereich < 0.001 → Ticks um Mittelwert spreizen
+    · Zeit-Disziplin: 0,1s Schritt; Feld-Disziplin: 0,05m Schritt als Default
+    · Gilt fuer y1 (Haupt-Achse) und y2 (Vergleichs-Achse)
+
+
+2026-05-14 15:30
+  - Kalender → Wettkampfdetail: Listenflackern vollständig behoben
+    · Wurzel: switchTab() rief ladeWettkaempfe() → wettkaempfeDaten = [] synchron
+    · Dadurch fand zeigeWettkampfDetail() den Wettkampf nicht → Fallback-Reload → Flackern
+    · Fix: Bei _fromKalender switchTab() komplett umgangen, Tab manuell aktiviert
+    · Daten nur neu laden wenn wettkaempfeDaten leer, sonst direkt zeigeWettkampfDetail()
+
+
+2026-05-14 15:00
+  - Kalender → Wettkampfdetail: kein Listenflackern mehr
+    · Detail-View wird vor switchTab() aktiviert → Liste nie sichtbar
+    · window._fromKalender Flag gesetzt beim Klick aus Kalender
+  - Zurueck-Button: "Zurueck zur Liste" vs. "Zurueck zum Kalender" je nach Herkunft
+    · wkZurueck(): navigiert zu Kalender-Tab wenn _fromKalender gesetzt
+    · zeigeWettkampfListe(): setzt _fromKalender = false zurueck
+    · zeigeWettkampfDetail(): aktualisiert Button-Text basierend auf Flag
+
+
+2026-05-14 14:30
+  - togglePasswordBtn: box-shadow und outline per Inline-Style entfernt
+    · Hatte keinen CSS-Klassenamen → globaler button{box-shadow} griff direkt
+  - Kalender: Wettkampf-Klick oeffnet jetzt Wettkampfdetailseite statt Popup
+    · openEventToEdit: switchTab('wettkaempfe') + zeigeWettkampfDetail(wkId)
+    · openWettkampfKalenderPopup/loadWettkampfKalenderLeistungen bleiben (inaktiv)
+
+
+2026-05-14 14:00
+  - Statistiken: Zeitraum-Filter jetzt client-seitig (PostgREST-Limitation)
+    · PostgREST filtert eingebettete Spalten nicht als Row-Filter (wettkampf.startdatum)
+    · Hilfsfunktion _filterStatistikZeitraum(data, filterZeitraum) eingefuehrt
+    · Nutzt datum || wettkampf.startdatum fuer Jahres- und Custom-Vergleich
+    · Betroffen: zeigeLeistungsTabelle, berechneDurchschnitt, berechneErfolgsquote, zeigeWettkampffrequenz
+
+
+2026-05-14 13:30
+  - Statistiken: fehlender Ort fuer Leistungen ohne wettkampf_id gefixt
+    · la.leistung hat eigene ort-Spalte (varchar 30) – war nicht im SELECT
+    · zeigeLeistungsTabelle: "ort" ergaenzt, Anzeige: l.ort || wettkampf.ort_display || wettkampf.ort
+  - Statistiken: Filter aktualisieren Tabelle direkt (Auto-Refresh)
+    · _runStatistik(fn, ...args): speichert aktive Funktion in window._aktiveStatistikFn
+    · _triggerActiveStatistik(): debounced (400ms) Neuaufruf der aktiven Funktion
+    · updateStFilterUI + removeStChip rufen _triggerActiveStatistik auf
+    · Alle 6 Statistik-Buttons auf _runStatistik() umgestellt
+
+
+2026-05-14 13:00
+  - formatiereLeistung: " min" Suffix ergaenzt bei Zeiten >= 60s mit eff='min'
+    · eff === 'min' && n >= 60 gab bisher "2:05,50" ohne Einheit zurueck
+    · Fix: suffix2 = eff === 'min' ? ' min' : '' → "2:05,50 min"
+  - Statistiken Score-Tabelle: datum-Spalte zum SELECT ergaenzt
+    · Leistungen ohne wettkampf_id hatten kein Datum/Ort (l.datum war undefined)
+    · "id, datum, disziplin, ..." – datum jetzt direkt aus la.leistung verfuegbar
+
+
+2026-05-14 12:30
+  - SB-Jahresfilter gefixt: PostgREST unterstuetzt kein Filtern auf eingebettete Spalten
+    · .gte/.lte("wettkampf.startdatum") hatte keine Wirkung auf Hauptzeilen
+    · Fix: alle Leistungen laden, dann client-seitig nach Jahr filtern
+    · Jahresvergleich per getFullYear() auf datum || wettkampf.startdatum
+  - formatiereLeistung: Einheiten-Normalisierung hinzugefuegt
+    · Faengt DB-Varianten ab: 'Meter'->'m', 'Sekunden'->'s', 'Pkt'->'Pkt.' etc.
+    · Macht Einheiten-Matching case-insensitiv und whitespace-tolerant
+
+
+2026-05-14 12:00
+  - Einheiten: vollstaendige Uebergabe von la.leistung.einheit an formatiereLeistung
+    · renderWettkampfDetail: Query um einheit erweitert, Render-Aufruf angepasst
+    · Score-Tabelle: Query um einheit erweitert, Render-Aufruf angepasst
+    · letzteWettkaempfe-Popup (Dashboard): l.einheit weitergegeben
+    · ersterWettkampf-Popup: l.einheit weitergegeben
+    · Ort-Popup (Karte): leistung.einheit weitergegeben
+  - formatiereLeistung: Pattern-Matching um Abkuerzungen erweitert
+    · Meter: Kugel, Diskus, Hammer, Speer, Stab(hoch), Hoch, Weit, Drei
+    · Zeit: Staffel, 4x-Prefix, Marathon, Halbmarathon
+    · Zusaetzlicher case-insensitiver Katalog-Lookup als Fallback
+  - getEinheit(): gleiche Pattern-Erweiterungen wie formatiereLeistung
+
+
+2026-05-14 11:00
+  - Leistungstabellen: Einheit aus DB-Feld einheit wird direkt an formatiereLeistung übergeben
+    · einheit jetzt in ladeLeistungen, alleLeistungenFuerPBs, zeigeTabelle, zeigeTabelleMitPBs
+    · Sicherheit: gespeicherte Einheit hat Vorrang vor Katalog-Lookup
+    · Auch im Detail-Popup (Leistungsfeld) und openDetailPopup übergeben
+  - Detail-Popup: Notizen werden read-only angezeigt wenn vorhanden
+    · Als grid-item (span 4) direkt unter den Infokacheln, mit weißem pre-wrap Text
+    · Notizen bleiben weiterhin im Bearbeiten-Modal pflegbar
+  - Wettkampfliste: Vergangene Wettkämpfe mit navy-blauem Akzent (#1e3a8a) statt grau
+
+
+2026-05-14 10:15
+  - Batch-Edit Modal: Stil an App-Standard angeglichen
+    · Modal-Hintergrund, Padding, Border-Radius, Box-Shadow wie andere Popups
+    · Inputs (Leistung, Platz) mit Inline-Styles statt batch-input-Klasse
+    · Status-Select mit App-Standard-Stil
+    · _batchInputChanged setzt borderColor dynamisch (gruen = befuellt)
+  - Wettkampf teilen: Button-Position in Wettkampf-Detailheader oben rechts verschoben
+    · Nur Icon sichtbar (detail-popup-share Klasse), analog zu Leistung-teilen-Button
+    · Edit- und Action-Buttons in zweite Zeile ausgelagert
+  - Notizen: aus Detail-Popup entfernt, ins Leistung-hinzufuegen/bearbeiten-Modal verschoben
+    · openAddLeistungModal: Notizen-Feld wird geleert
+    · openEditLeistungModal: Notizen werden aus bestehender Leistung vorbelegt
+    · saveLeistung: Notizen-Wert wird korrekt mitgespeichert
+
+
+2026-05-14 09:30
+  - Batch-Edit: 'Ergebnisse eintragen'-Button in Wettkampf-Detailansicht
+    · Oeffnet Modal mit allen Disziplinen des Wettkampfs in einer Tabelle
+    · Inline-Inputs fuer Leistung (vorformatiert), Platz, Status
+    · Tab/Enter-Navigation zwischen Feldern (Leistung -> Platz -> naechste Zeile)
+    · Geaenderte Zeilen gruen hervorgehoben, Zaehler 'X von Y mit Ergebnis'
+    · Speichert nur tatsaechlich geaenderte Zeilen (Diff-Logik)
+    · Toast-Bestaetigung + automatische Aktualisierung der Detailansicht
+
+
+2026-05-14 09:20
+  - Kalender: bei Athletenwechsel werden alle Eintraege korrekt aktualisiert
+    · dbLoadEvents filtert leistungen-Events jetzt nach athlet_id (vorher blieben alte Eintraege)
+    · selectCompactAthlete/clearCompactAthlete raeumt leistungen-Events vorab auf + kalRender()
+  - Dashboard Entwicklungen: Fallback auf 2 haeufigste Disziplinen wenn keine eigenen gesetzt
+    · Fallback auch wenn eigene Disziplinen keine Treffer in letzten 3 Jahren haben
+    · Zweiter Fallback: auch Disziplinen mit nur 1 Eintrag anzeigen
+  - Toast-Animation: Emoji durch SVG Person-Icon ersetzt
+
+
+2026-05-14 09:12
+  - Mobile-Nav: Im Login-Screen ausgeblendet (showLoginScreen/showMainApp)
+  - Athletenwechsel: Toast-Benachrichtigung + automatischer Tab-Wechsel zum Dashboard
+    · _zeigAthletToast() neu, selectCompactAthlete/clearCompactAthlete angepasst
+  - Sort-Pfeile (⇅) in allen sortierbaren Tabellen-Spaltenkoepfen (4 Stellen)
+    · Haupt-Leistungstabelle, PBs/SBs-Tabelle, Score-Tabelle, Ort-Popup
+    · CSS .sort-indicator + .sort-arrow fuer dezentes Hover-Styling
+
+
+2026-05-12 00:00
+  - Disziplin-Filter X-Button: SVG durch × Zeichen ersetzt (war unsichtbar)
+    · CSS: font-size:1.1em; line-height:1 ergänzt
+  - Score-Info-Icon: Alle "i"-Badges durch score.png ersetzt (3 Stellen)
+    · Leistungstabellen-Header (JS-String), ls-score-i Span, Bestleistungen-Tabelle
+    · score-info-icon: blaues Kreis-Badge-Styling entfernt, nur noch transparenter Wrapper
+    · ls-score-i CSS: Kreis-Border/Background entfernt
+  - Filter-Logik verifiziert: alle Filter korrekt AND verknüpft (Supabase-Chaining)
+    · Mehrere Disziplinen: OR innerhalb Disziplin-Gruppe, AND mit allen anderen Filtern
+
+2026-05-11 00:00
+  - "Wettkampf teilen" Feature komplett überarbeitet (wkShareModal + JS)
+    · Vorschau-Bug gefixt: Container-Klasse share-preview-wrap → share-preview-frame
+      (fehlendes CSS führte zu unkontrolliertem Zoom der Vorschau)
+    · 2 neue Optionen im Modal: "Altersklasse (AK) anzeigen" + "PB / SB markieren"
+    · PB/SB-Hilfsfunktionen: _isWkLeistungPB(), _isWkLeistungSB(), _wkLeistungIstZeit()
+      nutzen alleLeistungenFuerPBs für korrekte Berechnung (Zeit vs. Feld, Jahresgrenze für SB)
+    · Share-Card komplett neu designt:
+      - Blauer Gradient-Header (#1e3a8a → #2563eb) mit Wettkampfname, Datum, Ort, Saison-Badge
+      - PB-Badge (gold) und SB-Badge (grün) inline in der Leistungstabelle
+      - AK-Spalte optional einblendbar
+      - Schatten-Effekt auf dem composite canvas
+      - Hintergrundton: #eef2f8 (war #f2f6fa)
+
+2026-05-09 14:30
+  - CSV-Import vollständig entfernt (Leistungen-Tab)
+    · Toolbar-Button "CSV Import" entfernt
+    · <div id="importModal"> HTML-Modal entfernt
+    · JS-Funktionen openImportModal / closeImportModal / importCSV entfernt
+    · Alle CSS-Referenzen auf #importModal aus Selektoren entfernt
+      (print/responsive max-width, mobile bottom-sheet, ::before drag-indicator, dark-mode)
+
+2026-05-09 14:00
+  - Einstellungen: Hintergrund weiß, .settings-card Hintergrund #f8fafc (wie Dashboard-Kästen)
+  - Profile-Dropdown: Hover-Lücke geschlossen via ::after Pseudo-Element auf .header-profile-wrap
+
+2026-05-09 13:00
+  - #einstellungenTab: position:fixed entfernt — normaler Flow, kein Overlay
+  - switchTab: .container min-height auf 0 wenn Einstellungen aktiv, sonst restore
+  - .settings-page-header: sticky top 68px (Desktop) / 52px (Mobile)
+  - Profile-Dropdown: öffnet bei Hover via CSS
+
+2026-05-09 12:15
+  - year-separator CSS global gemacht (war nur in @media max-width:768px)
+  - Einstellungen: container-hide-Logik entfernt (zu aggressiv)
